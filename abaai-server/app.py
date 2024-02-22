@@ -1,9 +1,10 @@
 from flask import Flask, jsonify
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
-
-@app.route('/', methods=['GET'])
+@app.route('/api/hello', methods=['GET'])
 def root():
     data = {
         "message": "Hello World!"
@@ -13,4 +14,4 @@ def root():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
