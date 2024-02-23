@@ -1,47 +1,73 @@
-import { Grid, Paper } from "@mui/material";
+import { Grid, Fab } from "@mui/material";
 import { useBoardPositions } from "../hooks/useBoardPositions";
 import { useBoard } from "../hooks/useBoard";
+import { Marbles } from "../constants/marbles";
+import { useCallback, useEffect, useState } from "react";
 
 const Board = () => {
   // States
+  const [startPositionSet, setStartPositionSet] = useState(false);
 
   // Hooks
-  const { useDefaultBoardPosition } = useBoardPositions();
+  const { setDefaultBoardPosition } = useBoardPositions();
   const { board, setBoard } = useBoard();
-  useDefaultBoardPosition(board);
 
+  // Effects
+  useEffect(() => {
+    if (!startPositionSet) {
+      setDefaultBoardPosition(board);
+      setStartPositionSet(true);
+    }
+  }, [board, startPositionSet, setDefaultBoardPosition]);
+
+  // Callbacks
+  const onMarbleClick = useCallback((spot, rowIndex, columnIndex) => {
+    console.log("Marble clicked");
+    console.log(spot);
+  });
+
+  const onEmptySpotClick = useCallback((spot, rowIndex, columnIndex) => {
+    setBoard((prevBoard) => {
+      const newBoard = prevBoard.slice();
+      newBoard[rowIndex][columnIndex].marble = "#00ee00";
+      return newBoard;
+    });
+    console.log("Empty spot clicked");
+    console.log(spot);
+  });
+
+  // Functions
   const renderRow = (row, rowIndex) => {
     return (
       <Grid container item justifyContent="center" key={rowIndex}>
         {row.map((spot, columnIndex) => (
           <Grid item key={`${rowIndex}-${columnIndex}`}>
-            <Paper
+            <Fab
+              variant="contained"
               sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: "40px",
-                height: "40px",
-                borderRadius: "50%",
-                margin: "4px",
-                backgroundColor: spot.marble, // You can change the background color here
+                margin: "10px",
+                backgroundColor: spot.marble,
               }}
-              elevation={3}
+              onClick={() => {
+                if (spot.marble === Marbles.EMPTY) {
+                  onEmptySpotClick(spot, rowIndex, columnIndex);
+                } else {
+                  onMarbleClick(spot, rowIndex, columnIndex);
+                }
+              }}
             >
-              {`${spot.row}${spot.column}`}
-            </Paper>
+              {`${spot.rowLetter}${spot.columnNumber}`}
+            </Fab>
           </Grid>
         ))}
       </Grid>
     );
   };
 
+  // JSX
   return (
     <Grid container direction="column" alignItems="center">
-      {board
-        .slice()
-        .reverse()
-        .map((row, index) => renderRow(row, index))}
+      {board.map((row, index) => renderRow(row, index))}
     </Grid>
   );
 };

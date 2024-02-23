@@ -1,19 +1,19 @@
 import { Marbles } from "../constants/marbles";
 
 const useBoardPositions = () => {
-  const useDefaultBoardPosition = (board) => {
+  const setDefaultBoardPosition = (board) => {
     for (const row of board) {
       for (const spot of row) {
         if (
-          spot.row === "A" ||
-          spot.row === "B" ||
-          (spot.row === "C" && [3, 4, 5].includes(spot.column))
+          spot.rowLetter === "A" ||
+          spot.rowLetter === "B" ||
+          (spot.rowLetter === "C" && [3, 4, 5].includes(spot.columnNumber))
         ) {
           spot.marble = Marbles.BLUE;
         } else if (
-          spot.row === "I" ||
-          spot.row === "H" ||
-          (spot.row === "G" && [5, 6, 7].includes(spot.column))
+          spot.rowLetter === "I" ||
+          spot.rowLetter === "H" ||
+          (spot.rowLetter === "G" && [5, 6, 7].includes(spot.columnNumber))
         ) {
           spot.marble = Marbles.RED;
         }
@@ -21,18 +21,18 @@ const useBoardPositions = () => {
     }
   };
 
-  const useBelgianDaisyBoardPosition = (board) => {
+  const setBelgianDaisyBoardPosition = (board) => {
     console.log("Belgian Daisy board position not implemented yet");
   };
 
-  const useGermanDaisyBoardPosition = (board) => {
+  const setGermanDaisyBoardPosition = (board) => {
     console.log("German Daisy board position not implemented yet");
   };
 
   return {
-    useDefaultBoardPosition,
-    useBelgianDaisyBoardPosition,
-    useGermanDaisyBoardPosition,
+    setDefaultBoardPosition,
+    setBelgianDaisyBoardPosition,
+    setGermanDaisyBoardPosition,
   };
 };
 

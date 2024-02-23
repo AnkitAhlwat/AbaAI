@@ -2,12 +2,14 @@ import { Marbles } from "../constants/marbles";
 import { useState } from "react";
 
 const useBoard = () => {
-  const generateRow = (startColumnNum, endColumnNum, letter) => {
+  const generateRow = (startColumnIndex, endColumnIndex, rowIndex) => {
     let row = [];
-    for (let i = startColumnNum; i < endColumnNum + 1; i++) {
+    for (let i = startColumnIndex; i < endColumnIndex + 1; i++) {
       const spot = {
-        row: letter,
-        column: i,
+        rowIndex: rowIndex,
+        columnIndex: i,
+        rowLetter: String.fromCharCode(65 + rowIndex),
+        columnNumber: i + 1,
         marble: Marbles.EMPTY,
       };
       row.push(spot);
@@ -22,29 +24,17 @@ const useBoard = () => {
     let board = [];
     let letterCount = 0;
     for (let i = 0; i < rowLengthsBottomHalf.length; i++) {
-      const startColumnNum = 1;
-      const endColumnNum = rowLengthsBottomHalf[i];
+      const startColumnIndex = 0;
+      const endColumnIndex = rowLengthsBottomHalf[i] - 1;
 
-      board.push(
-        generateRow(
-          startColumnNum,
-          endColumnNum,
-          String.fromCharCode(65 + letterCount)
-        )
-      );
+      board.unshift(generateRow(startColumnIndex, endColumnIndex, letterCount));
       letterCount++;
     }
     for (let i = 0; i < rowLengthsTopHalf.length; i++) {
-      const startColumnNum = 9 - rowLengthsTopHalf[i] + 1;
-      const endColumnNum = 9;
+      const startColumnIndex = 9 - rowLengthsTopHalf[i];
+      const endColumnIndex = 9 - 1;
 
-      board.push(
-        generateRow(
-          startColumnNum,
-          endColumnNum,
-          String.fromCharCode(65 + letterCount)
-        )
-      );
+      board.unshift(generateRow(startColumnIndex, endColumnIndex, letterCount));
       letterCount++;
     }
 
