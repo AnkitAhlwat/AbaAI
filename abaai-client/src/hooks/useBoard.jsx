@@ -1,6 +1,7 @@
 import { Marbles } from "../constants/marbles";
 import { useState } from "react";
 
+// A custom hook that generates the board and returns the board state and a function to set the board state
 const useBoard = () => {
   const generateRow = (startColumnIndex, endColumnIndex, rowIndex) => {
     let row = [];

@@ -1,5 +1,6 @@
 import { Marbles } from "../constants/marbles";
 
+// A custom hook that returns functions to set the board position to the default position, Belgian Daisy position, and German Daisy position
 const useBoardPositions = () => {
   const setDefaultBoardPosition = (board) => {
     for (const row of board) {
