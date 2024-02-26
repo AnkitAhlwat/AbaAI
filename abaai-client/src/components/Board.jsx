@@ -9,17 +9,17 @@ const Board = () => {
   const [startPositionSet, setStartPositionSet] = useState(false);
 
   // Hooks
-  const { setDefaultBoardPosition } = useBoardPositions(); // import setDefaultBoardPosition function from useBoardPositions hook
+  const { setDefaultPosition, setBelgianDaisyPosition, setGermanDaisyPosition } = useBoardPositions(); // import board position functions from useBoardPositions hook
   const { board, setBoard } = useBoard(); // import board state and setBoard function from useBoard hook
 
   // Effects
   useEffect(() => {
     // if the board is not set, set the board position to the default position
     if (!startPositionSet) {
-      setDefaultBoardPosition(board);
+      setDefaultPosition(board);
       setStartPositionSet(true);
     }
-  }, [board, startPositionSet, setDefaultBoardPosition]); // when the dependencies in this array change the effect will run again
+  }, [board, startPositionSet, setDefaultPosition]); // when the dependencies in this array change the effect will run again
 
   // Callbacks
   const onMarbleClick = useCallback((spot, rowIndex, columnIndex) => {
