@@ -7,6 +7,7 @@ import { useCallback, useEffect, useState } from "react";
 const Board = () => {
   // States
   const [startPositionSet, setStartPositionSet] = useState(false);
+  const [selectedMarble, setSelectedMarble] = useState(null);
 
   // Hooks
   const { setDefaultPosition, setBelgianDaisyPosition, setGermanDaisyPosition } = useBoardPositions(); // import board position functions from useBoardPositions hook
@@ -16,7 +17,7 @@ const Board = () => {
   useEffect(() => {
     // if the board is not set, set the board position to the default position
     if (!startPositionSet) {
-      setDefaultPosition(board);
+      setBelgianDaisyPosition(board);
       setStartPositionSet(true);
     }
   }, [board, startPositionSet, setDefaultPosition]); // when the dependencies in this array change the effect will run again
@@ -26,17 +27,29 @@ const Board = () => {
     // a callback function that will be called when a marble is clicked
     console.log("Marble clicked");
     console.log(spot);
-  });
+    
+    //check is the marble has already been selected, else select the new one
+    if (selectedMarble && selectedMarble.rowIndex == rowIndex && selectedMarble.columnIndex == columnIndex){
+      setSelectedMarble(null);
+    } else {
+      setSelectedMarble({rowIndex, columnIndex, color: spot.marble})
+    }
+  }, [selectedMarble]);
 
   const onEmptySpotClick = useCallback((spot, rowIndex, columnIndex) => {
     // a callback function that will be called when an empty spot is clicked
-    setBoard((prevBoard) => {
-      const newBoard = prevBoard.slice();
-      newBoard[rowIndex][columnIndex].marble = "#00ee00";
-      return newBoard;
-    });
     console.log("Empty spot clicked");
     console.log(spot);
+
+    if (selectedMarble){
+      setBoard((prevBoard) => {
+        const newBoard = prevBoard.map(row => row.map(spot => ({ ...spot })));
+        newBoard[selectedMarble.rowIndex][selectedMarble.columnIndex].marble = Marbles.EMPTY;
+        newBoard[rowIndex][columnIndex].marble = selectedMarble.color;
+        return newBoard;
+      });
+      setSelectedMarble(null);
+    } 
   });
 
   // Functions
