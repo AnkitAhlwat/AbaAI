@@ -1,6 +1,4 @@
 import { Grid, Fab } from "@mui/material";
-import { Marbles } from "../constants/marbles";
-import { useCallback, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
 const Board = ({ boardArray }) => {
