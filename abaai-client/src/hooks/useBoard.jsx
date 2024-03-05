@@ -38,11 +38,10 @@ const useBoard = () => {
       board.unshift(generateRow(startColumnIndex, endColumnIndex, letterCount));
       letterCount++;
     }
-
     return board;
   };
 
-  const [board, setBoard] = useState(generateBoard());
+  const [board, setBoard] = useState(() => generateBoard());
 
   return {
     board,
