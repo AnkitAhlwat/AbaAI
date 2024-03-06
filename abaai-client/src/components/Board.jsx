@@ -1,13 +1,17 @@
 import { Grid, Fab } from "@mui/material";
 import PropTypes from "prop-types";
 import SpaceStates from "../constants/spaceStates";
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import Space from "../models/Space";
+import { MoveButtons } from "./MoveButtons";
 
-const Board = ({ board }) => {
-  // States
-  const [selectedMarbles, setSelectedMarbles] = useState([]);
-
+const Board = ({
+  board,
+  onMoveSelection,
+  selectedMarbles,
+  setSelectedMarbles,
+}) => {
+  // Callbacks
   const deselectMarbles = useCallback((marbles) => {
     for (const marble of marbles) {
       marble.selected = false;
@@ -30,7 +34,11 @@ const Board = ({ board }) => {
       // otherwise selected the current marble and deselect the previous marble
       else if (selectedMarbles.length === 1) {
         setSelectedMarbles((previousSelectedMarbles) => {
-          if (previousSelectedMarbles[0].isAdjacentTo(space)) {
+          if (
+            previousSelectedMarbles[0].isAdjacentTo(space) &&
+            !space.selected &&
+            space.state === previousSelectedMarbles[0].state
+          ) {
             space.selected = true;
             return [...previousSelectedMarbles, space];
           } else if (previousSelectedMarbles[0] === space) {
@@ -52,7 +60,9 @@ const Board = ({ board }) => {
               previousSelectedMarbles[0],
               previousSelectedMarbles[1],
               space
-            )
+            ) &&
+            !space.selected &&
+            space.state === previousSelectedMarbles[0].state
           ) {
             space.selected = true;
             return [...previousSelectedMarbles, space];
@@ -70,45 +80,7 @@ const Board = ({ board }) => {
         space.selected = true;
       }
     },
-    [deselectMarbles, selectedMarbles]
-  );
-
-  const onEmptySpaceClick = useCallback(
-    (emptySpace) => {
-      // if there are no selected marbles, return
-      if (selectedMarbles.length === 0) {
-        return;
-      }
-
-      // check if the empty space is adjacent to any of the selected marbles
-      const isAdjacentToSelectedMarble = selectedMarbles.some((marble) =>
-        marble.isAdjacentTo(emptySpace)
-      );
-      if (!isAdjacentToSelectedMarble) {
-        return;
-      }
-
-      // if there is one selected marble, move the marble to the empty space
-      if (selectedMarbles.length === 1) {
-        const marble = selectedMarbles[0];
-        marble.state = SpaceStates.EMPTY;
-        emptySpace.state = marble.state;
-      }
-
-      //
-    },
-    [selectedMarbles]
-  );
-
-  const onSpaceClick = useCallback(
-    (space) => {
-      if (space.state === SpaceStates.EMPTY) {
-        onEmptySpaceClick(space);
-      } else {
-        onMarbleClick(space);
-      }
-    },
-    [onEmptySpaceClick, onMarbleClick]
+    [deselectMarbles, selectedMarbles, setSelectedMarbles]
   );
 
   const getSpaceColor = useCallback((space) => {
@@ -130,7 +102,6 @@ const Board = ({ board }) => {
     }
   }, []);
 
-  // Functions
   const renderRow = useCallback(
     (row, rowIndex) => {
       // a function that will render a row of the board
@@ -145,7 +116,7 @@ const Board = ({ board }) => {
                     margin: "10px",
                     backgroundColor: getSpaceColor(space),
                   }}
-                  onClick={() => onSpaceClick(space)}
+                  onClick={() => onMarbleClick(space)}
                 >
                   {space.str}
                 </Fab>
@@ -155,20 +126,26 @@ const Board = ({ board }) => {
         </Grid>
       );
     },
-    [getSpaceColor, onSpaceClick]
+    [getSpaceColor, onMarbleClick]
   );
 
   // JSX
   return (
     // a grid container that will render the board by looping through all the rows in the board and rendering each row
-    <Grid container direction="column" alignItems="center">
-      {board.map((row, index) => renderRow(row, index))}
-    </Grid>
+    <>
+      <Grid container direction="column" alignItems="center">
+        {board.map((row, index) => renderRow(row, index))}
+      </Grid>
+      <MoveButtons onMoveSelection={onMoveSelection} />
+    </>
   );
 };
 
 Board.propTypes = {
   board: PropTypes.array.isRequired,
+  onMoveSelection: PropTypes.func.isRequired,
+  selectedMarbles: PropTypes.array.isRequired,
+  setSelectedMarbles: PropTypes.func.isRequired,
 };
 
 export { Board };
