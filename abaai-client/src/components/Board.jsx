@@ -134,9 +134,18 @@ const Board = ({
     // a grid container that will render the board by looping through all the rows in the board and rendering each row
     <>
       <Grid container direction="column" alignItems="center">
-        {board.map((row, index) => renderRow(row, index))}
+        <Grid item container direction="column" alignItems="center">
+          {board.map((row, index) => renderRow(row, index))}
+        </Grid>
+        <Grid
+          item
+          sx={{
+            marginTop: "30px",
+          }}
+        >
+          <MoveButtons onMoveSelection={onMoveSelection} />
+        </Grid>
       </Grid>
-      <MoveButtons onMoveSelection={onMoveSelection} />
     </>
   );
 };
