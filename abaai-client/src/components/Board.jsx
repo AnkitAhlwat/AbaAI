@@ -143,7 +143,10 @@ const Board = ({
             marginTop: "30px",
           }}
         >
-          <MoveButtons onMoveSelection={onMoveSelection} />
+          <MoveButtons
+            onMoveSelection={onMoveSelection}
+            selectedMarbles={selectedMarbles}
+          />
         </Grid>
       </Grid>
     </>

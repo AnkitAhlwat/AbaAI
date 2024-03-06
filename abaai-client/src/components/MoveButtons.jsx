@@ -1,7 +1,7 @@
 import { Button, Grid } from "@mui/material";
 import PropTypes from "prop-types";
 
-const MoveButtons = ({ onMoveSelection }) => {
+const MoveButtons = ({ onMoveSelection, selectedMarbles }) => {
   const move_map = [
     { label: "UpLeft", move: { x: 0, y: -1 } },
     { label: "UpRight", move: { x: 1, y: -1 } },
@@ -19,6 +19,7 @@ const MoveButtons = ({ onMoveSelection }) => {
             variant="contained"
             color="primary"
             onClick={() => onMoveSelection(obj.move)}
+            disabled={selectedMarbles.length === 0}
           >
             {obj.label}
           </Button>
@@ -30,6 +31,7 @@ const MoveButtons = ({ onMoveSelection }) => {
 
 MoveButtons.propTypes = {
   onMoveSelection: PropTypes.func.isRequired,
+  selectedMarbles: PropTypes.array.isRequired,
 };
 
 export { MoveButtons };
