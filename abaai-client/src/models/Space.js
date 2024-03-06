@@ -2,22 +2,8 @@ class Space {
     constructor(state, position) {
         this.state = state;
         this.position = position;
-        this.letter = this.getLetter(position);
-        this.number = this.getNumber(position);
-        this.str = `${this.letter}${this.number}`
+        this.str = Space.getCodeByPosition(position);
         this.selected = false;
-    }
-
-    getLetter(position) {
-        // 65 is the ASCII code for 'A'
-        // 8 is the max index of the board
-        // 8 - position.y is used to reverse the order of the letters
-        return String.fromCharCode(65 + 8 - position.y);
-    }
-
-    getNumber(position) {
-        // position.x + 1 is used to start the numbering from 1
-        return position.x + 1;
     }
 
     getAdjacentSpaces() {
@@ -70,6 +56,12 @@ class Space {
             return true;
         }
         return false;
+    }
+
+    static getCodeByPosition(position) {
+        const letter = String.fromCharCode(65 + 8 - position.y);
+        const number = position.x + 1;
+        return `${letter}${number}`;
     }
 }
 

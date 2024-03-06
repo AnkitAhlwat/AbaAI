@@ -14,8 +14,8 @@ app.game = Game()
 def configure_game():
     if request.is_json:
         data = request.get_json()
-        app.game = Game(data)
-        return jsonify(data)
+        response = app.game.set_up(data)
+        return jsonify(response)
 
     return jsonify({"error": "Invalid JSON"}), 400
 
@@ -28,6 +28,12 @@ def make_move():
         return jsonify(game_update.to_json())
 
     return jsonify({"error": "Invalid JSON"}), 400
+
+
+@app.route('/api/game/undo', methods=['POST'])
+def undo_move():
+    game_update = app.game.undo_move()
+    return jsonify(game_update.to_json())
 
 
 if __name__ == "__main__":

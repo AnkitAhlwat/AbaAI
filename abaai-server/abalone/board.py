@@ -67,6 +67,9 @@ class Board:
     def board(self):
         return self._board
 
+    def to_json(self):
+        return self._board
+
     def get_space_state(self, x: int, y: int) -> SpaceState:
         return SpaceState(self._board[y][x])
 
@@ -78,4 +81,11 @@ class Board:
             self.set_space_state(position.x, position.y, SpaceState.EMPTY)
 
         for position in move.next_positions:
+            self.set_space_state(position.x, position.y, SpaceState(move.player.value))
+
+    def undo_move(self, move):
+        for position in move.next_positions:
+            self.set_space_state(position.x, position.y, SpaceState.EMPTY)
+
+        for position in move.previous_positions:
             self.set_space_state(position.x, position.y, SpaceState(move.player.value))

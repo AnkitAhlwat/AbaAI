@@ -1,7 +1,7 @@
 class Move {
-    constructor(previousPosition, newPosition, player) {
-        this.previousPosition = previousPosition;
-        this.newPosition = newPosition;
+    constructor(previousPositions, newPositions, player) {
+        this.previous_positions = previousPositions;
+        this.next_positions = newPositions;
         this.player = player
     }
 }

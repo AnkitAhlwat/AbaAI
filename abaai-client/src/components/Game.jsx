@@ -7,6 +7,7 @@ import MoveHistory from "./MoveHistory";
 import { Grid } from "@mui/material";
 import GameService from "../services/game.service";
 import Move from "../models/Move";
+import GameControls from "./GameControls";
 
 const Game = () => {
   // States
@@ -55,6 +56,21 @@ const Game = () => {
     [boardArray, selectedMarbles, setBoardArray]
   );
 
+  const onUndoLastMove = useCallback(async () => {
+    const responseData = await GameService.postUndoLastMove();
+    console.log(responseData);
+    setBoardArray(responseData.board);
+    setMovesStack(responseData.moves_stack);
+  }, [setBoardArray]);
+
+  const onResetGame = useCallback(async () => {
+    console.log("resetting game");
+    // const responseData = await GameService.resetGame();
+    // console.log(responseData);
+    // setBoardArray(responseData.board);
+    // setMovesStack(responseData.moves_stack);
+  }, []);
+
   // JSX
   return (
     <Grid container spacing={2}>
@@ -70,6 +86,11 @@ const Game = () => {
           onMoveSelection={onMoveSelection}
           selectedMarbles={selectedMarbles}
           setSelectedMarbles={setSelectedMarbles}
+        />
+        <GameControls
+          onUndo={onUndoLastMove}
+          onReset={onResetGame}
+          movesStack={movesStack}
         />
       </Grid>
 
