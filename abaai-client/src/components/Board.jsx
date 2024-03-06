@@ -1,7 +1,6 @@
 import { Grid, Fab } from "@mui/material";
 import PropTypes from "prop-types";
 import SpaceStates from "../constants/spaceStates";
-import { useEffect } from "react";
 import { useState, useCallback } from "react";
 import Space from "../models/Space";
 
@@ -9,87 +8,127 @@ const Board = ({ board }) => {
   // States
   const [selectedMarbles, setSelectedMarbles] = useState([]);
 
-  // Callbacks
+  const deselectMarbles = useCallback((marbles) => {
+    for (const marble of marbles) {
+      marble.selected = false;
+    }
+  }, []);
+
   const onMarbleClick = useCallback(
     (space) => {
-      // a function that will handle the click event of a marble
+      // if the space is empty or the space is already selected, return
       if (space.state === SpaceStates.EMPTY) {
         return;
       }
 
-      // if the marble is already selected, deselect it
-      if (selectedMarbles.includes(space)) {
-        space.selected = false;
-        const updatedSelectedMarbles = selectedMarbles.filter(
-          (selectedMarble) => selectedMarble !== space
-        );
-        setSelectedMarbles(updatedSelectedMarbles);
-        return;
-      }
-
+      // if there are no selected marbles, select the current marble
       if (selectedMarbles.length === 0) {
         space.selected = true;
         setSelectedMarbles([space]);
-      } else if (selectedMarbles.length === 1) {
-        // if the marble is not adjacent to the either of the selected marbles, return
-        const isAdjacent = selectedMarbles.some((selectedMarble) =>
-          selectedMarble.isAdjacentTo(space)
-        );
-        if (!isAdjacent) {
-          return;
-        }
-
-        space.selected = true;
-        setSelectedMarbles([...selectedMarbles, space]);
-      } else if (selectedMarbles.length === 2) {
-        // if the marble is not in line with the selected marbles, return
-        const areInStraightLine = Space.areInStraightLine(
-          selectedMarbles[0],
-          selectedMarbles[1],
-          space
-        );
-        if (!areInStraightLine) {
-          return;
-        }
-
-        space.selected = true;
-        setSelectedMarbles([...selectedMarbles, space]);
-      } else if (selectedMarbles.length >= 3) {
-        // if there are already 3 marbles selected, deselect all the marbles and select the current marble
-        for (const marble of selectedMarbles) {
-          marble.selected = false;
-        }
-        space.selected = true;
-        setSelectedMarbles([space]);
       }
-
-      console.log(space);
-      console.log(selectedMarbles);
+      // if there is one selected marble, select the current marble if it is adjacent to the selected marble
+      // otherwise selected the current marble and deselect the previous marble
+      else if (selectedMarbles.length === 1) {
+        setSelectedMarbles((previousSelectedMarbles) => {
+          if (previousSelectedMarbles[0].isAdjacentTo(space)) {
+            space.selected = true;
+            return [...previousSelectedMarbles, space];
+          } else if (previousSelectedMarbles[0] === space) {
+            space.selected = false;
+            return [];
+          } else {
+            deselectMarbles(previousSelectedMarbles);
+            space.selected = true;
+            return [space];
+          }
+        });
+      }
+      // if there are two selected marbles, select the current marble if it is in a straight line with the selected marbles
+      // otherwise deselect all the marbles and select the current marble
+      else if (selectedMarbles.length === 2) {
+        setSelectedMarbles((previousSelectedMarbles) => {
+          if (
+            Space.areInStraightLine(
+              previousSelectedMarbles[0],
+              previousSelectedMarbles[1],
+              space
+            )
+          ) {
+            space.selected = true;
+            return [...previousSelectedMarbles, space];
+          } else {
+            deselectMarbles(previousSelectedMarbles);
+            space.selected = true;
+            return [space];
+          }
+        });
+      }
+      // if the marble is already selected or there are more than two selected marbles, deselect all the marbles and select the current marble
+      else if (selectedMarbles.includes(space) || selectedMarbles.length >= 3) {
+        deselectMarbles(selectedMarbles);
+        setSelectedMarbles([space]);
+        space.selected = true;
+      }
     },
-    [selectedMarbles, setSelectedMarbles]
+    [deselectMarbles, selectedMarbles]
   );
 
-  const getSpaceColor = useCallback(
-    (space) => {
-      if (space.selected) {
-        return "green";
+  const onEmptySpaceClick = useCallback(
+    (emptySpace) => {
+      // if there are no selected marbles, return
+      if (selectedMarbles.length === 0) {
+        return;
       }
-      // a function that will return the color of the marble based on the state
-      switch (space.state) {
-        case SpaceStates.BLACK:
-          return "grey";
-        case SpaceStates.WHITE:
-          return "white";
-        case SpaceStates.EMPTY:
-          return "beige";
-        case SpaceStates.NONE:
-          return "red";
-        default:
-          return "transparent";
+
+      // check if the empty space is adjacent to any of the selected marbles
+      const isAdjacentToSelectedMarble = selectedMarbles.some((marble) =>
+        marble.isAdjacentTo(emptySpace)
+      );
+      if (!isAdjacentToSelectedMarble) {
+        return;
       }
+
+      // if there is one selected marble, move the marble to the empty space
+      if (selectedMarbles.length === 1) {
+        const marble = selectedMarbles[0];
+        marble.state = SpaceStates.EMPTY;
+        emptySpace.state = marble.state;
+      }
+
+      //
     },
     [selectedMarbles]
   );
+
+  const onSpaceClick = useCallback(
+    (space) => {
+      if (space.state === SpaceStates.EMPTY) {
+        onEmptySpaceClick(space);
+      } else {
+        onMarbleClick(space);
+      }
+    },
+    [onEmptySpaceClick, onMarbleClick]
+  );
+
+  const getSpaceColor = useCallback((space) => {
+    if (space.selected) {
+      return "green";
+    }
+    // a function that will return the color of the marble based on the state
+    switch (space.state) {
+      case SpaceStates.BLACK:
+        return "grey";
+      case SpaceStates.WHITE:
+        return "white";
+      case SpaceStates.EMPTY:
+        return "beige";
+      case SpaceStates.NONE:
+        return "red";
+      default:
+        return "transparent";
+    }
+  }, []);
 
   // Functions
   const renderRow = useCallback(
@@ -106,7 +145,7 @@ const Board = ({ board }) => {
                     margin: "10px",
                     backgroundColor: getSpaceColor(space),
                   }}
-                  onClick={() => onMarbleClick(space)}
+                  onClick={() => onSpaceClick(space)}
                 >
                   {space.str}
                 </Fab>
@@ -116,7 +155,7 @@ const Board = ({ board }) => {
         </Grid>
       );
     },
-    [getSpaceColor, onMarbleClick]
+    [getSpaceColor, onSpaceClick]
   );
 
   // JSX
