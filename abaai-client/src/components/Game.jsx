@@ -3,6 +3,7 @@ import { Board } from "./Board";
 import ConfigMenu from "./ConfigMenu";
 import { useState } from "react";
 import { useBoard } from "../hooks/useBoard";
+import GameClock from "./Clock"; 
 
 const Game = () => {
   const [config, setConfig] = useState({
@@ -12,6 +13,7 @@ const Game = () => {
 
   return (
     <>
+      <GameClock initialTime={600} />
       <Board boardArray={board} />
       <ConfigMenu config={config} setConfig={setConfig} />
     </>
