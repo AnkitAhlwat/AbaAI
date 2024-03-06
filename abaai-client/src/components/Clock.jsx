@@ -68,7 +68,7 @@ const GameClock = ({ initialGameTime = 0, turnTimeLimit = 15 }) => {
       <Button onClick={handleStart} disabled={gameActive}>Start</Button>
       <Button onClick={handleStop}>Stop</Button>
       <Button onClick={handlePause} disabled={!gameActive}>Pause</Button>
-      <Button onClick={handleReset}>Reset</Button>
+      <Button onClick={handleReset}>Reset Time</Button>
     </Box>
   );
 };
