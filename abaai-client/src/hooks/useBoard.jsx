@@ -1,5 +1,6 @@
 import { BoardLayouts } from "../constants/boardLayouts";
 import { useEffect, useState } from "react";
+import Space from "../models/Space";
 
 // A custom hook that generates the board and returns the board state and a function to set the board state
 const useBoard = (boardLayout) => {
@@ -51,25 +52,38 @@ const useBoard = (boardLayout) => {
     [1, 1, 0, 2, 2, -1, -1, -1, -1],
   ];
 
-  const [board, setBoard] = useState(emptyLayout);
+  const [boardArray, setBoardArray] = useState(emptyLayout);
+  const [board, setBoard] = useState([]);
 
   useEffect(() => {
     switch (boardLayout) {
       case BoardLayouts.DEFAULT:
-        setBoard(defaultLayout);
+        setBoardArray(defaultLayout);
         break;
       case BoardLayouts.GERMAN_DAISY:
-        setBoard(germanDaisyLayout);
+        setBoardArray(germanDaisyLayout);
         break;
       case BoardLayouts.BELGIAN_DAISY:
-        setBoard(belgianDaisyLayout);
+        setBoardArray(belgianDaisyLayout);
         break;
       default:
-        setBoard(emptyLayout);
+        setBoardArray(emptyLayout);
     }
-  }, [boardLayout, setBoard]);
+  }, [boardLayout, setBoardArray]);
+
+  useEffect(() => {
+    const newBoard = boardArray.map((row, rowIndex) => {
+      return row.map((state, columnIndex) => {
+        return new Space(state, { x: columnIndex, y: rowIndex });
+      });
+    });
+
+    setBoard(newBoard);
+  }, [boardArray, setBoard]);
 
   return {
+    boardArray,
+    setBoardArray,
     board,
     setBoard,
   };

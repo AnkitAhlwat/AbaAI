@@ -1,79 +1,135 @@
 import { Grid, Fab } from "@mui/material";
 import PropTypes from "prop-types";
+import SpaceStates from "../constants/spaceStates";
+import { useEffect } from "react";
+import { useState, useCallback } from "react";
+import Space from "../models/Space";
 
-const Board = ({ boardArray }) => {
+const Board = ({ board }) => {
   // States
-  // const [selectedMarble, setSelectedMarble] = useState(null);
+  const [selectedMarbles, setSelectedMarbles] = useState([]);
 
   // Callbacks
-  // const onMarbleClick = useCallback(
-  //   (spot, rowIndex, columnIndex) => {
-  //     // a callback function that will be called when a marble is clicked
-  //     console.log("Marble clicked");
-  //     console.log(spot);
+  const onMarbleClick = useCallback(
+    (space) => {
+      // a function that will handle the click event of a marble
+      if (space.state === SpaceStates.EMPTY) {
+        return;
+      }
 
-  //     //check is the marble has already been selected, else select the new one
-  //     if (
-  //       selectedMarble &&
-  //       selectedMarble.rowIndex == rowIndex &&
-  //       selectedMarble.columnIndex == columnIndex
-  //     ) {
-  //       setSelectedMarble(null);
-  //     } else {
-  //       setSelectedMarble({ rowIndex, columnIndex, color: spot.marble });
-  //     }
-  //   },
-  //   [selectedMarble]
-  // );
-  const getMarbleColor = (state) => {
-    // a function that will return the color of the marble based on the state
-    switch (state) {
-      case 1:
-        return "grey";
-      case 2:
-        return "white";
-      case 0:
-        return "beige";
-      default:
-        return "transparent";
-    }
-  };
+      // if the marble is already selected, deselect it
+      if (selectedMarbles.includes(space)) {
+        space.selected = false;
+        const updatedSelectedMarbles = selectedMarbles.filter(
+          (selectedMarble) => selectedMarble !== space
+        );
+        setSelectedMarbles(updatedSelectedMarbles);
+        return;
+      }
+
+      if (selectedMarbles.length === 0) {
+        space.selected = true;
+        setSelectedMarbles([space]);
+      } else if (selectedMarbles.length === 1) {
+        // if the marble is not adjacent to the either of the selected marbles, return
+        const isAdjacent = selectedMarbles.some((selectedMarble) =>
+          selectedMarble.isAdjacentTo(space)
+        );
+        if (!isAdjacent) {
+          return;
+        }
+
+        space.selected = true;
+        setSelectedMarbles([...selectedMarbles, space]);
+      } else if (selectedMarbles.length === 2) {
+        // if the marble is not in line with the selected marbles, return
+        const areInStraightLine = Space.areInStraightLine(
+          selectedMarbles[0],
+          selectedMarbles[1],
+          space
+        );
+        if (!areInStraightLine) {
+          return;
+        }
+
+        space.selected = true;
+        setSelectedMarbles([...selectedMarbles, space]);
+      } else if (selectedMarbles.length >= 3) {
+        // if there are already 3 marbles selected, deselect all the marbles and select the current marble
+        for (const marble of selectedMarbles) {
+          marble.selected = false;
+        }
+        space.selected = true;
+        setSelectedMarbles([space]);
+      }
+
+      console.log(space);
+      console.log(selectedMarbles);
+    },
+    [selectedMarbles, setSelectedMarbles]
+  );
+
+  const getSpaceColor = useCallback(
+    (space) => {
+      if (space.selected) {
+        return "green";
+      }
+      // a function that will return the color of the marble based on the state
+      switch (space.state) {
+        case SpaceStates.BLACK:
+          return "grey";
+        case SpaceStates.WHITE:
+          return "white";
+        case SpaceStates.EMPTY:
+          return "beige";
+        case SpaceStates.NONE:
+          return "red";
+        default:
+          return "transparent";
+      }
+    },
+    [selectedMarbles]
+  );
 
   // Functions
-  const renderRow = (row, rowIndex) => {
-    // a function that will render a row of the board
-    return (
-      <Grid container item justifyContent="center" key={rowIndex}>
-        {row.map((state, columnIndex) => (
-          <Grid item key={`${rowIndex}-${columnIndex}`}>
-            {
-              <Fab
-                variant="contained"
-                sx={{
-                  margin: "10px",
-                  backgroundColor: state === -1 ? "red" : getMarbleColor(state),
-                }}
-              >
-                {state}
-              </Fab>
-            }
-          </Grid>
-        ))}
-      </Grid>
-    );
-  };
+  const renderRow = useCallback(
+    (row, rowIndex) => {
+      // a function that will render a row of the board
+      return (
+        <Grid container item justifyContent="center" key={rowIndex}>
+          {row.map((space, columnIndex) => (
+            <Grid item key={`${rowIndex}-${columnIndex}`}>
+              {space.state !== SpaceStates.NONE && (
+                <Fab
+                  variant="contained"
+                  sx={{
+                    margin: "10px",
+                    backgroundColor: getSpaceColor(space),
+                  }}
+                  onClick={() => onMarbleClick(space)}
+                >
+                  {space.str}
+                </Fab>
+              )}
+            </Grid>
+          ))}
+        </Grid>
+      );
+    },
+    [getSpaceColor, onMarbleClick]
+  );
 
   // JSX
   return (
     // a grid container that will render the board by looping through all the rows in the board and rendering each row
     <Grid container direction="column" alignItems="center">
-      {boardArray.map((row, index) => renderRow(row, index))}
+      {board.map((row, index) => renderRow(row, index))}
     </Grid>
   );
 };
 
 Board.propTypes = {
-  boardArray: PropTypes.array.isRequired,
+  board: PropTypes.array.isRequired,
 };
 
 export { Board };

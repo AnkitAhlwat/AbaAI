@@ -12,7 +12,7 @@ const Game = () => {
 
   return (
     <>
-      <Board boardArray={board} />
+      <Board board={board} />
       <ConfigMenu config={config} setConfig={setConfig} />
     </>
   );
