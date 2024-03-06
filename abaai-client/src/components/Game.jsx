@@ -8,6 +8,7 @@ import { Grid } from "@mui/material";
 import GameService from "../services/game.service";
 import Move from "../models/Move";
 import GameControls from "./GameControls";
+import GameClock from "./Clock"; 
 
 const Game = () => {
   // States
@@ -76,6 +77,7 @@ const Game = () => {
     <Grid container spacing={2}>
       {/* Configuration Menu on the left */}
       <Grid item xs={3}>
+      <GameClock initialTime={600} turnTimeLimit={15} />
         <ConfigMenu config={config} setConfig={setConfig} />
       </Grid>
 
