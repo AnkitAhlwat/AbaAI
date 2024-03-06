@@ -5,6 +5,8 @@ import { useCallback, useState } from "react";
 import { useBoard } from "../hooks/useBoard";
 import MoveHistory from "./MoveHistory";
 import { Grid } from "@mui/material";
+import GameService from "../services/game.service";
+import Move from "../models/Move";
 
 const Game = () => {
   // States
@@ -19,7 +21,7 @@ const Game = () => {
 
   // Callbacks
   const onMoveSelection = useCallback(
-    (move) => {
+    async (move) => {
       const newBoardArray = [...boardArray];
       const previousPositions = selectedMarbles.map(
         (marble) => marble.position
@@ -43,6 +45,12 @@ const Game = () => {
       // update the board array (will trigger a re-render of the board component with the new board array) and reset the selected marbles
       setBoardArray(newBoardArray);
       setSelectedMarbles([]);
+
+      // send post request to the server
+      const moveObj = new Move(previousPositions, newPositions, marbleState);
+      const responseData = await GameService.postMove(moveObj);
+      console.log(responseData);
+      setMovesStack(responseData.moves_stack);
     },
     [boardArray, selectedMarbles, setBoardArray]
   );

@@ -68,7 +68,14 @@ class Board:
         return self._board
 
     def get_space_state(self, x: int, y: int) -> SpaceState:
-        return SpaceState(self._board[x][y])
+        return SpaceState(self._board[y][x])
 
     def set_space_state(self, x: int, y: int, state: SpaceState):
-        self._board[x][y] = state.value
+        self._board[y][x] = state.value
+
+    def make_move(self, move):
+        for position in move.previous_positions:
+            self.set_space_state(position.x, position.y, SpaceState.EMPTY)
+
+        for position in move.next_positions:
+            self.set_space_state(position.x, position.y, SpaceState(move.player.value))
