@@ -1,49 +1,89 @@
-import { Marbles } from "../constants/marbles";
-import { useState } from "react";
+import { BoardLayouts } from "../constants/boardLayouts";
+import { useEffect, useState } from "react";
+import Space from "../models/Space";
 
 // A custom hook that generates the board and returns the board state and a function to set the board state
-const useBoard = () => {
-  const generateRow = (startColumnIndex, endColumnIndex, rowIndex) => {
-    let row = [];
-    for (let i = startColumnIndex; i < endColumnIndex + 1; i++) {
-      const spot = {
-        rowIndex: rowIndex,
-        columnIndex: i,
-        rowLetter: String.fromCharCode(65 + rowIndex),
-        columnNumber: i + 1,
-        marble: Marbles.EMPTY,
-      };
-      row.push(spot);
+const useBoard = (boardLayout) => {
+  const emptyLayout = [
+    [-1, -1, -1, -1, 0, 0, 0, 0, 0],
+    [-1, -1, -1, 0, 0, 0, 0, 0, 0],
+    [-1, -1, 0, 0, 0, 0, 0, 0, 0],
+    [-1, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, -1],
+    [0, 0, 0, 0, 0, 0, 0, -1, -1],
+    [0, 0, 0, 0, 0, 0, -1, -1, -1],
+    [0, 0, 0, 0, 0, -1, -1, -1, -1],
+  ];
+
+  const defaultLayout = [
+    [-1, -1, -1, -1, 2, 2, 2, 2, 2],
+    [-1, -1, -1, 2, 2, 2, 2, 2, 2],
+    [-1, -1, 0, 0, 2, 2, 2, 0, 0],
+    [-1, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, -1],
+    [0, 0, 1, 1, 1, 0, 0, -1, -1],
+    [1, 1, 1, 1, 1, 1, -1, -1, -1],
+    [1, 1, 1, 1, 1, -1, -1, -1, -1],
+  ];
+
+  const germanDaisyLayout = [
+    [-1, -1, -1, -1, 0, 0, 0, 0, 0],
+    [-1, -1, -1, 2, 2, 0, 0, 1, 1],
+    [-1, -1, 2, 2, 2, 0, 1, 1, 1],
+    [-1, 0, 2, 2, 0, 0, 1, 1, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 1, 1, 0, 0, 2, 2, 0, -1],
+    [1, 1, 1, 0, 2, 2, 2, -1, -1],
+    [1, 1, 0, 0, 2, 2, -1, -1, -1],
+    [0, 0, 0, 0, 0, -1, -1, -1, -1],
+  ];
+
+  const belgianDaisyLayout = [
+    [-1, -1, -1, -1, 2, 2, 0, 1, 1],
+    [-1, -1, -1, 2, 2, 2, 1, 1, 1],
+    [-1, -1, 0, 2, 2, 0, 1, 1, 0],
+    [-1, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, -1],
+    [0, 1, 1, 0, 2, 2, 0, -1, -1],
+    [1, 1, 1, 2, 2, 2, -1, -1, -1],
+    [1, 1, 0, 2, 2, -1, -1, -1, -1],
+  ];
+
+  const [boardArray, setBoardArray] = useState(emptyLayout);
+  const [board, setBoard] = useState([]);
+
+  useEffect(() => {
+    switch (boardLayout) {
+      case BoardLayouts.DEFAULT:
+        setBoardArray(defaultLayout);
+        break;
+      case BoardLayouts.GERMAN_DAISY:
+        setBoardArray(germanDaisyLayout);
+        break;
+      case BoardLayouts.BELGIAN_DAISY:
+        setBoardArray(belgianDaisyLayout);
+        break;
+      default:
+        setBoardArray(emptyLayout);
     }
-    return row;
-  };
+  }, [boardLayout, setBoardArray]);
 
-  const generateBoard = () => {
-    const rowLengthsBottomHalf = [5, 6, 7, 8, 9];
-    const rowLengthsTopHalf = [8, 7, 6, 5];
+  useEffect(() => {
+    const newBoard = boardArray.map((row, rowIndex) => {
+      return row.map((state, columnIndex) => {
+        return new Space(state, { x: columnIndex, y: rowIndex });
+      });
+    });
 
-    let board = [];
-    let letterCount = 0;
-    for (let i = 0; i < rowLengthsBottomHalf.length; i++) {
-      const startColumnIndex = 0;
-      const endColumnIndex = rowLengthsBottomHalf[i] - 1;
-
-      board.unshift(generateRow(startColumnIndex, endColumnIndex, letterCount));
-      letterCount++;
-    }
-    for (let i = 0; i < rowLengthsTopHalf.length; i++) {
-      const startColumnIndex = 9 - rowLengthsTopHalf[i];
-      const endColumnIndex = 9 - 1;
-
-      board.unshift(generateRow(startColumnIndex, endColumnIndex, letterCount));
-      letterCount++;
-    }
-    return board;
-  };
-
-  const [board, setBoard] = useState(() => generateBoard());
+    setBoard(newBoard);
+  }, [boardArray, setBoard]);
 
   return {
+    boardArray,
+    setBoardArray,
     board,
     setBoard,
   };
