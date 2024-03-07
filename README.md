@@ -60,12 +60,19 @@ cd <directory name>
     ```
 
 5. Start the application server
+- Windows
     ```
     python app.py
     ```
+- Linux/MaxOS
+    ```
+    python3 app.py
+    ```
 
 ### Step 3: Start the front end React server
-1. Change directory to the `abaai-client` directory.
+1. Open a separate terminal window
+
+2. Change directory to the `abaai-client` directory. (from root directory)
     ```
     cd abaai-client
     
@@ -73,11 +80,11 @@ cd <directory name>
     
     cd ../abaai-client // if navigating from abaai-server directory
     ```
-2. Install the node dependencies
+3. Install the node dependencies
     ```
     npm install
     ```
-3. Start the React server
+4. Start the React server
     ```
     npm run dev
     ```
