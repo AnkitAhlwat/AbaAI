@@ -28,6 +28,6 @@ echo Installing node modules
 npm install
 
 echo Starting the frontend server
-npm run dev
+start /MIN cmd /C "npm run dev"
 
 pause
