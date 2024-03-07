@@ -16,7 +16,8 @@ echo Installing requirements
 pip install -r requirements.txt
 
 rem Start the backend server in a separate command prompt window
-start "Backend Server" /B python app.py
+echo Starting the backend server
+start /MIN cmd /C "python app.py"
 
 rem Start the react server
 echo Starting the react server
