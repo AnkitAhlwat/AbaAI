@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 
-const GameClock = ({ initialGameTime = 0, turnTimeLimit = 15 }) => {
+const GameClock = ({ initialGameTime = 0, turnTimeLimit = 15, gameStarted}) => {
   const [gameTime, setGameTime] = useState(initialGameTime);
   const [turnTime, setTurnTime] = useState(turnTimeLimit);
   const [gameActive, setGameActive] = useState(false);
@@ -35,6 +35,13 @@ const GameClock = ({ initialGameTime = 0, turnTimeLimit = 15 }) => {
     return () => clearInterval(turnTimer);
   }, [turnActive, turnTime]);
 
+  //start the timer if a move is made
+  useEffect(() => {
+    if (gameStarted){
+      handleStart();
+    }
+  }, [gameStarted]);
+
   const handleStart = () => {
     startTimeRef.current = Date.now();
     setTimeout(() => {
@@ -59,6 +66,7 @@ const GameClock = ({ initialGameTime = 0, turnTimeLimit = 15 }) => {
     setTurnTime(turnTimeLimit);
     setGameActive(false);
     setTurnActive(false);
+    gameStarted(false);
   };
 
   return (
