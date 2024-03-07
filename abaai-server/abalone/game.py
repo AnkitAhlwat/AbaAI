@@ -1,19 +1,21 @@
 from abalone.board import BoardLayout, Board
-from abalone.movement import Move
+from abalone.movement import Move, Turn
 from abalone.stack import Stack
 
 
 class GameUpdate:
-    def __init__(self, ai_move: Move = None, moves_stack: Stack = None, board: Board = None):
+    def __init__(self, ai_move: Move = None, moves_stack: Stack = None, board: Board = None, turn: Turn = None):
         self._ai_move = ai_move
         self._moves_stack = moves_stack
         self._board = board
+        self._turn = turn
 
     def to_json(self):
         return {
             "ai_move": self._ai_move,
             "moves_stack": self._moves_stack.to_json(),
-            "board": self._board.to_json() if self._board is not None else None
+            "board": self._board.to_json() if self._board is not None else None,
+            "turn": self._turn.value if self._turn is not None else None
         }
 
 

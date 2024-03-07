@@ -8,7 +8,8 @@ import { Grid } from "@mui/material";
 import GameService from "../services/game.service";
 import Move from "../models/Move";
 import GameControls from "./GameControls";
-import GameClock from "./Clock"; 
+import GameClock from "./Clock";
+import MoveButtons from "./MoveButtons";
 
 const Game = () => {
   // States
@@ -24,7 +25,7 @@ const Game = () => {
   // Callbacks
   const onMoveSelection = useCallback(
     async (move) => {
-      const newBoardArray = [...boardArray];
+      // const newBoardArray = [...boardArray];
       const previousPositions = selectedMarbles.map(
         (marble) => marble.position
       );
@@ -34,19 +35,19 @@ const Game = () => {
       }));
       const marbleState = selectedMarbles[0].state;
 
-      // set all the previous positions to empty
-      for (const position of previousPositions) {
-        newBoardArray[position.y][position.x] = 0;
-      }
+      // // set all the previous positions to empty
+      // for (const position of previousPositions) {
+      //   newBoardArray[position.y][position.x] = 0;
+      // }
 
-      // set all the new positions to the marble state
-      for (const position of newPositions) {
-        newBoardArray[position.y][position.x] = marbleState;
-      }
+      // // set all the new positions to the marble state
+      // for (const position of newPositions) {
+      //   newBoardArray[position.y][position.x] = marbleState;
+      // }
 
-      // update the board array (will trigger a re-render of the board component with the new board array) and reset the selected marbles
-      setBoardArray(newBoardArray);
-      setSelectedMarbles([]);
+      // // update the board array (will trigger a re-render of the board component with the new board array) and reset the selected marbles
+      // setBoardArray(newBoardArray);
+      // setSelectedMarbles([]);
 
       // send post request to the server
       const moveObj = new Move(previousPositions, newPositions, marbleState);
@@ -77,17 +78,29 @@ const Game = () => {
     <Grid container spacing={2}>
       {/* Configuration Menu on the left */}
       <Grid item xs={3}>
-      <GameClock initialTime={600} turnTimeLimit={15} />
+        <GameClock initialTime={600} turnTimeLimit={15} />
         <ConfigMenu config={config} setConfig={setConfig} />
       </Grid>
 
       {/* Board in the middle */}
-      <Grid item xs={6}>
+      <Grid
+        container
+        item
+        xs={6}
+        sx={{
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
         <Board
           board={board}
           onMoveSelection={onMoveSelection}
           selectedMarbles={selectedMarbles}
           setSelectedMarbles={setSelectedMarbles}
+        />
+        <MoveButtons
+          onMoveSelection={onMoveSelection}
+          selectedMarbles={selectedMarbles}
         />
         <GameControls
           onUndo={onUndoLastMove}
