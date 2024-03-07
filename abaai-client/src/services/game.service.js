@@ -1,6 +1,9 @@
 import axios from 'axios';
 
+// Handles requests to the server end
 class GameService {
+
+    // Posts move request to python server
     static async postMove(move) {
         try {
             const url = `${import.meta.env.VITE_API_BASE_URL}/game/move`;
@@ -11,6 +14,7 @@ class GameService {
         }
     }
 
+    // Posts undo move request to python server
     static async postUndoLastMove() {
         try {
             const url = `${import.meta.env.VITE_API_BASE_URL}/game/undo`;
@@ -21,6 +25,7 @@ class GameService {
         }
     }
 
+    // Posts reset request to python server
     static async postResetGame() {
         try {
             const url = `${import.meta.env.VITE_API_BASE_URL}/game/reset`;
