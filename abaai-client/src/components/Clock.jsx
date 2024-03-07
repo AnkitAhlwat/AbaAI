@@ -2,11 +2,12 @@ import React, { useState, useEffect, useRef , useCallback} from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import GameService from '../services/game.service';
 
+// Displays the clock of the GUI
 const GameClock = ({ initialGameTime = 0, turnTimeLimit = 15, gameStarted, setBoardArray}) => {
-  const [gameTime, setGameTime] = useState(initialGameTime);
-  const [turnTime, setTurnTime] = useState(turnTimeLimit);
-  const [gameActive, setGameActive] = useState(false);
-  const [turnActive, setTurnActive] = useState(false);
+  const [gameTime, setGameTime] = useState(initialGameTime); // Total game time
+  const [turnTime, setTurnTime] = useState(turnTimeLimit); // Time left per turn
+  const [gameActive, setGameActive] = useState(false); // Whether game is being played
+  const [turnActive, setTurnActive] = useState(false); // Whether turn is being played
   const waitTimeRef = useRef(1000);
   const startTimeRef = useRef(0);
 
@@ -36,13 +37,14 @@ const GameClock = ({ initialGameTime = 0, turnTimeLimit = 15, gameStarted, setBo
     return () => clearInterval(turnTimer);
   }, [turnActive, turnTime]);
 
-  //start the timer if a move is made
+  // Detects whether a move is made
   useEffect(() => {
     if (gameStarted){
       handleStart();
     }
   }, [gameStarted]);
 
+  // Starts the timer if a move is made
   const handleStart = () => {
     startTimeRef.current = Date.now();
     setTimeout(() => {
@@ -53,15 +55,18 @@ const GameClock = ({ initialGameTime = 0, turnTimeLimit = 15, gameStarted, setBo
     }, waitTimeRef.current);
   };
 
+  // Stops the timer if button is pressed
   const handleStop = () => {
   };
 
+  // Pauses the timer if button is pressed
   const handlePause = () => {
     waitTimeRef.current = 1000 - (Date.now() - startTimeRef.current)%1000;
     setGameActive(false);
     setTurnActive(false);
   };
 
+  // Resets the timer if button is pressed
   const handleReset = useCallback(async () => {
     const responseData = await GameService.postResetGame();
     console.log(responseData);
@@ -73,6 +78,7 @@ const GameClock = ({ initialGameTime = 0, turnTimeLimit = 15, gameStarted, setBo
     // gameStarted(false);
   });
 
+  // Returns UI component with clock information
   return (
     <Box>
       <Typography variant="h5">Game Time: {Math.floor(gameTime / 60)}:{String(gameTime % 60).padStart(2, '0')}</Typography>
