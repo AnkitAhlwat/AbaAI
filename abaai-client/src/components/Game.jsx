@@ -21,6 +21,7 @@ const Game = () => {
   const [config, setConfig] = useState({
     boardLayout: BoardLayouts.DEFAULT,
   });
+  const [gameStarted, setGameStarted] = useState(false);
 
   // Custom hooks
   const { board, setBoardArray } = useBoard(config.boardLayout); // import board state and setBoard function from useBoard hook
@@ -52,6 +53,13 @@ const Game = () => {
       }));
       const marbleState = selectedMarbles[0].state;
 
+      //set gamestarted to true
+      if (!gameStarted) {
+        setGameStarted(true);
+      }
+
+      setSelectedMarbles([]);
+
       // send post request to the server
       const moveObj = new Move(previousPositions, newPositions, marbleState);
       const responseData = await GameService.postMove(moveObj);
@@ -63,7 +71,7 @@ const Game = () => {
       setMovesStack(responseData.moves_stack);
       setBoardArray(responseData.board);
     },
-    [selectedMarbles, setBoardArray, updateAiMove]
+    [selectedMarbles, setBoardArray, updateAiMove, gameStarted]
   );
 
   const onUndoLastMove = useCallback(async () => {
@@ -82,7 +90,11 @@ const Game = () => {
     <Grid container spacing={2}>
       {/* Configuration Menu on the left */}
       <Grid item xs={3}>
-        <GameClock initialTime={600} turnTimeLimit={15} />
+        <GameClock
+          initialTime={600}
+          turnTimeLimit={15}
+          gameStarted={gameStarted}
+        />
         <ConfigMenu config={config} setConfig={setConfig} />
       </Grid>
 
