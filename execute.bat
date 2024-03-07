@@ -29,3 +29,5 @@ npm install
 
 rem Start the frontend server
 start /MIN cmd /C "npm run dev"
+
+echo App started
