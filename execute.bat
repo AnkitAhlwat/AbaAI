@@ -24,6 +24,9 @@ echo Starting the react server
 rem Change directory to the abaai-client directory
 cd ../abaai-client
 
+rem Debugging: Output the current directory
+echo Current directory: %CD%
+
 echo Installing node modules
 npm install
 
