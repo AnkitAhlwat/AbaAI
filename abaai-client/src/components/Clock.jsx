@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef , useCallback} from 'react';
 import { Box, Typography, Button } from '@mui/material';
+import GameService from '../services/game.service';
 
-const GameClock = ({ initialGameTime = 0, turnTimeLimit = 15, gameStarted}) => {
+const GameClock = ({ initialGameTime = 0, turnTimeLimit = 15, gameStarted, setBoardArray}) => {
   const [gameTime, setGameTime] = useState(initialGameTime);
   const [turnTime, setTurnTime] = useState(turnTimeLimit);
   const [gameActive, setGameActive] = useState(false);
@@ -61,13 +62,16 @@ const GameClock = ({ initialGameTime = 0, turnTimeLimit = 15, gameStarted}) => {
     setTurnActive(false);
   };
 
-  const handleReset = () => {
+  const handleReset = useCallback(async () => {
+    const responseData = await GameService.postResetGame();
+    console.log(responseData);
     setGameTime(initialGameTime);
     setTurnTime(turnTimeLimit);
     setGameActive(false);
     setTurnActive(false);
-    gameStarted(false);
-  };
+    setBoardArray(responseData.board);
+    // gameStarted(false);
+  });
 
   return (
     <Box>
