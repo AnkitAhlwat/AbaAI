@@ -23,12 +23,26 @@ const Game = () => {
   });
 
   // Custom hooks
-  const { board, boardArray, setBoardArray } = useBoard(config.boardLayout); // import board state and setBoard function from useBoard hook
+  const { board, setBoardArray } = useBoard(config.boardLayout); // import board state and setBoard function from useBoard hook
 
   // Callbacks
+  const updateAiMove = useCallback((aiMove) => {
+    const aiMoveNext = aiMove.next_positions;
+    const aiMovePrev = aiMove.previous_positions;
+    const prev_moves = aiMovePrev.map((position) => {
+      return Space.getCodeByPosition(position);
+    });
+    const next_moves = aiMoveNext.map((position) => {
+      return Space.getCodeByPosition(position);
+    });
+
+    const moveCode = `${prev_moves} -> ${next_moves}`;
+    setAiMove(moveCode);
+  }, []);
+
   const onMoveSelection = useCallback(
     async (move) => {
-      // const newBoardArray = [...boardArray];
+      // get the previous and new positions of the selected marbles
       const previousPositions = selectedMarbles.map(
         (marble) => marble.position
       );
@@ -38,38 +52,18 @@ const Game = () => {
       }));
       const marbleState = selectedMarbles[0].state;
 
-      // // set all the previous positions to empty
-      // for (const position of previousPositions) {
-      //   newBoardArray[position.y][position.x] = 0;
-      // }
-
-      // // set all the new positions to the marble state
-      // for (const position of newPositions) {
-      //   newBoardArray[position.y][position.x] = marbleState;
-      // }
-
-      // // update the board array (will trigger a re-render of the board component with the new board array) and reset the selected marbles
-      // setBoardArray(newBoardArray);
-      // setSelectedMarbles([]);
-
       // send post request to the server
       const moveObj = new Move(previousPositions, newPositions, marbleState);
       const responseData = await GameService.postMove(moveObj);
-      const aiMoveNext = responseData.ai_move.next_positions;
-      const aiMovePrev = responseData.ai_move.previous_positions;
-      const prev_moves = aiMovePrev.map((position) => {
-        return Space.getCodeByPosition(position);
-      });
-      const next_moves = aiMoveNext.map((position) => {
-        return Space.getCodeByPosition(position);
-      });
 
-      const aiMove = `${prev_moves} -> ${next_moves}`;
-      setAiMove(aiMove);
+      // set the ai move card to show what the ai did
+      updateAiMove(responseData.ai_move);
+
+      // update the board and moves stack
       setMovesStack(responseData.moves_stack);
       setBoardArray(responseData.board);
     },
-    [boardArray, selectedMarbles, setBoardArray]
+    [selectedMarbles, setBoardArray, updateAiMove]
   );
 
   const onUndoLastMove = useCallback(async () => {
@@ -81,10 +75,6 @@ const Game = () => {
 
   const onResetGame = useCallback(async () => {
     console.log("resetting game");
-    // const responseData = await GameService.resetGame();
-    // console.log(responseData);
-    // setBoardArray(responseData.board);
-    // setMovesStack(responseData.moves_stack);
   }, []);
 
   // JSX
