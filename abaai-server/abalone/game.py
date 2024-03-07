@@ -82,10 +82,14 @@ class Game:
 
         #set the turn to be black
         self._turn = 1
-
+        self.reset_ai_increment()
         return GameUpdate(None, self._moves_stack, board=self._board)
 
 
+    @classmethod
+    def reset_ai_increment(cls):
+        cls.ai_increment = -1
+        
     @classmethod
     def get_default_ai_move(cls):
         cls.ai_increment += 1
