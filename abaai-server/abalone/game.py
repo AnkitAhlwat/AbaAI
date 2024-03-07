@@ -67,6 +67,24 @@ class Game:
         self._board.make_move(ai_move_obj)
 
         return ai_move_obj
+    
+    def reset_game(self):
+        """
+        Resets the game and timer to the default state.
+        Clears everything.
+        """
+        #clear the stack
+        self._moves_stack.clear_stack()
+
+        #rest the board to be the default board
+        #TODO: reset to the position the plauyer has selected
+        self._board = Board(BoardLayout.DEFAULT)
+
+        #set the turn to be black
+        self._turn = 1
+
+        return GameUpdate(None, self._moves_stack, board=self._board)
+
 
     @classmethod
     def get_default_ai_move(cls):

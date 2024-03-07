@@ -86,6 +86,10 @@ const Game = () => {
 
   const onResetGame = useCallback(async () => {
     console.log("resetting game");
+    const responseData = await GameService.resetGame();
+    console.log(responseData);
+    setBoardArray(responseData.board);
+    setMovesStack(responseData.moves_stack);
   }, []);
 
   // JSX
@@ -97,6 +101,7 @@ const Game = () => {
           initialTime={600}
           turnTimeLimit={15}
           gameStarted={gameStarted}
+          setBoardArray={setBoardArray}
         />
         <ConfigMenu config={config} setConfig={setConfig} />
       </Grid>

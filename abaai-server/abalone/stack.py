@@ -27,6 +27,9 @@ class Stack:
         else:
             print("Stack is empty")
 
+    def clear_stack(self):
+        self._items = []
+
     def size(self):
         return len(self._items)
 
