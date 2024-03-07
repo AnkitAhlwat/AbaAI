@@ -22,7 +22,9 @@ const Game = () => {
   const [config, setConfig] = useState({
     boardLayout: BoardLayouts.DEFAULT,
     playerColor: PlayerColors.BLACK,
-    gameMode: "Computer"
+    gameMode: "Computer",
+    moveLimit: 100,
+    timeLimit: 15
   });
   const [gameStarted, setGameStarted] = useState(false);
 
@@ -95,7 +97,7 @@ const Game = () => {
       <Grid item xs={3}>
         <GameClock
           initialTime={600}
-          turnTimeLimit={15}
+          turnTimeLimit={config.timeLimit}
           gameStarted={gameStarted}
         />
         <ConfigMenu config={config} setConfig={setConfig} />
