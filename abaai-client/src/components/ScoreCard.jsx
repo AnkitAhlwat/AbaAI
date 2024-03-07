@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardContent, Typography, Grid } from '@mui/material';
 
 const ScoreCard = ({ blackSide, whiteSide, }) => {
+    // If the game is just starting, initialize the score card to default values
     if (!blackSide || !whiteSide) {
         blackSide = { marblesKnockedOff: 0, totalMoves: 20 };
         whiteSide = { marblesKnockedOff: 0, totalMoves: 20 };
