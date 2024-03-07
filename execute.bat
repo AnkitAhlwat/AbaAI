@@ -28,3 +28,5 @@ npm install
 
 echo Starting the frontend server
 npm run dev
+
+pause
