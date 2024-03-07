@@ -12,6 +12,7 @@ import GameClock from "./Clock";
 import MoveButtons from "./MoveButtons";
 import AIMoveDisplay from "./AiMove";
 import Space from "../models/Space";
+import { PlayerColors } from "../constants/playerColors";
 
 const Game = () => {
   // States
@@ -20,6 +21,8 @@ const Game = () => {
   const [movesStack, setMovesStack] = useState([]);
   const [config, setConfig] = useState({
     boardLayout: BoardLayouts.DEFAULT,
+    playerColor: PlayerColors.BLACK,
+    gameMode: "Computer"
   });
   const [gameStarted, setGameStarted] = useState(false);
 
