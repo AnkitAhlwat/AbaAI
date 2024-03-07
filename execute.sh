@@ -16,7 +16,7 @@ echo "Installing requirements"
 pip install -r requirements.txt
 
 echo "Starting the backend server"
-python app.py
+python app.py & # Run the flask server in the background
 
 # Start the react server
 echo "Starting the react server"
