@@ -3,14 +3,8 @@ import PropTypes from "prop-types";
 import SpaceStates from "../constants/spaceStates";
 import { useCallback } from "react";
 import Space from "../models/Space";
-import { MoveButtons } from "./MoveButtons";
 
-const Board = ({
-  board,
-  onMoveSelection,
-  selectedMarbles,
-  setSelectedMarbles,
-}) => {
+const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
   // Callbacks
   const deselectMarbles = useCallback((marbles) => {
     for (const marble of marbles) {
@@ -136,17 +130,6 @@ const Board = ({
       <Grid container direction="column" alignItems="center">
         <Grid item container direction="column" alignItems="center">
           {board.map((row, index) => renderRow(row, index))}
-        </Grid>
-        <Grid
-          item
-          sx={{
-            marginTop: "30px",
-          }}
-        >
-          <MoveButtons
-            onMoveSelection={onMoveSelection}
-            selectedMarbles={selectedMarbles}
-          />
         </Grid>
       </Grid>
     </>

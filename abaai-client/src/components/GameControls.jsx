@@ -8,7 +8,7 @@ const GameControls = ({ onReset, onUndo, movesStack }) => {
       spacing={2}
       justifyContent="center"
       alignItems="center"
-      sx={{ marginTop: "20px" }}
+      sx={{ marginTop: "40px" }}
     >
       <Button variant="contained" onClick={onReset} color="warning">
         Reset

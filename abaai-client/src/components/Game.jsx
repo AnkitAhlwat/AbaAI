@@ -9,9 +9,9 @@ import GameService from "../services/game.service";
 import Move from "../models/Move";
 import GameControls from "./GameControls";
 import GameClock from "./Clock";
+import MoveButtons from "./MoveButtons";
 import AIMoveDisplay from "./AiMove";
 import Space from "../models/Space";
-
 
 const Game = () => {
   // States
@@ -24,12 +24,26 @@ const Game = () => {
   const [gameStarted, setGameStarted] = useState(false);
 
   // Custom hooks
-  const { board, boardArray, setBoardArray } = useBoard(config.boardLayout); // import board state and setBoard function from useBoard hook
+  const { board, setBoardArray } = useBoard(config.boardLayout); // import board state and setBoard function from useBoard hook
 
   // Callbacks
+  const updateAiMove = useCallback((aiMove) => {
+    const aiMoveNext = aiMove.next_positions;
+    const aiMovePrev = aiMove.previous_positions;
+    const prev_moves = aiMovePrev.map((position) => {
+      return Space.getCodeByPosition(position);
+    });
+    const next_moves = aiMoveNext.map((position) => {
+      return Space.getCodeByPosition(position);
+    });
+
+    const moveCode = `${prev_moves} -> ${next_moves}`;
+    setAiMove(moveCode);
+  }, []);
+
   const onMoveSelection = useCallback(
     async (move) => {
-      const newBoardArray = [...boardArray];
+      // get the previous and new positions of the selected marbles
       const previousPositions = selectedMarbles.map(
         (marble) => marble.position
       );
@@ -39,44 +53,25 @@ const Game = () => {
       }));
       const marbleState = selectedMarbles[0].state;
 
-      // set all the previous positions to empty
-      for (const position of previousPositions) {
-        newBoardArray[position.y][position.x] = 0;
-      }
-
-      // set all the new positions to the marble state
-      for (const position of newPositions) {
-        newBoardArray[position.y][position.x] = marbleState;
-      }
-
       //set gamestarted to true
       if (!gameStarted) {
         setGameStarted(true);
       }
 
-      // update the board array (will trigger a re-render of the board component with the new board array) and reset the selected marbles
-      setBoardArray(newBoardArray);
       setSelectedMarbles([]);
 
       // send post request to the server
       const moveObj = new Move(previousPositions, newPositions, marbleState);
       const responseData = await GameService.postMove(moveObj);
-      const aiMoveNext = responseData.ai_move.next_positions
-      const aiMovePrev = responseData.ai_move.previous_positions
-      const prev_moves = aiMovePrev.map((position) => {
-        return Space.getCodeByPosition(position);
-      });
-      const next_moves = aiMoveNext.map((position) => {
-        return Space.getCodeByPosition(position);
-      });
 
+      // set the ai move card to show what the ai did
+      updateAiMove(responseData.ai_move);
 
-      const aiMove = `${prev_moves} -> ${next_moves}`;
-      setAiMove(aiMove);
+      // update the board and moves stack
       setMovesStack(responseData.moves_stack);
-      setBoardArray(responseData.board)
+      setBoardArray(responseData.board);
     },
-    [boardArray, selectedMarbles, setBoardArray, gameStarted]
+    [selectedMarbles, setBoardArray, updateAiMove, gameStarted]
   );
 
   const onUndoLastMove = useCallback(async () => {
@@ -88,10 +83,6 @@ const Game = () => {
 
   const onResetGame = useCallback(async () => {
     console.log("resetting game");
-    // const responseData = await GameService.resetGame();
-    // console.log(responseData);
-    // setBoardArray(responseData.board);
-    // setMovesStack(responseData.moves_stack);
   }, []);
 
   // JSX
@@ -99,21 +90,33 @@ const Game = () => {
     <Grid container spacing={2}>
       {/* Configuration Menu on the left */}
       <Grid item xs={3}>
-      <GameClock 
-      initialTime={600} 
-      turnTimeLimit={15}
-      gameStarted={gameStarted} 
-      />
+        <GameClock
+          initialTime={600}
+          turnTimeLimit={15}
+          gameStarted={gameStarted}
+        />
         <ConfigMenu config={config} setConfig={setConfig} />
       </Grid>
 
       {/* Board in the middle */}
-      <Grid item xs={6}>
+      <Grid
+        container
+        item
+        xs={6}
+        sx={{
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
         <Board
           board={board}
           onMoveSelection={onMoveSelection}
           selectedMarbles={selectedMarbles}
           setSelectedMarbles={setSelectedMarbles}
+        />
+        <MoveButtons
+          onMoveSelection={onMoveSelection}
+          selectedMarbles={selectedMarbles}
         />
         <GameControls
           onUndo={onUndoLastMove}

@@ -12,7 +12,15 @@ const MoveButtons = ({ onMoveSelection, selectedMarbles }) => {
   ];
 
   return (
-    <Grid container spacing={2}>
+    <Grid
+      container
+      spacing={2}
+      sx={{
+        alignItems: "center",
+        justifyContent: "center",
+        marginTop: 2,
+      }}
+    >
       {move_map.map((obj) => (
         <Grid item key={obj.label}>
           <Button
@@ -34,4 +42,4 @@ MoveButtons.propTypes = {
   selectedMarbles: PropTypes.array.isRequired,
 };
 
-export { MoveButtons };
+export default MoveButtons;
