@@ -20,6 +20,17 @@ class GameService {
             console.error('Error undoing last move:', error);
         }
     }
+
+    static async postResetGame() {
+        try {
+            const url = `${import.meta.env.VITE_API_BASE_URL}/game/reset`;
+            const response = await axios.post(url);
+            return response.data;
+        } catch (error) {
+            console.error('Error resetting game:', error);
+        }
+    }
 }
+
 
 export default GameService;

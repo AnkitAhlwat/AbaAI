@@ -61,7 +61,7 @@ class SpaceState(Enum):
 class Board:
     def __init__(self, layout: BoardLayout = BoardLayout.DEFAULT):
         self._layout = layout
-        self._board = layout.value
+        self._board = [row[:] for row in layout.value]
 
     @property
     def board(self):
