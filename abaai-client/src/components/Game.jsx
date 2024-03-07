@@ -13,6 +13,7 @@ import MoveButtons from "./MoveButtons";
 import AIMoveDisplay from "./AiMove";
 import Space from "../models/Space";
 import { PlayerColors } from "../constants/playerColors";
+import ScoreCard from "./ScoreCard";
 
 const Game = () => {
   // States
@@ -111,6 +112,8 @@ const Game = () => {
           alignItems: "center",
         }}
       >
+        <ScoreCard />
+
         <Board
           board={board}
           onMoveSelection={onMoveSelection}
