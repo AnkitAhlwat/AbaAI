@@ -2,7 +2,7 @@
 const electron = require("electron");
 let mainWindow;
 function createWindow() {
-  mainWindow = new electron.BrowserWindow({ width: 1600, height: 1100 });
+  mainWindow = new electron.BrowserWindow({ width: 1600, height: 1100, title: "Aba AI" });
   mainWindow.loadURL("http://localhost:5173");
   mainWindow.on("closed", () => mainWindow = null);
 }
