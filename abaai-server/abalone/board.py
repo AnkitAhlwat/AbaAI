@@ -1,6 +1,7 @@
 from enum import Enum
 
 
+# Define board layouts for the game
 class BoardLayout(Enum):
     EMPTY = [
         [-1, -1, -1, -1, 0, 0, 0, 0, 0],
@@ -51,6 +52,7 @@ class BoardLayout(Enum):
     ]
 
 
+# Define possible tile states
 class SpaceState(Enum):
     EMPTY = 0
     MAX = 1
@@ -58,6 +60,7 @@ class SpaceState(Enum):
     NONE = -1
 
 
+# Handles logic with the board
 class Board:
     def __init__(self, layout: BoardLayout = BoardLayout.DEFAULT):
         self._layout = layout

@@ -21,7 +21,6 @@ const Game = () => {
   const [selectedMarbles, setSelectedMarbles] = useState([]); // Tracks which marbles are selected
   const [movesStack, setMovesStack] = useState([]); // Tracks player move history
   const [gameStarted, setGameStarted] = useState(false); // Tracks whether game has started
-  const { board, setBoardArray } = useBoard(config.boardLayout); // import board state and setBoard function from useBoard hook
 
   // Tracks configuration options
   const [config, setConfig] = useState({
@@ -31,6 +30,8 @@ const Game = () => {
     moveLimit: 100,
     timeLimit: 15
   });
+
+  const { board, setBoardArray } = useBoard(config.boardLayout); // import board state and setBoard function from useBoard hook
 
   // Handles new AI move
   const updateAiMove = useCallback((aiMove) => {
