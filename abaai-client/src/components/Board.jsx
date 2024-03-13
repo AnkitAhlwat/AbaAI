@@ -4,28 +4,30 @@ import SpaceStates from "../constants/spaceStates";
 import { useCallback } from "react";
 import Space from "../models/Space";
 
+// Displays the playing board of the GUI
 const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
-  // Callbacks
+
+  // Callback when a marble is deselected
   const deselectMarbles = useCallback((marbles) => {
     for (const marble of marbles) {
       marble.selected = false;
     }
   }, []);
 
+
   const onMarbleClick = useCallback(
     (space) => {
-      // if the space is empty or the space is already selected, return
-      if (space.state === SpaceStates.EMPTY) {
-        return;
-      }
+      // If the space is empty or the space is already selected, return
+      if (space.state === SpaceStates.EMPTY) return;
 
-      // if there are no selected marbles, select the current marble
+      // If there are no selected marbles, select the current marble
       if (selectedMarbles.length === 0) {
         space.selected = true;
         setSelectedMarbles([space]);
       }
-      // if there is one selected marble, select the current marble if it is adjacent to the selected marble
-      // otherwise selected the current marble and deselect the previous marble
+
+      // If there is one selected marble, select the current marble if it is adjacent to the selected marble
+      // Otherwise selected the current marble and deselect the previous marble
       else if (selectedMarbles.length === 1) {
         setSelectedMarbles((previousSelectedMarbles) => {
           if (
@@ -45,8 +47,9 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
           }
         });
       }
-      // if there are two selected marbles, select the current marble if it is in a straight line with the selected marbles
-      // otherwise deselect all the marbles and select the current marble
+
+      // If there are two selected marbles, select the current marble if it is in a straight line with the selected marbles
+      // Otherwise deselect all the marbles and select the current marble
       else if (selectedMarbles.length === 2) {
         setSelectedMarbles((previousSelectedMarbles) => {
           if (
@@ -67,7 +70,8 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
           }
         });
       }
-      // if the marble is already selected or there are more than two selected marbles, deselect all the marbles and select the current marble
+
+      // If the marble is already selected or there are more than two selected marbles, deselect all the marbles and select the current marble
       else if (selectedMarbles.includes(space) || selectedMarbles.length >= 3) {
         deselectMarbles(selectedMarbles);
         setSelectedMarbles([space]);
@@ -77,11 +81,11 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
     [deselectMarbles, selectedMarbles, setSelectedMarbles]
   );
 
+  // A function that will return the color of the marble based on the state
   const getSpaceColor = useCallback((space) => {
     if (space.selected) {
       return "green";
     }
-    // a function that will return the color of the marble based on the state
     switch (space.state) {
       case SpaceStates.BLACK:
         return "grey";
@@ -96,9 +100,9 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
     }
   }, []);
 
+  // A function that will render a row of the board
   const renderRow = useCallback(
     (row, rowIndex) => {
-      // a function that will render a row of the board
       return (
         <Grid container item justifyContent="center" key={rowIndex}>
           {row.map((space, columnIndex) => (
@@ -123,9 +127,8 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
     [getSpaceColor, onMarbleClick]
   );
 
-  // JSX
+  // Return a grid that will render the board by looping through all the rows in the board and rendering each row
   return (
-    // a grid container that will render the board by looping through all the rows in the board and rendering each row
     <>
       <Grid container direction="column" alignItems="center">
         <Grid item container direction="column" alignItems="center">

@@ -15,24 +15,25 @@ import Space from "../models/Space";
 import { PlayerColors } from "../constants/playerColors";
 import ScoreCard from "./ScoreCard";
 
+// Displays complete assembly of the GUI
 const Game = () => {
-  // States
-  const [aiMove, setAiMove] = useState("");
-  const [selectedMarbles, setSelectedMarbles] = useState([]);
-  const [movesStack, setMovesStack] = useState([]);
+  const [aiMove, setAiMove] = useState(""); // Tracks AI move history
+  const [selectedMarbles, setSelectedMarbles] = useState([]); // Tracks which marbles are selected
+  const [movesStack, setMovesStack] = useState([]); // Tracks player move history
+  const [gameStarted, setGameStarted] = useState(false); // Tracks whether game has started
+
+  // Tracks configuration options
   const [config, setConfig] = useState({
     boardLayout: BoardLayouts.DEFAULT,
     playerColor: PlayerColors.BLACK,
     gameMode: "Computer",
     moveLimit: 100,
-    timeLimit: 15
+    timeLimit: 15,
   });
-  const [gameStarted, setGameStarted] = useState(false);
 
-  // Custom hooks
   const { board, setBoardArray } = useBoard(config.boardLayout); // import board state and setBoard function from useBoard hook
 
-  // Callbacks
+  // Handles new AI move
   const updateAiMove = useCallback((aiMove) => {
     const aiMoveNext = aiMove.next_positions;
     const aiMovePrev = aiMove.previous_positions;
@@ -47,6 +48,7 @@ const Game = () => {
     setAiMove(moveCode);
   }, []);
 
+  // Handles move selection
   const onMoveSelection = useCallback(
     async (move) => {
       // get the previous and new positions of the selected marbles
@@ -80,6 +82,7 @@ const Game = () => {
     [selectedMarbles, setBoardArray, updateAiMove, gameStarted]
   );
 
+  // Handles move undo
   const onUndoLastMove = useCallback(async () => {
     const responseData = await GameService.postUndoLastMove();
     console.log(responseData);
@@ -87,6 +90,7 @@ const Game = () => {
     setMovesStack(responseData.moves_stack);
   }, [setBoardArray]);
 
+  // Handles game reset
   const onResetGame = useCallback(async () => {
     console.log("resetting game");
     const responseData = await GameService.resetGame();
@@ -95,7 +99,7 @@ const Game = () => {
     setMovesStack(responseData.moves_stack);
   }, []);
 
-  // JSX
+  // Returns assembly of the GUI
   return (
     <Grid container spacing={2}>
       {/* Configuration Menu on the left */}
