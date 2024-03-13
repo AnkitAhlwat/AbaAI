@@ -52,9 +52,10 @@ const useBoard = (boardLayout) => {
     [1, 1, 0, 2, 2, -1, -1, -1, -1],
   ];
 
-  const [boardArray, setBoardArray] = useState(emptyLayout);
-  const [board, setBoard] = useState([]);
+  const [boardArray, setBoardArray] = useState(emptyLayout); // Tracks state of board array
+  const [board, setBoard] = useState([]); // Tracks state of total board
 
+  // Changes board layout depending on enum
   useEffect(() => {
     switch (boardLayout) {
       case BoardLayouts.DEFAULT:
@@ -71,6 +72,7 @@ const useBoard = (boardLayout) => {
     }
   }, [boardLayout, setBoardArray]);
 
+  // Initializes board when change is detected
   useEffect(() => {
     const newBoard = boardArray.map((row, rowIndex) => {
       return row.map((state, columnIndex) => {

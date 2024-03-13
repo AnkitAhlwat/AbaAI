@@ -3,9 +3,11 @@ import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import Space from "../models/Space";
 
+// Displays movement history of the GUI
 const MoveHistory = ({ movesStack }) => {
-  const [moveStackFormatted, setMoveStackFormatted] = useState([]);
+  const [moveStackFormatted, setMoveStackFormatted] = useState([]); // The history of past moves
 
+  // Updates movement history when a move is made
   useEffect(() => {
     const moveStackFormatted = movesStack.map((move) => {
       const prev_moves = move.previous_positions.map((position) => {
@@ -24,6 +26,7 @@ const MoveHistory = ({ movesStack }) => {
     setMoveStackFormatted(moveStackFormatted);
   }, [movesStack]);
 
+  // Returns UI component containing move history
   return (
     <Box>
       <Typography variant="h4" gutterBottom>

@@ -1,12 +1,16 @@
 import React from 'react';
 import { Card, CardContent, Typography, Grid } from '@mui/material';
 
+// Display score card of the GUI
 const ScoreCard = ({ blackSide, whiteSide, }) => {
-    // If the game is just starting, initialize the score card to default values
+
+    // Displays default values of both sides
     if (!blackSide || !whiteSide) {
         blackSide = { marblesKnockedOff: 0, totalMoves: 20 };
         whiteSide = { marblesKnockedOff: 0, totalMoves: 20 };
     }
+
+    // Returns UI component for the score card
     return (
         <Grid container spacing={2} justifyContent="center">
             <Grid item xs={12} md={6}>

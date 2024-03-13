@@ -11,6 +11,7 @@ import { PlayerColors } from "../constants/playerColors";
 import { TextField } from "@mui/material";
 
 const ConfigMenu = (props) => {
+
   // Destructuring props to extract config and setConfig
   const { config, setConfig } = props;
 
@@ -23,26 +24,28 @@ const ConfigMenu = (props) => {
     setConfig({ ...config, boardLayout: event.target.value });
   };
 
+  // Function to handle change in player color
   const handleColorChange = (event) => {
     setConfig({ ...config, playerColor: event.target.value })
   }
 
+  // Function to handle change to game mode
   const handleGameModeChange = (event) => {
     setConfig({ ...config, gameMode: event.target.value })
   }
 
+  // Function to handle change to move limit
   const handleMoveLimitChange = (event) => {
     setMoveLimit(event.target.value)
-    console.log(event.target.value)
   }
 
+  // Function to handle change to time limit
   const handleTimeLimitChange = (event) => {
     setTimeLimit(event.target.value)
-    console.log(event.target.value)
   }
 
+  // Update time limit and move limit when button pressed
   const handleSubmit = () => {
-    // Update time limit and move limit in config
     setConfig({
       ...config,
       moveLimit: parseInt(moveLimit), // Convert to integer
@@ -50,6 +53,7 @@ const ConfigMenu = (props) => {
     })
   }
 
+  // Returns config menu UI component
   return (
     <Box>
       <FormControl>

@@ -1,12 +1,15 @@
 import { Button, Grid } from "@mui/material";
 import PropTypes from "prop-types";
 
+// Displays buttons that handle marble movement
 const MoveButtons = ({ onMoveSelection, selectedMarbles }) => {
+
+  // Table to translate movement into board
   const move_map = [
-    { label: "UpLeft", move: { x: 0, y: -1 } },
-    { label: "UpRight", move: { x: 1, y: -1 } },
-    { label: "DownLeft", move: { x: -1, y: 1 } },
-    { label: "DownRight", move: { x: 0, y: 1 } },
+    { label: "Up-Left", move: { x: 0, y: -1 } },
+    { label: "Up-Right", move: { x: 1, y: -1 } },
+    { label: "Down-Left", move: { x: -1, y: 1 } },
+    { label: "Down-Right", move: { x: 0, y: 1 } },
     { label: "Left", move: { x: -1, y: 0 } },
     { label: "Right", move: { x: 1, y: 0 } },
   ];

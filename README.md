@@ -8,7 +8,18 @@ AbaAI is an ambitious project aimed at developing a sophisticated AI to excel at
 - To explore various heuristics and algorithms to find the most effective strategies for winning.
 - To contribute to the AI and board game community by providing a fully open-source solution.
 
-## Getting started
+## Application Website
+You can access the application via the following url:
+
+[Aba AI](https://aba-ai.vercel.app/)
+
+NOTE: This is hosted using a free cloud hosting service, and may not respond properly all the time.
+
+## Local Installation
+
+### Prerequisites
+- Python 3.11 or higher is installed on your computer. [Install Python Here](https://www.python.org/downloads/?trk=cndc-detail)
+- Node 20.11 or higher is installed on your computer. [Install Node Here](https://nodejs.org/en/download/)
 
 ### Step 1: Clone the project to your computer and navigate to directory
 
