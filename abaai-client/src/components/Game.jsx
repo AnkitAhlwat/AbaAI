@@ -14,6 +14,8 @@ import AIMoveDisplay from "./AiMove";
 import Space from "../models/Space";
 import { PlayerColors } from "../constants/playerColors";
 import ScoreCard from "./ScoreCard";
+import SideBar from "./SideBar";
+import GameplaySection from "./GameplaySection";
 
 // Displays complete assembly of the GUI
 const Game = () => {
@@ -97,41 +99,35 @@ const Game = () => {
     console.log(responseData);
     setBoardArray(responseData.board);
     setMovesStack(responseData.moves_stack);
-  }, []);
+  }, [setBoardArray]);
 
   // Returns assembly of the GUI
   return (
-    <Grid container spacing={2}>
-      {/* Configuration Menu on the left */}
-      <Grid item xs={3}>
-        <GameClock
-          initialTime={600}
-          turnTimeLimit={config.timeLimit}
-          gameStarted={gameStarted}
-          setBoardArray={setBoardArray}
-        />
-        <ConfigMenu config={config} setConfig={setConfig} />
-      </Grid>
-
+    <Grid
+      container
+      sx={{
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
       {/* Board in the middle */}
       <Grid
         container
         item
-        xs={6}
+        xs={9}
         sx={{
           justifyContent: "center",
           alignItems: "center",
+          height: "98vh",
         }}
       >
-        <ScoreCard />
-
-        <Board
+        <GameplaySection
           board={board}
           onMoveSelection={onMoveSelection}
           selectedMarbles={selectedMarbles}
           setSelectedMarbles={setSelectedMarbles}
         />
-        <MoveButtons
+        {/* <MoveButtons
           onMoveSelection={onMoveSelection}
           selectedMarbles={selectedMarbles}
         />
@@ -139,13 +135,20 @@ const Game = () => {
           onUndo={onUndoLastMove}
           onReset={onResetGame}
           movesStack={movesStack}
-        />
+        /> */}
       </Grid>
 
       {/* Move History on the right */}
-      <Grid item xs={3}>
-        <AIMoveDisplay aiMove={aiMove} />
-        <MoveHistory movesStack={movesStack} />
+      <Grid
+        item
+        xs={3}
+        sx={{
+          height: "98vh",
+        }}
+      >
+        {/* <AIMoveDisplay aiMove={aiMove} />
+        <MoveHistory movesStack={movesStack} /> */}
+        <SideBar />
       </Grid>
     </Grid>
   );

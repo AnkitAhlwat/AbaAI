@@ -1,19 +1,57 @@
-import { Grid, Fab } from "@mui/material";
+import { Grid, Fab, Box } from "@mui/material";
 import PropTypes from "prop-types";
 import SpaceStates from "../constants/spaceStates";
 import { useCallback } from "react";
 import Space from "../models/Space";
 
+const marbleStyles = {
+  // Black marble
+  1: {
+    backgroundColor: "black",
+    color: "white",
+    outline: "solid 2px black",
+    boxShadow: "none",
+    "&:hover": {
+      backgroundColor: "#767271", // Change hover color
+    },
+    flexShrink: 1,
+  },
+  // White marble
+  2: {
+    backgroundColor: "white",
+    color: "black",
+    outline: "solid 2px black",
+    boxShadow: "none",
+    "&:hover": {
+      backgroundColor: "#767271", // Change hover color
+    },
+    flexShrink: 1,
+  },
+  // Empty space
+  0: {
+    backgroundColor: "#ae694a",
+    boxShadow: "none",
+    flexShrink: 1,
+  },
+  selected: {
+    backgroundColor: "rgba(115,149,82,255)",
+    boxShadow: "none",
+    outline: "solid 2px black",
+    flexShrink: 1,
+    "&:hover": {
+      backgroundColor: "rgba(130,180,100,255)", // Change hover color
+    },
+  },
+};
+
 // Displays the playing board of the GUI
 const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
-
   // Callback when a marble is deselected
   const deselectMarbles = useCallback((marbles) => {
     for (const marble of marbles) {
       marble.selected = false;
     }
   }, []);
-
 
   const onMarbleClick = useCallback(
     (space) => {
@@ -82,59 +120,79 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
   );
 
   // A function that will return the color of the marble based on the state
-  const getSpaceColor = useCallback((space) => {
+  const getSpaceStyle = useCallback((space) => {
     if (space.selected) {
-      return "green";
+      return marbleStyles.selected;
     }
-    switch (space.state) {
-      case SpaceStates.BLACK:
-        return "grey";
-      case SpaceStates.WHITE:
-        return "white";
-      case SpaceStates.EMPTY:
-        return "beige";
-      case SpaceStates.NONE:
-        return "red";
-      default:
-        return "transparent";
-    }
+
+    return marbleStyles[space.state];
   }, []);
+
+  const renderMarble = useCallback(
+    (space) => {
+      return (
+        <Fab
+          variant="contained"
+          sx={{
+            ...getSpaceStyle(space),
+            margin: "5px",
+            width: "80px",
+            height: "80px",
+          }}
+          onClick={() => onMarbleClick(space)}
+        >
+          {space.str}
+        </Fab>
+      );
+    },
+    [getSpaceStyle, onMarbleClick]
+  );
 
   // A function that will render a row of the board
   const renderRow = useCallback(
     (row, rowIndex) => {
       return (
-        <Grid container item justifyContent="center" key={rowIndex}>
+        <Grid
+          container
+          item
+          justifyContent="center"
+          key={rowIndex}
+          sx={{
+            flexShrink: 1,
+            flexWrap: "nowrap",
+          }}
+        >
           {row.map((space, columnIndex) => (
-            <Grid item key={`${rowIndex}-${columnIndex}`}>
-              {space.state !== SpaceStates.NONE && (
-                <Fab
-                  variant="contained"
-                  sx={{
-                    margin: "10px",
-                    backgroundColor: getSpaceColor(space),
-                  }}
-                  onClick={() => onMarbleClick(space)}
-                >
-                  {space.str}
-                </Fab>
-              )}
+            <Grid
+              item
+              key={`${rowIndex}-${columnIndex}`}
+              sx={{
+                flexShrink: 1,
+                flexWrap: "nowrap",
+              }}
+            >
+              {space.state !== SpaceStates.NONE && renderMarble(space)}
             </Grid>
           ))}
         </Grid>
       );
     },
-    [getSpaceColor, onMarbleClick]
+    [renderMarble]
   );
 
   // Return a grid that will render the board by looping through all the rows in the board and rendering each row
   return (
     <>
-      <Grid container direction="column" alignItems="center">
-        <Grid item container direction="column" alignItems="center">
-          {board.map((row, index) => renderRow(row, index))}
-        </Grid>
-      </Grid>
+      <Box
+        sx={{
+          backgroundColor: "#6f2404",
+          borderRadius: "5px",
+          padding: "20px",
+          flexShrink: 1,
+        }}
+      >
+        {board.map((row, index) => renderRow(row, index))}
+      </Box>
     </>
   );
 };
