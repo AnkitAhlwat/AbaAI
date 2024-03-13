@@ -16,6 +16,7 @@ import { PlayerColors } from "../constants/playerColors";
 import ScoreCard from "./ScoreCard";
 import SideBar from "./SideBar";
 import GameplaySection from "./GameplaySection";
+import RightSideBar from "./RightSideBar";
 
 // Displays complete assembly of the GUI
 const Game = () => {
@@ -110,7 +111,6 @@ const Game = () => {
         alignItems: "center",
       }}
     >
-      {/* Board in the middle */}
       <Grid
         container
         item
@@ -119,6 +119,7 @@ const Game = () => {
           justifyContent: "center",
           alignItems: "center",
           height: "98vh",
+          padding: "5px",
         }}
       >
         <GameplaySection
@@ -127,28 +128,24 @@ const Game = () => {
           selectedMarbles={selectedMarbles}
           setSelectedMarbles={setSelectedMarbles}
         />
-        {/* <MoveButtons
-          onMoveSelection={onMoveSelection}
-          selectedMarbles={selectedMarbles}
-        />
-        <GameControls
-          onUndo={onUndoLastMove}
-          onReset={onResetGame}
-          movesStack={movesStack}
-        /> */}
       </Grid>
 
-      {/* Move History on the right */}
       <Grid
         item
         xs={3}
         sx={{
-          height: "98vh",
+          height: "95vh",
+          padding: "5px",
         }}
       >
         {/* <AIMoveDisplay aiMove={aiMove} />
         <MoveHistory movesStack={movesStack} /> */}
-        <SideBar />
+        <RightSideBar
+          config={config}
+          setConfig={setConfig}
+          movesStack={movesStack}
+          aiMove={aiMove}
+        />
       </Grid>
     </Grid>
   );

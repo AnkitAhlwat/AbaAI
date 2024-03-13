@@ -9,9 +9,22 @@ const GameplaySection = (props) => {
   return (
     <Grid container>
       <Grid item xs={12}>
-        <PlayerInfo isBot color="white" numCapturedMarbles={5} />
+        <PlayerInfo
+          isBot
+          color="white"
+          numCapturedMarbles={5}
+          // movesRemaining={19}
+          moveTimeRemaining={20}
+        />
       </Grid>
-      <Grid item xs={12}>
+      <Grid
+        item
+        xs={12}
+        sx={{
+          marginTop: "10px",
+          marginBottom: "10px",
+        }}
+      >
         <Board
           board={board}
           onMoveSelection={onMoveSelection}
@@ -20,7 +33,12 @@ const GameplaySection = (props) => {
         />
       </Grid>
       <Grid item xs={12}>
-        <PlayerInfo color="black" numCapturedMarbles={2} />
+        <PlayerInfo
+          color="black"
+          numCapturedMarbles={2}
+          movesRemaining={18}
+          moveTimeRemaining={20}
+        />
       </Grid>
     </Grid>
   );
