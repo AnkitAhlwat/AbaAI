@@ -56,13 +56,10 @@ const ConfigMenu = (props) => {
 
   // Returns config menu UI component
   return (
-    <Box style={{
-      margin: 'auto',
-      textAlign: 'center'
-    }}>
-      <FormControl>
-        <InputLabel>Board Layout</InputLabel>
-        <Select value={config.boardLayout} onChange={handleLayoutChange} label="Board Layout">
+    <Box style={{margin: 'auto', textAlign: 'center'}}>
+      <FormControl sx={{width: 1}} variant='filled' style={{backgroundColor: 'gray'}}>
+        <InputLabel style={{fontWeight: 'bold', color: 'white'}}>Board Layout</InputLabel>
+        <Select value={config.boardLayout} onChange={handleLayoutChange} style={{color: 'white'}}>
           {Object.values(BoardLayouts).map((layout) => (
             <MenuItem key={layout} value={layout}>
               {layout}
@@ -72,9 +69,9 @@ const ConfigMenu = (props) => {
       </FormControl>
       <br></br>
       <br></br>
-      <FormControl>
-        <InputLabel>Color</InputLabel>
-        <Select value={config.playerColor} onChange={handleColorChange} label="Color">
+      <FormControl sx={{width: 1}} variant='filled' style={{backgroundColor: 'gray'}}>
+        <InputLabel style={{fontWeight: 'bold', color: 'white'}}>Color</InputLabel>
+        <Select value={config.playerColor} onChange={handleColorChange} style={{color: 'white'}}>
           {Object.values(PlayerColors).map((color) => (
             <MenuItem key={color} value={color}>
               {color}
@@ -84,9 +81,9 @@ const ConfigMenu = (props) => {
       </FormControl>
       <br></br>
       <br></br>
-      <FormControl>
-        <InputLabel>Game Mode</InputLabel>
-        <Select value={config.gameMode} onChange={handleGameModeChange} label="Game Mode">
+      <FormControl sx={{width: 1}} variant='filled' style={{backgroundColor: 'gray'}}>
+        <InputLabel style={{fontWeight: 'bold', color: 'white'}}>Game Mode</InputLabel>
+        <Select value={config.gameMode} onChange={handleGameModeChange} style={{color: 'white'}}>
           {Object.values(["Human","Computer"]).map((mode) => (
             <MenuItem key={mode} value={mode}>
               {mode}
@@ -96,29 +93,35 @@ const ConfigMenu = (props) => {
       </FormControl>
       <br></br>
       <br></br>
-      <FormControl>
+      <FormControl sx={{width: 1}} variant='filled' style={{backgroundColor: 'gray'}}>
         <TextField
           id="move-limit"
           label="Move Limit"
           type="number"
           value={moveLimit}
           onInput={handleMoveLimitChange}
+          InputProps={{ style: { color: 'white' } }}
+          InputLabelProps={{ style: { color: 'white' } }}
+          style={{color: 'white'}}
         />
       </FormControl>
       <br></br>
       <br></br>
-      <FormControl>
+      <FormControl sx={{width: 1}} variant='filled' style={{backgroundColor: 'gray'}}>
         <TextField
           id="time-limit"
           label="Time Limit (Seconds)"
           type="number"
           value={blackTimeLimit}
           onInput={handleTimeLimitChange}
+          InputProps={{ style: { color: 'white' } }}
+          InputLabelProps={{ style: { color: 'white' } }}
+          style={{color: 'white'}}
         />
       </FormControl>
       <br></br>
       <br></br>
-      <FormControl>
+      <FormControl variant='filled'>
         <Button variant="contained" onClick={handleSubmit}>
          Submit
         </Button>
