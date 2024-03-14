@@ -12,7 +12,6 @@ import GameClock from "./Clock";
 import MoveButtons from "./MoveButtons";
 import AIMoveDisplay from "./AiMove";
 import Space from "../models/Space";
-import { PlayerColors } from "../constants/playerColors";
 import ScoreCard from "./ScoreCard";
 import SideBar from "./SideBar";
 import GameplaySection from "./GameplaySection";
@@ -28,10 +27,11 @@ const Game = () => {
   // Tracks configuration options
   const [config, setConfig] = useState({
     boardLayout: BoardLayouts.DEFAULT,
-    playerColor: PlayerColors.BLACK,
-    gameMode: "Computer",
-    moveLimit: 100,
-    timeLimit: 15,
+    blackPlayer: "Human",
+    whitePlayer: "Computer",
+    blackTimeLimit: 15,
+    whiteTimeLimit: 15,
+    moveLimit: 20
   });
 
   const { board, setBoardArray } = useBoard(config.boardLayout); // import board state and setBoard function from useBoard hook

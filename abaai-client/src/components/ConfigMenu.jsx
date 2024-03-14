@@ -1,3 +1,4 @@
+import React from 'react';
 import Box from "@mui/material/Box";
 import FormControl from "@mui/material/FormControl";
 import Button from "@mui/material/Button"
@@ -7,123 +8,73 @@ import MenuItem from "@mui/material/MenuItem";
 import { BoardLayouts } from "../constants/boardLayouts";
 import PropTypes from "prop-types";
 import { useState } from "react";
-import { PlayerColors } from "../constants/playerColors";
 import { TextField } from "@mui/material";
 
-const ConfigMenu = (props) => {
 
-  // Destructuring props to extract config and setConfig
-  const { config, setConfig } = props;
+const SelectInput = ({ label, value, onChange, options }) => (
+  <FormControl sx={{ width: 1 }} variant='filled' style={{ backgroundColor: 'gray' }}>
+    <InputLabel style={{ fontWeight: 'bold', color: 'white' }}>{label}</InputLabel>
+    <Select value={value} onChange={onChange} style={{ color: 'white' }}>
+      {options.map((option) => (
+        <MenuItem key={option} value={option}>
+          {option}
+        </MenuItem>
+      ))}
+    </Select>
+  </FormControl>
+);
 
-  // State variables for moveLimit and timeLimit
-  const [moveLimit, setMoveLimit] = useState('');
+
+const NumberInput = ({ id, label, value, onChange }) => (
+  <FormControl sx={{ width: 1 }} variant='filled' style={{ backgroundColor: 'gray' }}>
+    <TextField
+      id={id}
+      label={label}
+      type="number"
+      value={value}
+      onInput={onChange}
+      InputProps={{ style: { color: 'white' } }}
+      InputLabelProps={{ style: { color: 'white' } }}
+    />
+  </FormControl>
+);
+
+
+const ConfigMenu = ({ config, setConfig }) => {
   const [blackTimeLimit, setBlackTimeLimit] = useState('');
   const [whiteTimeLimit, setWhiteTimeLimit] = useState('');
+  const [moveLimit, setMoveLimit] = useState('');
 
-  // Function to handle changes in the board layout
-  const handleLayoutChange = (event) => {
-    setConfig({ ...config, boardLayout: event.target.value });
-  };
-
-  // Function to handle change in player color
-  const handleColorChange = (event) => {
-    setConfig({ ...config, playerColor: event.target.value })
-  }
-
-  // Function to handle change to game mode
-  const handleGameModeChange = (event) => {
-    setConfig({ ...config, gameMode: event.target.value })
-  }
-
-  // Function to handle change to move limit
-  const handleMoveLimitChange = (event) => {
-    setMoveLimit(event.target.value)
-  }
-
-  // Function to handle change to time limit
-  const handleTimeLimitChange = (event) => {
-    setBlackTimeLimit(event.target.value)
-  }
-
-  // Update time limit and move limit when button pressed
+  const handleLayoutChange = (event) => setConfig({ ...config, boardLayout: event.target.value });
+  const handlePlayerChange = (event, player) => setConfig({ ...config, [player]: event.target.value });
+  const handleTimeChange = (event, setter) => setter(event.target.value);
   const handleSubmit = () => {
     setConfig({
       ...config,
-      moveLimit: parseInt(moveLimit), // Convert to integer
-      timeLimit: parseInt(blackTimeLimit), // Convert to integer
-    })
+      blackTimeLimit: parseInt(blackTimeLimit),
+      whiteTimeLimit: parseInt(whiteTimeLimit),
+      moveLimit: parseInt(moveLimit)
+    });
   }
 
-  // Returns config menu UI component
+  
   return (
-    <Box style={{margin: 'auto', textAlign: 'center'}}>
-      <FormControl sx={{width: 1}} variant='filled' style={{backgroundColor: 'gray'}}>
-        <InputLabel style={{fontWeight: 'bold', color: 'white'}}>Board Layout</InputLabel>
-        <Select value={config.boardLayout} onChange={handleLayoutChange} style={{color: 'white'}}>
-          {Object.values(BoardLayouts).map((layout) => (
-            <MenuItem key={layout} value={layout}>
-              {layout}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <br></br>
-      <br></br>
-      <FormControl sx={{width: 1}} variant='filled' style={{backgroundColor: 'gray'}}>
-        <InputLabel style={{fontWeight: 'bold', color: 'white'}}>Color</InputLabel>
-        <Select value={config.playerColor} onChange={handleColorChange} style={{color: 'white'}}>
-          {Object.values(PlayerColors).map((color) => (
-            <MenuItem key={color} value={color}>
-              {color}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <br></br>
-      <br></br>
-      <FormControl sx={{width: 1}} variant='filled' style={{backgroundColor: 'gray'}}>
-        <InputLabel style={{fontWeight: 'bold', color: 'white'}}>Game Mode</InputLabel>
-        <Select value={config.gameMode} onChange={handleGameModeChange} style={{color: 'white'}}>
-          {Object.values(["Human","Computer"]).map((mode) => (
-            <MenuItem key={mode} value={mode}>
-              {mode}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <br></br>
-      <br></br>
-      <FormControl sx={{width: 1}} variant='filled' style={{backgroundColor: 'gray'}}>
-        <TextField
-          id="move-limit"
-          label="Move Limit"
-          type="number"
-          value={moveLimit}
-          onInput={handleMoveLimitChange}
-          InputProps={{ style: { color: 'white' } }}
-          InputLabelProps={{ style: { color: 'white' } }}
-          style={{color: 'white'}}
-        />
-      </FormControl>
-      <br></br>
-      <br></br>
-      <FormControl sx={{width: 1}} variant='filled' style={{backgroundColor: 'gray'}}>
-        <TextField
-          id="time-limit"
-          label="Time Limit (Seconds)"
-          type="number"
-          value={blackTimeLimit}
-          onInput={handleTimeLimitChange}
-          InputProps={{ style: { color: 'white' } }}
-          InputLabelProps={{ style: { color: 'white' } }}
-          style={{color: 'white'}}
-        />
-      </FormControl>
-      <br></br>
-      <br></br>
+    <Box style={{ margin: 'auto', textAlign: 'center' }}>
+      <SelectInput label="Board Layout" value={config.boardLayout} onChange={handleLayoutChange} options={Object.values(BoardLayouts)} />
+      <br /><br />
+      <SelectInput label="Black Player" value={config.blackPlayer} onChange={(e) => handlePlayerChange(e, 'blackPlayer')} options={["Human", "Computer"]} />
+      <br /><br />
+      <SelectInput label="White Player" value={config.whitePlayer} onChange={(e) => handlePlayerChange(e, 'whitePlayer')} options={["Human", "Computer"]} />
+      <br /><br />
+      <NumberInput id="black-time-limit" label="Black Time Limit (Seconds)" value={blackTimeLimit} onChange={(e) => handleTimeChange(e, setBlackTimeLimit)} />
+      <br /><br />
+      <NumberInput id="white-time-limit" label="White Time Limit (Seconds)" value={whiteTimeLimit} onChange={(e) => handleTimeChange(e, setWhiteTimeLimit)} />
+      <br /><br />
+      <NumberInput id="move-limit" label="Move Limit" value={moveLimit} onChange={(e) => setMoveLimit(e.target.value)} />
+      <br /><br />
       <FormControl variant='filled'>
         <Button variant="contained" onClick={handleSubmit}>
-         Submit
+          Submit
         </Button>
       </FormControl>
     </Box>
