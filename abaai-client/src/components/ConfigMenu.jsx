@@ -17,7 +17,8 @@ const ConfigMenu = (props) => {
 
   // State variables for moveLimit and timeLimit
   const [moveLimit, setMoveLimit] = useState('');
-  const [timeLimit, setTimeLimit] = useState('');
+  const [blackTimeLimit, setBlackTimeLimit] = useState('');
+  const [whiteTimeLimit, setWhiteTimeLimit] = useState('');
 
   // Function to handle changes in the board layout
   const handleLayoutChange = (event) => {
@@ -41,7 +42,7 @@ const ConfigMenu = (props) => {
 
   // Function to handle change to time limit
   const handleTimeLimitChange = (event) => {
-    setTimeLimit(event.target.value)
+    setBlackTimeLimit(event.target.value)
   }
 
   // Update time limit and move limit when button pressed
@@ -49,13 +50,16 @@ const ConfigMenu = (props) => {
     setConfig({
       ...config,
       moveLimit: parseInt(moveLimit), // Convert to integer
-      timeLimit: parseInt(timeLimit), // Convert to integer
+      timeLimit: parseInt(blackTimeLimit), // Convert to integer
     })
   }
 
   // Returns config menu UI component
   return (
-    <Box>
+    <Box style={{
+      margin: 'auto',
+      textAlign: 'center'
+    }}>
       <FormControl>
         <InputLabel>Board Layout</InputLabel>
         <Select value={config.boardLayout} onChange={handleLayoutChange} label="Board Layout">
@@ -108,7 +112,7 @@ const ConfigMenu = (props) => {
           id="time-limit"
           label="Time Limit (Seconds)"
           type="number"
-          value={timeLimit}
+          value={blackTimeLimit}
           onInput={handleTimeLimitChange}
         />
       </FormControl>
