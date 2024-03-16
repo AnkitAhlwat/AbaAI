@@ -1,9 +1,9 @@
 from enum import Enum
 
 
-class Turn(Enum):
-    MAX = 1
-    MIN = 2
+class Piece(Enum):
+    BLACK = 1
+    WHITE = 2
 
 
 class Position:
@@ -11,9 +11,25 @@ class Position:
         self.x = x
         self.y = y
 
+    @staticmethod
+    def get_y_from_letter(letter: str):
+        return (65 + 8) - ord(letter)
+
+    @staticmethod
+    def get_letter_from_y(y: int):
+        return chr(65 + 8 - y)
+
+    @staticmethod
+    def get_x_from_number(number: int):
+        return number - 1
+
+    @staticmethod
+    def get_number_from_x(x: int):
+        return x + 1
+
 
 class Move:
-    def __init__(self, previous_positions: list[Position], next_positions: list[Position], player: Turn):
+    def __init__(self, previous_positions: list[Position], next_positions: list[Position], player: Piece):
         self._previous_positions = previous_positions
         self._next_positions = next_positions
         self._player = player
@@ -41,5 +57,5 @@ class Move:
     def from_json(cls, json):
         previous_positions = [Position(position['x'], position['y']) for position in json['previous_positions']]
         next_positions = [Position(position['x'], position['y']) for position in json['next_positions']]
-        player = Turn(json['player'])
+        player = Piece(json['player'])
         return cls(previous_positions, next_positions, player)

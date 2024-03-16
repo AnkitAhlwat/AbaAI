@@ -1,10 +1,10 @@
 from abalone.board import BoardLayout, Board
-from abalone.movement import Move, Turn
+from abalone.movement import Move, Piece
 from abalone.stack import Stack
 
 
 class GameUpdate:
-    def __init__(self, ai_move: Move = None, moves_stack: Stack = None, board: Board = None, turn: Turn = None):
+    def __init__(self, ai_move: Move = None, moves_stack: Stack = None, board: Board = None, turn: Piece = None):
         self._ai_move = ai_move
         self._moves_stack = moves_stack
         self._board = board
@@ -17,6 +17,20 @@ class GameUpdate:
             "board": self._board.to_json() if self._board is not None else None,
             "turn": self._turn.value if self._turn is not None else None
         }
+
+
+class GameState:
+    def __init__(self, board: Board, turn: Piece):
+        self._board = board
+        self._turn = turn
+
+    @property
+    def board(self):
+        return self._board
+
+    @property
+    def turn(self):
+        return self._turn
 
 
 class Game:
@@ -67,36 +81,35 @@ class Game:
         self._board.make_move(ai_move_obj)
 
         return ai_move_obj
-    
+
     def reset_game(self):
         """
         Resets the game and timer to the default state.
         Clears everything.
         """
-        #clear the stack
+        # clear the stack
         self._moves_stack.clear_stack()
 
-        #rest the board to be the default board
-        #TODO: reset to the position the plauyer has selected
+        # rest the board to be the default board
+        # TODO: reset to the position the plauyer has selected
         self._board = Board(BoardLayout.DEFAULT)
 
-        #set the turn to be black
+        # set the turn to be black
         self._turn = 1
         self.reset_ai_increment()
         return GameUpdate(None, self._moves_stack, board=self._board)
 
-
     @classmethod
     def reset_ai_increment(cls):
         cls.ai_increment = -1
-        
+
     @classmethod
     def get_default_ai_move(cls):
         cls.ai_increment += 1
-        return {"previous_positions": [{"x": 5, "y": 2+cls.ai_increment},
-                                       {"x": 5, "y": 1+cls.ai_increment},
-                                       {"x": 5, "y": 0+cls.ai_increment}],
-                "next_positions": [{"x": 5, "y": 3+cls.ai_increment},
-                                   {"x": 5, "y": 2+cls.ai_increment},
-                                   {"x": 5, "y": 1+cls.ai_increment}],
+        return {"previous_positions": [{"x": 5, "y": 2 + cls.ai_increment},
+                                       {"x": 5, "y": 1 + cls.ai_increment},
+                                       {"x": 5, "y": 0 + cls.ai_increment}],
+                "next_positions": [{"x": 5, "y": 3 + cls.ai_increment},
+                                   {"x": 5, "y": 2 + cls.ai_increment},
+                                   {"x": 5, "y": 1 + cls.ai_increment}],
                 "player": 2}
