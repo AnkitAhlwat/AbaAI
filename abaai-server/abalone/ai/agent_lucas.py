@@ -37,7 +37,7 @@ class StateSpaceGenerator:
         return legal_moves
 
     @staticmethod
-    def get_max_player_piece_positions(game_state: GameState):
+    def get_max_player_piece_positions(game_state: GameState) -> list[Position]:
         max_player_value = game_state.turn.value
 
         max_player_piece_positions = []
@@ -49,7 +49,7 @@ class StateSpaceGenerator:
         return max_player_piece_positions
 
     @staticmethod
-    def get_min_player_piece_positions(game_state: GameState):
+    def get_min_player_piece_positions(game_state: GameState) -> list[Position]:
         min_player_value = Piece.BLACK.value if game_state.turn == Piece.WHITE else Piece.WHITE.value
 
         min_player_piece_positions = []
@@ -59,6 +59,31 @@ class StateSpaceGenerator:
                     min_player_piece_positions.append(Position(x, y))
 
         return min_player_piece_positions
+
+    @staticmethod
+    def get_max_player_two_piece_adjacent_positions(max_player_piece_positions: list[Position]) -> list[tuple[Position,
+    Position]]:
+        pass
+
+    @staticmethod
+    def are_positions_adjacent_and_in_line(positions: list[Position]) -> bool:
+        # Check if the positions are in a straight line on the x, y or z (diagonal) axis
+        if not (
+                (positions[0].x == positions[1].x == positions[2].x) or
+                (positions[0].y == positions[1].y == positions[2].y) or
+                (positions[0].x - positions[0].y == positions[1].x - positions[1].y == positions[2].x - positions[2].y)
+        ):
+            return False
+
+        # Check if the positions are adjacent
+        if not (
+                (abs(positions[0].x - positions[1].x) <= 1 and abs(positions[0].y - positions[1].y) <= 1) or
+                (abs(positions[0].x - positions[2].x) <= 1 and abs(positions[0].y - positions[2].y) <= 1) or
+                (abs(positions[1].x - positions[2].x) <= 1 and abs(positions[1].y - positions[2].y) <= 1)
+        ):
+            return False
+
+        return True
 
     @staticmethod
     def convert_input_file_to_game_state(file_name) -> GameState:
@@ -91,6 +116,23 @@ class LegalMovesGeneratorLucas:
             if LegalMovesGeneratorLucas.__is_available_position(game_state, previous_positions, new_positions):
                 previous_positions = [Position(x, y)]
                 new_positions = [Position(new_x, new_y)]
+                legal_move = Move(previous_positions, new_positions, game_state.turn)
+                legal_moves.append(legal_move)
+
+        return legal_moves
+
+    @staticmethod
+    def generate_legal_two_piece_moves(game_state: GameState, x1: int, y1: int, x2: int, y2):
+        possible_positions = PossibleMovesGenerator.get_possible_two_piece_new_positions(x1, y1, x2, y2)
+        legal_moves = []
+
+        for (new_x1, new_y1), (new_x2, new_y2) in possible_positions:
+            previous_positions = [(x1, y1), (x2, y2)]
+            new_positions = [(new_x1, new_y1), (new_x2, new_y2)]
+
+            if LegalMovesGeneratorLucas.__is_available_position(game_state, previous_positions, new_positions):
+                previous_positions = [Position(x1, y1), Position(x2, y2)]
+                new_positions = [Position(new_x1, new_y1), Position(new_x2, new_y2)]
                 legal_move = Move(previous_positions, new_positions, game_state.turn)
                 legal_moves.append(legal_move)
 
