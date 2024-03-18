@@ -1,3 +1,4 @@
+import itertools as it
 from copy import deepcopy
 
 from abalone.board import BoardLayout
@@ -25,14 +26,14 @@ class StateSpaceGenerator:
             legal_moves.extend(LegalMovesGeneratorLucas.generate_legal_one_piece_moves(game_state, position))
 
         # Generate all possible two piece moves
-        max_player_adjacent_pairs = StateSpaceGenerator.get_max_player_two_piece_adjacent_positions(
+        max_player_adjacent_pairs = StateSpaceGenerator.get_max_player_two_piece_line_positions(
             max_player_piece_positions)
         for position1, position2 in max_player_adjacent_pairs:
             legal_moves.extend(
                 LegalMovesGeneratorLucas.generate_legal_two_piece_moves(game_state, position1, position2))
 
         # Generate all possible three-piece moves
-        max_player_adjacent_triples = StateSpaceGenerator.get_max_player_three_piece_adjacent_positions(
+        max_player_adjacent_triples = StateSpaceGenerator.get_max_player_three_piece_line_positions(
             max_player_piece_positions, max_player_adjacent_pairs)
         for position1, position2, position3 in max_player_adjacent_triples:
             legal_moves.extend(
@@ -71,59 +72,47 @@ class StateSpaceGenerator:
         return min_player_piece_positions
 
     @staticmethod
-    def get_max_player_two_piece_adjacent_positions(
+    def get_max_player_two_piece_line_positions(
             max_player_piece_positions: list[Position]
     ) -> list[tuple[Position, Position]]:
-        adjacent_positions = []
-        for i in range(len(max_player_piece_positions)):
-            for j in range(i + 1, len(max_player_piece_positions)):
-                if max_player_piece_positions[i].is_adjacent_to(max_player_piece_positions[j]):
-                    adjacent_positions.append((max_player_piece_positions[i], max_player_piece_positions[j]))
-
-        return adjacent_positions
+        two_piece_combinations = it.combinations(max_player_piece_positions, 2)
+        return [
+            positions for positions in two_piece_combinations
+            if positions[0].is_adjacent_to(positions[1])
+        ]
 
     @staticmethod
-    def get_max_player_three_piece_adjacent_positions(
+    def get_max_player_three_piece_line_positions(
             max_player_piece_positions: list[Position],
-            max_player_two_piece_adjacent_positions: list[tuple[Position, Position]],
     ) -> list[tuple[Position, Position, Position]]:
-        adjacent_positions = []
+        three_piece_combinations = it.combinations(max_player_piece_positions, 3)
+        return [
+            positions for positions in three_piece_combinations
+            if Position.are_positions_adjacent_and_in_line(positions[0], positions[1], positions[2])
+        ]
+
+    @staticmethod
+    def get_max_player_2_to_1_sumito_positions(
+            max_player_two_piece_adjacent_positions: list[tuple[Position, Position]],
+            min_player_piece_positions: list[Position]
+    ):
+        sumito_positions = []
         added_positions = set()  # Set to store already added positions
 
         for two_piece_adjacent_position in max_player_two_piece_adjacent_positions:
-            piece1, piece2 = two_piece_adjacent_position
-            possible_third_pieces = [position for position in max_player_piece_positions if
-                                     position not in two_piece_adjacent_position]
+            max_piece1, max_piece2 = two_piece_adjacent_position
+            possible_min_pieces = [position for position in min_player_piece_positions if
+                                   position not in two_piece_adjacent_position]
 
-            for third_piece in possible_third_pieces:
-                if Position.are_positions_adjacent_and_in_line(piece1, piece2, third_piece):
+            for min_piece in possible_min_pieces:
+                if Position.are_positions_adjacent_and_in_line(max_piece1, max_piece2, min_piece):
                     # Create a tuple representing the triple
-                    triple = tuple(sorted([piece1.as_tuple(), piece2.as_tuple(), third_piece.as_tuple()]))
+                    triple = tuple(sorted([max_piece1.as_tuple(), max_piece2.as_tuple(), min_piece.as_tuple()]))
                     if triple not in added_positions:  # Check if triple is not already added
-                        adjacent_positions.append((piece1, piece2, third_piece))
+                        sumito_positions.append((max_piece1, max_piece2, min_piece))
                         added_positions.add(triple)  # Add the triple to the set of added positions
 
-        return adjacent_positions
-
-    # @staticmethod
-    # def are_positions_adjacent_and_in_line(positions: list[Position]) -> bool:
-    #     # Check if the positions are in a straight line on the x, y or z (diagonal) axis
-    #     if not (
-    #             (positions[0].x == positions[1].x == positions[2].x) or
-    #             (positions[0].y == positions[1].y == positions[2].y) or
-    #             (positions[0].x - positions[0].y == positions[1].x - positions[1].y == positions[2].x - positions[2].y)
-    #     ):
-    #         return False
-    #
-    #     # Check if the positions are adjacent
-    #     if not (
-    #             (abs(positions[0].x - positions[1].x) <= 1 and abs(positions[0].y - positions[1].y) <= 1) or
-    #             (abs(positions[0].x - positions[2].x) <= 1 and abs(positions[0].y - positions[2].y) <= 1) or
-    #             (abs(positions[1].x - positions[2].x) <= 1 and abs(positions[1].y - positions[2].y) <= 1)
-    #     ):
-    #         return False
-    #
-    #     return True
+        return sumito_positions
 
     @staticmethod
     def convert_input_file_to_game_state(file_name) -> GameState:
