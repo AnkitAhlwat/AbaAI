@@ -1,16 +1,13 @@
-from copy import deepcopy
-
-from abalone.board import BoardLayout
-from abalone.game import GameState
-from abalone.movement import Piece, Position
+from itertools import combinations
+from abalone.ai.agent_ankit import LegalMoves
+from abalone.movement import Position
 
 
 class StateSpaceGenerator:
 
     @staticmethod
-    def get_max_player_piece_positions(game_state: GameState) -> list[Position]:
-        max_player_value = game_state.turn.value
-
+    def get_max_player_piece_positions(game_state, turn) -> list[Position]:
+        max_player_value = turn
         max_player_piece_positions = []
         for y in range(9):
             for x in range(9):
@@ -20,9 +17,8 @@ class StateSpaceGenerator:
         return max_player_piece_positions
 
     @staticmethod
-    def get_min_player_piece_positions(game_state: GameState) -> list[Position]:
-        min_player_value = Piece.BLACK.value if game_state.turn == Piece.WHITE else Piece.WHITE.value
-
+    def get_min_player_piece_positions(game_state, turn) -> list[Position]:
+        min_player_value = turn
         min_player_piece_positions = []
         for y in range(9):
             for x in range(9):
@@ -32,18 +28,28 @@ class StateSpaceGenerator:
         return min_player_piece_positions
 
     @staticmethod
-    def convert_input_file_to_game_state(file_name) -> GameState:
-        with open(file_name, 'r', encoding="utf-8") as file:
-            turn = Piece.BLACK if file.readline().strip().upper() == 'B' else Piece.WHITE
+    def generate_all_moves(board, black_positions, white_positions):
+        all_moves = {
+            "black": black_positions,
+            "white": white_positions
+        }
 
-            piece_positions = file.readline().strip().split(',')
+        result = {"black": {}, "white": {}}
 
-            # Create a 9x9 board with the pieces in the correct positions, starting with empty board
-            board = deepcopy(BoardLayout.EMPTY.value)
-            for position_notation in piece_positions:
-                y_letter, x_number, piece_letter = position_notation
-                y = Position.get_y_from_letter(y_letter)
-                x = Position.get_x_from_number(int(x_number))
-                board[y][x] = Piece.BLACK.value if piece_letter.upper() == 'B' else Piece.WHITE.value
+        for color, positions in all_moves.items():
+            for pos in positions:
+                moves = LegalMoves.get_valid_moves(board.board, pos)
+                if moves:
+                    result[color][pos] = moves
 
-            return GameState(board, turn)
+            for pos1, pos2 in combinations(positions, 2):
+                moves = LegalMoves.get_valid_moves(board.board, pos1, pos2)
+                if moves:
+                    result[color][(pos1, pos2)] = moves
+
+            for pos1, pos2, pos3 in combinations(positions, 3):
+                moves = LegalMoves.get_valid_moves(board.board, pos1, pos2, pos3)
+                if moves:
+                    result[color][(pos1, pos2, pos3)] = moves
+
+        return result
