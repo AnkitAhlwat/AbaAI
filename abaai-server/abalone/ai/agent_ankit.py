@@ -50,7 +50,7 @@ class LegalMoves:
     def get_valid_moves(board, *positions):
         num_marbles = len(positions)
         if num_marbles == 1:
-            return LegalMoves.get_valid_moves_one_marble(board, positions[0].x, positions[0].y)
+            return LegalMoves.get_valid_moves_one_marble(board, positions[0])
         elif num_marbles == 2:
             return LegalMoves.get_valid_moves_two_marbles(board, positions[0], positions[1])
         elif num_marbles == 3:
@@ -60,13 +60,13 @@ class LegalMoves:
 
     # Put all the methods to get valid moves here
     @staticmethod
-    def get_valid_moves_one_marble(board, x, y):
+    def get_valid_moves_one_marble(board, pos):
         valid_moves = []
 
         for move_x, move_y in LegalMoves.possible_moves:
-            new_x, new_y = x + move_x, y + move_y
-            if LegalMoves.is_position_empty(board, Position(new_x, new_y)):
-                valid_moves.append(Position(new_x, new_y))
+            new_pos = Position(pos.x + move_x, pos.y + move_y)
+            if LegalMoves.is_position_empty(board, new_pos):
+                valid_moves.append(new_pos)
 
         return valid_moves
 
