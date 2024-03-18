@@ -11,6 +11,15 @@ class Position:
         self.x = x
         self.y = y
 
+    def __repr__(self):
+        return f'({self.x}, {self.y})'
+
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
+
+    def as_tuple(self):
+        return self.x, self.y
+
     @staticmethod
     def get_y_from_letter(letter: str):
         return (65 + 8) - ord(letter)
@@ -27,12 +36,33 @@ class Position:
     def get_number_from_x(x: int):
         return x + 1
 
+    @staticmethod
+    def get_adjacent_positions(position):
+        x, y = position.x, position.y
+        possible_moves = [
+            Position(x - 1, y),
+            Position(x + 1, y),
+            Position(x, y - 1),
+            Position(x, y + 1),
+            Position(x + 1, y - 1),
+            Position(x - 1, y + 1)
+        ]
+
+        return possible_moves
+
+    @staticmethod
+    def are_positions_adjacent(position1, position2):
+        return position1 in Position.get_adjacent_positions(position2)
+
 
 class Move:
     def __init__(self, previous_positions: list[Position], next_positions: list[Position], player: Piece):
         self._previous_positions = previous_positions
         self._next_positions = next_positions
         self._player = player
+
+    def __repr__(self):
+        return f'Previous: {self._previous_positions}, Next: {self._next_positions}, Player: {self._player}'
 
     @property
     def previous_positions(self):

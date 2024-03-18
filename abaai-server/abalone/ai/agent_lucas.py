@@ -1,7 +1,8 @@
+from copy import deepcopy
+
 from abalone.board import BoardLayout
 from abalone.game import GameState
 from abalone.movement import Piece, Position, Move
-from copy import deepcopy
 
 
 class StateSpaceGenerator:
@@ -21,10 +22,14 @@ class StateSpaceGenerator:
 
         # Generate all possible one piece moves
         for position in max_player_piece_positions:
-            x, y = position.x, position.y
-            legal_moves.extend(LegalMovesGeneratorLucas.generate_legal_one_piece_moves(game_state, x, y))
+            legal_moves.extend(LegalMovesGeneratorLucas.generate_legal_one_piece_moves(game_state, position))
 
         # Generate all possible two piece moves
+        max_player_adjacent_pairs = StateSpaceGenerator.get_max_player_two_piece_adjacent_positions(
+            max_player_piece_positions)
+        for position1, position2 in max_player_adjacent_pairs:
+            legal_moves.extend(
+                LegalMovesGeneratorLucas.generate_legal_two_piece_moves(game_state, position1, position2))
 
         # Generate all possible three piece moves
 
@@ -63,27 +68,33 @@ class StateSpaceGenerator:
     @staticmethod
     def get_max_player_two_piece_adjacent_positions(max_player_piece_positions: list[Position]) -> list[tuple[Position,
     Position]]:
-        pass
+        adjacent_positions = []
+        for i in range(len(max_player_piece_positions)):
+            for j in range(i + 1, len(max_player_piece_positions)):
+                if Position.are_positions_adjacent(max_player_piece_positions[i], max_player_piece_positions[j]):
+                    adjacent_positions.append((max_player_piece_positions[i], max_player_piece_positions[j]))
 
-    @staticmethod
-    def are_positions_adjacent_and_in_line(positions: list[Position]) -> bool:
-        # Check if the positions are in a straight line on the x, y or z (diagonal) axis
-        if not (
-                (positions[0].x == positions[1].x == positions[2].x) or
-                (positions[0].y == positions[1].y == positions[2].y) or
-                (positions[0].x - positions[0].y == positions[1].x - positions[1].y == positions[2].x - positions[2].y)
-        ):
-            return False
+        return adjacent_positions
 
-        # Check if the positions are adjacent
-        if not (
-                (abs(positions[0].x - positions[1].x) <= 1 and abs(positions[0].y - positions[1].y) <= 1) or
-                (abs(positions[0].x - positions[2].x) <= 1 and abs(positions[0].y - positions[2].y) <= 1) or
-                (abs(positions[1].x - positions[2].x) <= 1 and abs(positions[1].y - positions[2].y) <= 1)
-        ):
-            return False
-
-        return True
+    # @staticmethod
+    # def are_positions_adjacent_and_in_line(positions: list[Position]) -> bool:
+    #     # Check if the positions are in a straight line on the x, y or z (diagonal) axis
+    #     if not (
+    #             (positions[0].x == positions[1].x == positions[2].x) or
+    #             (positions[0].y == positions[1].y == positions[2].y) or
+    #             (positions[0].x - positions[0].y == positions[1].x - positions[1].y == positions[2].x - positions[2].y)
+    #     ):
+    #         return False
+    #
+    #     # Check if the positions are adjacent
+    #     if not (
+    #             (abs(positions[0].x - positions[1].x) <= 1 and abs(positions[0].y - positions[1].y) <= 1) or
+    #             (abs(positions[0].x - positions[2].x) <= 1 and abs(positions[0].y - positions[2].y) <= 1) or
+    #             (abs(positions[1].x - positions[2].x) <= 1 and abs(positions[1].y - positions[2].y) <= 1)
+    #     ):
+    #         return False
+    #
+    #     return True
 
     @staticmethod
     def convert_input_file_to_game_state(file_name) -> GameState:
@@ -105,34 +116,30 @@ class StateSpaceGenerator:
 
 class LegalMovesGeneratorLucas:
     @staticmethod
-    def generate_legal_one_piece_moves(game_state: GameState, x: int, y: int):
-        possible_positions = PossibleMovesGenerator.get_possible_one_piece_new_positions(x, y)
+    def generate_legal_one_piece_moves(game_state: GameState, position: Position) -> list[Move]:
+        possible_positions = PossibleMovesGenerator.get_possible_one_piece_new_positions(position)
         legal_moves = []
 
-        for new_x, new_y in possible_positions:
-            previous_positions = [(x, y)]
-            new_positions = [(new_x, new_y)]
+        for new_position in possible_positions:
+            previous_positions = [position]
+            new_positions = [new_position]
 
             if LegalMovesGeneratorLucas.__is_available_position(game_state, previous_positions, new_positions):
-                previous_positions = [Position(x, y)]
-                new_positions = [Position(new_x, new_y)]
                 legal_move = Move(previous_positions, new_positions, game_state.turn)
                 legal_moves.append(legal_move)
 
         return legal_moves
 
     @staticmethod
-    def generate_legal_two_piece_moves(game_state: GameState, x1: int, y1: int, x2: int, y2):
-        possible_positions = PossibleMovesGenerator.get_possible_two_piece_new_positions(x1, y1, x2, y2)
+    def generate_legal_two_piece_moves(game_state: GameState, position1: Position, position2: Position):
+        possible_positions = PossibleMovesGenerator.get_possible_two_piece_new_positions(position1, position2)
         legal_moves = []
 
-        for (new_x1, new_y1), (new_x2, new_y2) in possible_positions:
-            previous_positions = [(x1, y1), (x2, y2)]
-            new_positions = [(new_x1, new_y1), (new_x2, new_y2)]
+        for new_position1, new_position2 in possible_positions:
+            previous_positions = [position1, position2]
+            new_positions = [new_position1, new_position2]
 
             if LegalMovesGeneratorLucas.__is_available_position(game_state, previous_positions, new_positions):
-                previous_positions = [Position(x1, y1), Position(x2, y2)]
-                new_positions = [Position(new_x1, new_y1), Position(new_x2, new_y2)]
                 legal_move = Move(previous_positions, new_positions, game_state.turn)
                 legal_moves.append(legal_move)
 
@@ -141,12 +148,12 @@ class LegalMovesGeneratorLucas:
     @staticmethod
     def __is_available_position(
             game_state: GameState,
-            previous_positions: list[tuple[int, int]],
-            new_positions: list[tuple[int, int]]
+            previous_positions: list[Position],
+            new_positions: list[Position]
     ) -> bool:
-        for x, y in new_positions:
+        for position in new_positions:
             if (
-                    not LegalMovesGeneratorLucas.__is_position_inside_board(game_state, x, y) or
+                    not LegalMovesGeneratorLucas.__is_position_inside_board(game_state, position) or
                     not LegalMovesGeneratorLucas.__is_space_empty(game_state, previous_positions, new_positions)
             ):
                 return False
@@ -156,18 +163,20 @@ class LegalMovesGeneratorLucas:
     @staticmethod
     def __is_space_empty(
             game_state: GameState,
-            previous_positions: list[tuple[int, int]],
-            new_positions: list[tuple[int, int]]
+            previous_positions: list[Position],
+            new_positions: list[Position]
     ) -> bool:
-        for x, y in new_positions:
+        for position in new_positions:
+            x, y = position.x, position.y
             # It can't move to a position that is already occupied and not going to be moved
-            if game_state.board[y][x] != 0 and (x, y) not in previous_positions:
+            if game_state.board[y][x] != 0 and position not in previous_positions:
                 return False
 
         return True
 
     @staticmethod
-    def __is_position_inside_board(game_state: GameState, x: int, y: int):
+    def __is_position_inside_board(game_state: GameState, position: Position) -> bool:
+        x, y = position.x, position.y
         # Check if the position is in the bounds of the board indices
         if x < 0 or y < 0 or x > 8 or y > 8:
             return False
@@ -180,32 +189,27 @@ class LegalMovesGeneratorLucas:
 
 class PossibleMovesGenerator:
     @staticmethod
-    def get_possible_one_piece_new_positions(x, y) -> list[tuple[int, int]]:
-        possible_moves = [
-            (x - 1, y),
-            (x + 1, y),
-            (x, y - 1),
-            (x, y + 1),
-            (x + 1, y - 1),
-            (x - 1, y + 1)
-        ]
-
-        return possible_moves
+    def get_possible_one_piece_new_positions(position: Position) -> list[Position]:
+        return Position.get_adjacent_positions(position)
 
     @staticmethod
-    def get_possible_two_piece_new_positions(x1, y1, x2, y2):
-        possible_moves_1 = PossibleMovesGenerator.get_possible_one_piece_new_positions(x1, y1)
-        possible_moves_2 = PossibleMovesGenerator.get_possible_one_piece_new_positions(x2, y2)
+    def get_possible_two_piece_new_positions(
+            position1: Position, position2: Position
+    ) -> list[tuple[Position, Position]]:
+        possible_moves_1 = PossibleMovesGenerator.get_possible_one_piece_new_positions(position1)
+        possible_moves_2 = PossibleMovesGenerator.get_possible_one_piece_new_positions(position2)
 
         possible_moves = list(zip(possible_moves_1, possible_moves_2))
 
         return possible_moves
 
     @staticmethod
-    def get_possible_three_piece_new_positions(x1, y1, x2, y2, x3, y3):
-        possible_moves_1 = PossibleMovesGenerator.get_possible_one_piece_new_positions(x1, y1)
-        possible_moves_2 = PossibleMovesGenerator.get_possible_one_piece_new_positions(x2, y2)
-        possible_moves_3 = PossibleMovesGenerator.get_possible_one_piece_new_positions(x3, y3)
+    def get_possible_three_piece_new_positions(
+            position1: Position, position2: Position, position3: Position
+    ) -> list[tuple[Position, Position, Position]]:
+        possible_moves_1 = PossibleMovesGenerator.get_possible_one_piece_new_positions(position1)
+        possible_moves_2 = PossibleMovesGenerator.get_possible_one_piece_new_positions(position2)
+        possible_moves_3 = PossibleMovesGenerator.get_possible_one_piece_new_positions(position3)
 
         possible_moves = list(zip(possible_moves_1, possible_moves_2, possible_moves_3))
 
