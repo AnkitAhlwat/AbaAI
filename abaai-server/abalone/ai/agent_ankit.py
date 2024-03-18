@@ -1,4 +1,3 @@
-from state_space_generator import StateSpaceGenerator
 from abalone.movement import Position
 
 
@@ -14,9 +13,18 @@ class LegalMoves:
 
     # Conditions / Helpers
     @staticmethod
-    def are_marbles_inline(pos1, pos2):
-        """Check if the marbles are in-line."""
-        return any((pos1.x - pos2.x, pos1.y - pos2.y) == move for move in LegalMoves.possible_moves)
+    def are_marbles_inline(*positions):
+        """Check if the given marbles (positions) are in-line. Works for 2 or 3 marbles."""
+        if len(positions) < 2:
+            return False
+        initial_direction = (positions[1].x - positions[0].x, positions[1].y - positions[0].y)
+
+        for i in range(1, len(positions) - 1):
+            direction = (positions[i + 1].x - positions[i].x, positions[i + 1].y - positions[i].y)
+            if direction != initial_direction:
+                return False
+
+        return initial_direction in LegalMoves.possible_moves
 
     @staticmethod
     def is_position_within_board(board, position):
@@ -37,6 +45,18 @@ class LegalMoves:
             vacating_positions = []
         if LegalMoves.is_position_within_board(board, position):
             return board[position.y][position.x] == 0 or position in vacating_positions
+
+    @staticmethod
+    def get_valid_moves(board, *positions):
+        num_marbles = len(positions)
+        if num_marbles == 1:
+            return LegalMoves.get_valid_moves_one_marble(board, positions[0].x, positions[0].y)
+        elif num_marbles == 2:
+            return LegalMoves.get_valid_moves_two_marbles(board, positions[0], positions[1])
+        elif num_marbles == 3:
+            return LegalMoves.get_valid_moves_three_marbles(board, positions[0], positions[1], positions[2])
+        else:
+            return []
 
     # Put all the methods to get valid moves here
     @staticmethod
@@ -66,31 +86,21 @@ class LegalMoves:
                 valid_moves.append((new_pos1, new_pos2))
         return valid_moves
 
+    @staticmethod
+    def get_valid_moves_three_marbles(board, pos1, pos2, pos3):
+        if not LegalMoves.are_marbles_inline(pos1, pos2, pos3):
+            return []
 
-GameBoard = StateSpaceGenerator.convert_input_file_to_game_state('Ankit.input')
-# print(GameBoard.board)
-maxPlayer = StateSpaceGenerator.get_max_player_piece_positions(GameBoard)
-# minPlayer = StateSpaceGenerator.get_min_player_piece_positions(GameBoard)
-print(f'All possible max moves : {maxPlayer}')
-for i in maxPlayer:
-    # get all possible moves from left, right, up, down, up-right, down-left
-    # print(i)
-    # print(LegalMoves.get_valid_moves_one_marble(GameBoard.board, i.x, i.y))
-    print(i, (i.x - 1, i.y))
-    print(LegalMoves.get_valid_moves_two_marbles(GameBoard.board, i, Position(i.x - 1, i.y)))
-    print("---------------------------------------------------")
-    print(i, (i.x + 1, i.y))
-    print(LegalMoves.get_valid_moves_two_marbles(GameBoard.board, i, Position(i.x + 1, i.y)))
-    print("---------------------------------------------------")
-    print(i, (i.x, i.y - 1))
-    print(LegalMoves.get_valid_moves_two_marbles(GameBoard.board, i, Position(i.x, i.y - 1)))
-    print("---------------------------------------------------")
-    print(i, (i.x, i.y + 1))
-    print(LegalMoves.get_valid_moves_two_marbles(GameBoard.board, i, Position(i.x, i.y + 1)))
-    print("---------------------------------------------------")
-    print(i, (i.x - 1, i.y + 1))
-    print(LegalMoves.get_valid_moves_two_marbles(GameBoard.board, i, Position(i.x - 1, i.y + 1)))
-    print("---------------------------------------------------")
-    print(i, (i.x + 1, i.y - 1))
-    print(LegalMoves.get_valid_moves_two_marbles(GameBoard.board, i, Position(i.x + 1, i.y - 1)))
-    print("---------------------------------------------------")
+        valid_moves = []
+        vacating_positions = [pos1, pos2, pos3]
+
+        for move_x, move_y in LegalMoves.possible_moves:
+            new_pos1 = Position(pos1.x + move_x, pos1.y + move_y)
+            new_pos2 = Position(pos2.x + move_x, pos2.y + move_y)
+            new_pos3 = Position(pos3.x + move_x, pos3.y + move_y)
+
+            if all(LegalMoves.is_position_empty_or_vacating(board, p, vacating_positions)
+                   for p in [new_pos1, new_pos2, new_pos3]):
+                valid_moves.append((new_pos1, new_pos2, new_pos3))
+
+        return valid_moves
