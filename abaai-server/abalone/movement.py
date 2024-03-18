@@ -27,6 +27,18 @@ class Position:
     def get_number_from_x(x: int):
         return x + 1
 
+    def __str__(self):
+        return f'({self.x}, {self.y})'
+
+    def __repr__(self):
+        return f'({self.x}, {self.y})'
+
+    def __eq__(self, other):
+        return isinstance(other, Position) and self.x == other.x and self.y == other.y
+
+    def __hash__(self):
+        return hash((self.x, self.y))
+
 
 class Move:
     def __init__(self, previous_positions: list[Position], next_positions: list[Position], player: Piece):
