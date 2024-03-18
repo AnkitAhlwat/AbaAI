@@ -35,6 +35,7 @@ def undo_move():
     game_update = app.game.undo_move()
     return jsonify(game_update.to_json())
 
+
 @app.route('/api/game/reset', methods=['POST'])
 def reset_game():
     if request:
@@ -44,6 +45,14 @@ def reset_game():
         return jsonify(game_update.to_json())
 
     return jsonify({"error": "Invalid JSON"}), 400
+
+
+@app.route('/api/game/possibleMoves', methods=['GET'])
+def possible_moves():
+    board = app.game.board
+    game_update = app.game.get_possible_moves(board)
+    return jsonify(game_update.to_json())
+
 
 
 if __name__ == "__main__":
