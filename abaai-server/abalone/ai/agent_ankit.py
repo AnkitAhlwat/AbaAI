@@ -48,59 +48,19 @@ class LegalMoves:
 
     @staticmethod
     def get_valid_moves(board, *positions):
-        num_marbles = len(positions)
-        if num_marbles == 1:
-            return LegalMoves.get_valid_moves_one_marble(board, positions[0])
-        elif num_marbles == 2:
-            return LegalMoves.get_valid_moves_two_marbles(board, positions[0], positions[1])
-        elif num_marbles == 3:
-            return LegalMoves.get_valid_moves_three_marbles(board, positions[0], positions[1], positions[2])
-        else:
-            return []
-
-    # Put all the methods to get valid moves here
-    @staticmethod
-    def get_valid_moves_one_marble(board, pos):
-        valid_moves = []
-
-        for move_x, move_y in LegalMoves.possible_moves:
-            new_pos = Position(pos.x + move_x, pos.y + move_y)
-            if LegalMoves.is_position_empty(board, new_pos):
-                valid_moves.append(new_pos)
-
-        return valid_moves
-
-    @staticmethod
-    def get_valid_moves_two_marbles(board, pos1, pos2):
-        if not LegalMoves.are_marbles_inline(pos1, pos2):
+        """Get the valid moves for the given marbles(Currently only for movement.)"""
+        if len(positions) > 1 and not LegalMoves.are_marbles_inline(*positions):
             return []
 
         valid_moves = []
-        vacating_positions = [pos1, pos2]
-        for move_x, move_y in LegalMoves.possible_moves:
-            new_pos1 = Position(pos1.x + move_x, pos1.y + move_y)
-            new_pos2 = Position(pos2.x + move_x, pos2.y + move_y)
-
-            if LegalMoves.is_position_empty_or_vacating(board, new_pos1, vacating_positions) and \
-                    LegalMoves.is_position_empty_or_vacating(board, new_pos2, vacating_positions):
-                valid_moves.append((new_pos1, new_pos2))
-        return valid_moves
-
-    @staticmethod
-    def get_valid_moves_three_marbles(board, pos1, pos2, pos3):
-        if not LegalMoves.are_marbles_inline(pos1, pos2, pos3):
-            return []
-
-        valid_moves = []
-        vacating_positions = [pos1, pos2, pos3]
+        vacating_positions = list(positions)
 
         for move_x, move_y in LegalMoves.possible_moves:
-            new_pos1 = Position(pos1.x + move_x, pos1.y + move_y)
-            new_pos2 = Position(pos2.x + move_x, pos2.y + move_y)
-            new_pos3 = Position(pos3.x + move_x, pos3.y + move_y)
+            new_positions = [Position(pos.x + move_x, pos.y + move_y) for pos in positions]
 
-            if all(LegalMoves.is_position_empty_or_vacating(board, p, vacating_positions)
-                   for p in [new_pos1, new_pos2, new_pos3]):
-                valid_moves.append((new_pos1, new_pos2, new_pos3))
+            if all(LegalMoves.is_position_within_board(board, new_pos) for new_pos in new_positions) and \
+                    all(LegalMoves.is_position_empty_or_vacating(board, new_pos, vacating_positions)
+                        for new_pos in new_positions):
+                valid_moves.append(new_positions[0] if len(new_positions) == 1 else tuple(new_positions))
 
         return valid_moves
