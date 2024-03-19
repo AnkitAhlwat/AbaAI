@@ -22,6 +22,7 @@ const Game = () => {
   const [selectedMarbles, setSelectedMarbles] = useState([]); // Tracks which marbles are selected
   const [movesStack, setMovesStack] = useState([]); // Tracks player move history
   const [gameStarted, setGameStarted] = useState(false); // Tracks whether game has started
+  const [activePlayer, setActivePlayer] = useState('black'); // Tracks which player's turn it is for clock logic, potentially temporary
   // const [currentPlayer, setCurrentPlayer] = useState('player1'); CLOCKSTUFF
   // const [isPaused, setIsPaused] = useState(false);
 
@@ -34,6 +35,10 @@ const Game = () => {
     whiteTimeLimit: 15,
     moveLimit: 20
   });
+
+  const toggleActivePlayer = () => {
+    setActivePlayer(prev => prev === 'black' ? 'white' : 'black');
+  };
 
   // const togglePause = () => { CLOCKSTUFF
   //   setIsPaused(!isPaused);
@@ -77,6 +82,9 @@ const Game = () => {
       if (!gameStarted) {
         setGameStarted(true);
       }
+
+      //toggle the active player turn
+      toggleActivePlayer();
 
       setSelectedMarbles([]);
 
@@ -162,6 +170,9 @@ const Game = () => {
           aiMove={aiMove}
 
           //for the clock controls
+          activePlayer={activePlayer}
+          toggleActivePlayer={toggleActivePlayer}
+          gameStarted={gameStarted}
           // currentPlayer={currentPlayer}
           // isPaused={isPaused}
           // togglePause={togglePause}

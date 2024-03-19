@@ -5,7 +5,7 @@ import Proptypes from "prop-types";
 import { Divider, Typography } from "@mui/material";
 
 const CurrentGameBar = (props) => {
-  const { movesStack, aiMove } = props;
+  const { movesStack, aiMove, activePlayer, toggleActivePlayer, gameStarted } = props;
   //const { movesStack, aiMove, currentPlayer, isPaused, togglePause} = props; CLOCK
   const blackPlayerTime = 180; 
   const whitePlayerTime = 180;
@@ -69,8 +69,20 @@ const CurrentGameBar = (props) => {
 
   return (
     <>
-      <GameClock initialTime={blackPlayerTime} playerId="black" />
-      <GameClock initialTime={whitePlayerTime} playerId="white" />
+      <GameClock 
+        initialTime={blackPlayerTime} 
+        isActive={activePlayer === 'black'}
+        playerId="black" 
+        onMoveMade={toggleActivePlayer}
+        gameStarted = {gameStarted}
+        />
+      <GameClock 
+        initialTime={whitePlayerTime}
+        isActive={activePlayer === 'white'}
+        playerId="white" 
+        onMoveMade={toggleActivePlayer} 
+        gameStarted = {gameStarted}
+        />
       {/* <GameClock currentPlayer={currentPlayer} isPaused={isPaused} togglePause={togglePause} /> */}
       {centerDivider("AI Suggested Move")}
       <AIMoveDisplay aiMove={aiMove} />

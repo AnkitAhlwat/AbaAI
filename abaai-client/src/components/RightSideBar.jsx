@@ -6,7 +6,7 @@ import { Box, Tab } from "@mui/material";
 import CurrentGameBar from "./CurrentGameBar";
 
 const RightSideBar = (props) => {
-  const { config, setConfig, movesStack, aiMove } = props;
+  const { config, setConfig, movesStack, aiMove, activePlayer, toggleActivePlayer, gameStarted } = props;
   //CLOCKSTUFF
   //const { config, setConfig, movesStack, aiMove, currentPlayer, isPaused, togglePause } = props;
 
@@ -28,7 +28,12 @@ const RightSideBar = (props) => {
         <CurrentGameBar
             movesStack={movesStack}
             aiMove={aiMove}
-            // currentPlayer={currentPlayer} CLOCKSTUFF
+
+            //clock controls
+            activePlayer={activePlayer}
+            toggleActivePlayer={toggleActivePlayer}
+            gameStarted={gameStarted}
+            // currentPlayer={currentPlayer}
             // isPaused={isPaused}
             // togglePause={togglePause}
           />
