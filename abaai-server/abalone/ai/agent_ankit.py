@@ -77,7 +77,7 @@ class LegalMoves:
         push_target_pos = Position(last_opponent_pos.x + direction[0], last_opponent_pos.y + direction[1])
 
         return not LegalMoves.is_position_within_board(board, push_target_pos) \
-            or LegalMoves.is_position_empty(board, push_target_pos)
+               or LegalMoves.is_position_empty(board, push_target_pos)
 
     @staticmethod
     def find_marble_sequence(board, start_pos, direction, player_positions, opponent_positions):
@@ -129,14 +129,9 @@ class LegalMoves:
                     new_positions_player = [Position(pos.x + direction[0], pos.y + direction[1]) for pos in
                                             sequence['player']]
                     new_positions_opponent = [Position(pos.x + direction[0], pos.y + direction[1]) for pos in
-                                              sequence['opponent'] if LegalMoves.is_position_within_board(board,
-                                                                                                          Position(
-                                                                                                              pos.x +
-                                                                                                              direction[
-                                                                                                                  0],
-                                                                                                              pos.y +
-                                                                                                              direction[
-                                                                                                                  1]))]
+                                              sequence['opponent']
+                                              if LegalMoves.is_position_within_board
+                                              (board, Position(pos.x + direction[0], pos.y + direction[1]))]
 
                     sumitos[key] = {
                         'previous_player_seq': sequence['player'],
