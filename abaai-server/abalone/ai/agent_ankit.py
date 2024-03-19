@@ -97,8 +97,8 @@ class LegalMoves:
                     sequence_found = True
                     current_pos = next_pos
                     break
-                elif not LegalMoves.is_position_within_board(board, next_pos) or LegalMoves.is_position_empty(board,
-                                                                                                              next_pos):
+                elif not LegalMoves.is_position_within_board(board, next_pos) \
+                        or LegalMoves.is_position_empty(board, next_pos):
                     break
                 current_pos = next_pos
             else:
