@@ -94,11 +94,9 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
       if (selectedMarbles[0].state == 2) {
         turn = "white";
       }
+      setValidMoves(possibleMoves[turn][myString]);
+
       if (possibleMoves[turn][myString] !== undefined) {
-        setValidMoves(possibleMoves[turn][myString]);
-        console.log("setting valid moves");
-        console.log(validMoves);
-        console.log(possibleMoves[turn][myString]);
         possibleMoves[turn][myString].forEach(move => {
           if (move[0]) {
             move = move[0];
@@ -120,8 +118,6 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
   // Callback when a marble is deselected
 
   const clearValidMoves = useCallback(async () => {
-    console.log("clearing valid moves");
-    console.log(validMoves);
     for (let move of board) {
       console.log(move);
       for (let space of move) {
@@ -130,7 +126,7 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
         }
       }
     }
-  }, [setValidMoves, validMoves, setSelectedMarbles]);
+  }, [setValidMoves, validMoves, setSelectedMarbles, selectedMarbles]);
 
 
   const deselectMarbles = useCallback(async (marbles) => {
@@ -201,13 +197,14 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
 
       // If the marble is already selected or there are more than two selected marbles, deselect all the marbles and select the current marble
       else if (selectedMarbles.includes(space) || selectedMarbles.length >= 3) {
-        clearValidMoves();
         deselectMarbles(selectedMarbles);
         setSelectedMarbles([space]);
+        clearValidMoves();
+
         space.selected = true;
       }
     },
-    [deselectMarbles, selectedMarbles, setSelectedMarbles]
+    [deselectMarbles, selectedMarbles, setSelectedMarbles, clearValidMoves]
   );
 
   // A function that will return the color of the marble based on the state
