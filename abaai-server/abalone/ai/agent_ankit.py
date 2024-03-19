@@ -64,6 +64,8 @@ class LegalMoves:
 
         return valid_moves
 
+    """Sumito Logic"""
+
     @staticmethod
     def can_sumito_occur(sequence, direction, board):
         """Determine if a Sumito move is possible based on the sequence and direction."""
@@ -124,7 +126,9 @@ class LegalMoves:
                 sequence = LegalMoves.find_marble_sequence(board, start_pos, direction, player_positions,
                                                            opponent_positions)
                 if sequence and LegalMoves.can_sumito_occur(sequence, direction, board):
-                    key = tuple(sequence['player']) + tuple(sequence['opponent'])
+                    player = sorted([sequence['player']])
+                    opponent = sorted([sequence['opponent']])
+                    key = player[0] + opponent[0]
 
                     new_positions_player = [Position(pos.x + direction[0], pos.y + direction[1]) for pos in
                                             sequence['player']]
@@ -133,7 +137,7 @@ class LegalMoves:
                                               if LegalMoves.is_position_within_board
                                               (board, Position(pos.x + direction[0], pos.y + direction[1]))]
 
-                    sumitos[key] = {
+                    sumitos[f'{key}'] = {
                         'previous_player_seq': sequence['player'],
                         'new_player_seq': new_positions_player,
                         'previous_opponent_seq': sequence['opponent'],
