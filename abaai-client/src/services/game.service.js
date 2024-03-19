@@ -35,6 +35,15 @@ class GameService {
             console.error('Error resetting game:', error);
         }
     }
+    static async getPossibleMoves() {
+        try {
+            const url = `${import.meta.env.VITE_API_BASE_URL}/game/possibleMoves`;
+            const response = await axios.get(url);
+            return response.data;
+        } catch (error) {
+            console.error('Error getting possible moves:', error);
+        }
+    }
 }
 
 

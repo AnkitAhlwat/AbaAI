@@ -23,6 +23,7 @@ const Game = () => {
   const [selectedMarbles, setSelectedMarbles] = useState([]); // Tracks which marbles are selected
   const [movesStack, setMovesStack] = useState([]); // Tracks player move history
   const [gameStarted, setGameStarted] = useState(false); // Tracks whether game has started
+  const [possibleMoves, setPossibleMoves] = useState([]);
 
   // Tracks configuration options
   const [config, setConfig] = useState({
