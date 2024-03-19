@@ -33,6 +33,11 @@ const marbleStyles = {
     backgroundColor: "#ae694a",
     boxShadow: "none",
     flexShrink: 1,
+    highlighted: {
+      backgroundColor: "yellow",
+      boxShadow: "none",
+      flexShrink: 1,
+    },
   },
   selected: {
     backgroundColor: "rgba(115,149,82,255)",
@@ -90,7 +95,6 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
         turn = "white";
       }
       if (possibleMoves[turn][myString] !== undefined) {
-        setValidMoves(possibleMoves[turn][myString]);
         console.log(validMoves);
         console.log(possibleMoves[turn][myString]);
         possibleMoves[turn][myString].forEach(move => {
@@ -98,8 +102,11 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
             move = move[0];
           }
           let state = board[move.y][move.x];
-          state.state = 3;
+          if (state.state == 0) {
+            state.state = 3;
+          }
         });
+        setValidMoves(possibleMoves[turn][myString]);
 
       }
     };
@@ -111,9 +118,18 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
   }, [possibleMoves, selectedMarbles]);
   // Callback when a marble is deselected
   const deselectMarbles = useCallback((marbles) => {
+    console.log("deselecting marbles");
     for (const marble of marbles) {
       marble.selected = false;
     }
+    for (const move of validMoves) {
+      console.log(move);
+      if (board[move.y][move.x].state == 3) {
+        console.log("setting state to 0");
+        board[move.y][move.x].state = 0;
+      }
+    }
+    setValidMoves([]);
   }, []);
 
   const onMarbleClick = useCallback(
@@ -186,10 +202,7 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
   const getSpaceStyle = useCallback((space) => {
     if (space.selected) {
       return marbleStyles.selected;
-    } else if (space.highlighted) {
-      return marbleStyles.possibleMoves;
     }
-
     return marbleStyles[space.state];
   }, []);
 
