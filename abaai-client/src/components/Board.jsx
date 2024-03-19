@@ -75,43 +75,24 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
 
   useEffect(() => {
     const updateHighlightedMoves = () => {
-      const updatedBoard = board.map((row) => row.map((space) => ({ ...space, highlighted: false })));
-      if (selectedMarbles.length === 1) {
-        const marble = selectedMarbles[0];
-        const marbleKey = `${marble.position.x},${marble.position.y}`;
-        let turn = "white";
-        if (marble.state == 1) {
-          turn = "black";
-        }
-        console.log(possibleMoves[turn][marbleKey]);
-        if (possibleMoves[marbleKey]) {
-          possibleMoves[marbleKey].forEach(move => {
-            updatedBoard[move.y][move.x].highlighted = true;
-          });
-        }
+      let marbleKey = [];
+      let turn = "black"
+      selectedMarbles.forEach(marble => {
+        marbleKey.push([marble.position.x, marble.position.y]);
+      });
+      console.log(marbleKey);
+      const sortedMarbleKey = marbleKey.sort();
+      let myString = "[";
+      sortedMarbleKey.forEach(marble => {
+        myString += `'${marble[0]},${marble[1]}', `;
+      });
+      myString = myString.slice(0, -2);
+      myString += "]";
+      console.log(myString);
+      if (possibleMoves[selectedMarbles[0].state] == 2) {
+        turn = "white";
       }
-      if (selectedMarbles.length > 1) {
-        selectedMarbles.sort((a, b) => {
-          if (a.position.x == b.position.x) {
-            return a.position.y - b.position.y;
-          }
-          return a.position.x - b.position.x;
-        });
-        let marbleKey = `(`
-        selectedMarbles.forEach(marble => {
-          marbleKey += `'${marble.position.x},${marble.position.y}', `;
-        });
-        marbleKey = marbleKey.slice(0, -2);
-        marbleKey += `)`;
-        let turn = "white";
-        if (selectedMarbles[0].state == 1) {
-          turn = "black";
-        }
-        console.log(marbleKey)
-        console.log(possibleMoves[turn][marbleKey]);
-
-      };
-
+      console.log(possibleMoves[turn][myString]);
     };
 
     // Call the update function if there are selected marbles
