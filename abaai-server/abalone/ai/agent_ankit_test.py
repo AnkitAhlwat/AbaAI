@@ -6,7 +6,7 @@ from state_space_generator import StateSpaceGenerator
 
 
 
-GameBoard = FileReader.convert_input_file_to_game_state('Ankit.input')
+GameBoard = FileReader.convert_input_file_to_game_state('Test1.input')
 maxPlayer = StateSpaceGenerator.get_max_player_piece_positions(GameBoard,1)
 minPlayer = StateSpaceGenerator.get_min_player_piece_positions(GameBoard,2)
 all_moves = StateSpaceGenerator.generate_all_moves(GameBoard, maxPlayer, minPlayer)
