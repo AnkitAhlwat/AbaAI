@@ -32,6 +32,9 @@ class Position:
 
     def to_string(self):
         return f'{self.x},{self.y}'
+    def __iter__(self):
+        """Allow the Position object to be iterable, so it can be unpacked like a tuple."""
+        return iter((self.x, self.y))
 
     def __str__(self):
         return f'({self.x}, {self.y})'
@@ -44,6 +47,13 @@ class Position:
 
     def __hash__(self):
         return hash((self.x, self.y))
+    def __getitem__(self, index):
+        if index == 0:
+            return self.x
+        elif index == 1:
+            return self.y
+        else:
+            raise IndexError("Index out of range for Position")
 
 
 class Move:

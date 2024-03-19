@@ -1,4 +1,6 @@
 from itertools import combinations
+
+from abalone.ai.file_reader import FileReader
 from agent_ankit import LegalMoves
 from state_space_generator import StateSpaceGenerator
 
@@ -29,11 +31,14 @@ def generate_all_black_moves(board, black_marbles_positions):
     return all_moves
 
 
-# GameBoard = StateSpaceGenerator.convert_input_file_to_game_state('Ankit.input')
-# maxPlayer = StateSpaceGenerator.get_max_player_piece_positions(GameBoard)
-# minPlayer = StateSpaceGenerator.get_min_player_piece_positions(GameBoard)
+GameBoard = FileReader.convert_input_file_to_game_state('Test1.input')
+maxPlayer = StateSpaceGenerator.get_max_player_piece_positions(GameBoard,1)
+minPlayer = StateSpaceGenerator.get_min_player_piece_positions(GameBoard,2)
 # all_moves = StateSpaceGenerator.generate_all_moves(GameBoard, maxPlayer, minPlayer)
-# print(all_moves)
+sumitos = LegalMoves.generate_all_sumitos(GameBoard.board, maxPlayer, minPlayer)
+print(sumitos)
+sumitos2 = LegalMoves.generate_all_sumitos(GameBoard.board, minPlayer, maxPlayer)
+print(sumitos2)
 """Testing Ignore below"""
 
 # GameBoard = StateSpaceGenerator.convert_input_file_to_game_state('Ankit.input')

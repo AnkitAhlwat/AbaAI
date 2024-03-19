@@ -34,9 +34,7 @@ class LegalMoves:
     @staticmethod
     def is_position_empty(board, position):
         """Check if a position is empty."""
-        if LegalMoves.is_position_within_board(board, position):
-            return board[position.y][position.x] == 0
-        return False
+        return LegalMoves.is_position_within_board(board, position) and board[position.y][position.x] == 0
 
     @staticmethod
     def is_position_empty_or_vacating(board, position, vacating_positions=None):
@@ -65,3 +63,87 @@ class LegalMoves:
                                    else [pos.to_json() for pos in new_positions])
 
         return valid_moves
+
+    @staticmethod
+    def can_sumito_occur(sequence, direction, board):
+        """Determine if a Sumito move is possible based on the sequence and direction."""
+        if not sequence['opponent']:
+            return False
+
+        if len(sequence['player']) <= len(sequence['opponent']):
+            return False
+
+        last_opponent_pos = sequence['opponent'][-1]
+        push_target_pos = Position(last_opponent_pos.x + direction[0], last_opponent_pos.y + direction[1])
+
+        return not LegalMoves.is_position_within_board(board, push_target_pos) \
+            or LegalMoves.is_position_empty(board, push_target_pos)
+
+    @staticmethod
+    def find_marble_sequence(board, start_pos, direction, player_positions, opponent_positions):
+        """Identify a sequence of player and opponent marbles in a specific direction."""
+        player_seq = []
+        opponent_seq = []
+        current_pos = start_pos
+        sequence_found = False
+
+        for _ in range(3):
+            if current_pos in player_positions:
+                player_seq.append(current_pos)
+                next_pos = Position(current_pos.x + direction[0], current_pos.y + direction[1])
+                if next_pos in opponent_positions:
+                    sequence_found = True
+                    current_pos = next_pos
+                    break
+                elif not LegalMoves.is_position_within_board(board, next_pos) or LegalMoves.is_position_empty(board,
+                                                                                                              next_pos):
+                    break
+                current_pos = next_pos
+            else:
+                break
+
+        while sequence_found and current_pos in opponent_positions:
+            opponent_seq.append(current_pos)
+            next_pos = Position(current_pos.x + direction[0], current_pos.y + direction[1])
+            if not LegalMoves.is_position_within_board(board, next_pos) or LegalMoves.is_position_empty(board,
+                                                                                                        next_pos):
+                break
+            current_pos = next_pos
+
+        if sequence_found:
+            return {'player': player_seq, 'opponent': opponent_seq}
+        return None
+
+    @staticmethod
+    def generate_all_sumitos(board, player_positions, opponent_positions):
+        """Generate all possible Sumitos given the current board state."""
+        sumitos = {}
+
+        for start_pos in player_positions:
+            for direction in LegalMoves.possible_moves:
+                sequence = LegalMoves.find_marble_sequence(board, start_pos, direction, player_positions,
+                                                           opponent_positions)
+                if sequence and LegalMoves.can_sumito_occur(sequence, direction, board):
+                    key = tuple(sequence['player']) + tuple(sequence['opponent'])
+
+                    new_positions_player = [Position(pos.x + direction[0], pos.y + direction[1]) for pos in
+                                            sequence['player']]
+                    new_positions_opponent = [Position(pos.x + direction[0], pos.y + direction[1]) for pos in
+                                              sequence['opponent'] if LegalMoves.is_position_within_board(board,
+                                                                                                          Position(
+                                                                                                              pos.x +
+                                                                                                              direction[
+                                                                                                                  0],
+                                                                                                              pos.y +
+                                                                                                              direction[
+                                                                                                                  1]))]
+
+                    sumitos[key] = {
+                        'previous_player_seq': sequence['player'],
+                        'new_player_seq': new_positions_player,
+                        'previous_opponent_seq': sequence['opponent'],
+                        'new_opponent_seq': new_positions_opponent,
+                        'direction': direction
+                    }
+
+        return sumitos
