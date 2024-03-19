@@ -95,6 +95,8 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
         turn = "white";
       }
       if (possibleMoves[turn][myString] !== undefined) {
+        setValidMoves(possibleMoves[turn][myString]);
+        console.log("valid moves");
         console.log(validMoves);
         console.log(possibleMoves[turn][myString]);
         possibleMoves[turn][myString].forEach(move => {
@@ -106,7 +108,6 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
             state.state = 3;
           }
         });
-        setValidMoves(possibleMoves[turn][myString]);
 
       }
     };
@@ -117,20 +118,24 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
     }
   }, [possibleMoves, selectedMarbles]);
   // Callback when a marble is deselected
-  const deselectMarbles = useCallback((marbles) => {
+  const deselectMarbles = useCallback(async (marbles) => {
     console.log("deselecting marbles");
     for (const marble of marbles) {
       marble.selected = false;
     }
-    for (const move of validMoves) {
-      console.log(move);
+    console.log(validMoves);
+    for (let move of validMoves) {
+      console.log("setting state to 0");
+      if (move[0]) {
+        move = move[0];
+      }
       if (board[move.y][move.x].state == 3) {
         console.log("setting state to 0");
         board[move.y][move.x].state = 0;
       }
     }
     setValidMoves([]);
-  }, []);
+  }, [selectedMarbles, setValidMoves]);
 
   const onMarbleClick = useCallback(
     (space) => {
