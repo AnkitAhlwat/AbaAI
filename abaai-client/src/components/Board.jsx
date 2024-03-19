@@ -135,7 +135,7 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
       }
     }
     setValidMoves([]);
-  }, [selectedMarbles, setValidMoves]);
+  }, [selectedMarbles, validMoves]);
 
   const onMarbleClick = useCallback(
     (space) => {
