@@ -7,6 +7,8 @@ import CurrentGameBar from "./CurrentGameBar";
 
 const RightSideBar = (props) => {
   const { config, setConfig, movesStack, aiMove } = props;
+  //CLOCKSTUFF
+  //const { config, setConfig, movesStack, aiMove, currentPlayer, isPaused, togglePause } = props;
 
   const [value, setValue] = useState("2");
   const handleChange = (event, newValue) => {
@@ -23,7 +25,14 @@ const RightSideBar = (props) => {
           </TabList>
         </Box>
         <TabPanel value="1">
-          <CurrentGameBar movesStack={movesStack} aiMove={aiMove} />
+        <CurrentGameBar
+            movesStack={movesStack}
+            aiMove={aiMove}
+            // currentPlayer={currentPlayer} CLOCKSTUFF
+            // isPaused={isPaused}
+            // togglePause={togglePause}
+          />
+          
         </TabPanel>
         <TabPanel value="2">
           <ConfigMenu config={config} setConfig={setConfig} />

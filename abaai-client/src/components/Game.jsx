@@ -8,7 +8,6 @@ import { Grid } from "@mui/material";
 import GameService from "../services/game.service";
 import Move from "../models/Move";
 import GameControls from "./GameControls";
-import GameClock from "./Clock";
 import MoveButtons from "./MoveButtons";
 import AIMoveDisplay from "./AiMove";
 import Space from "../models/Space";
@@ -23,6 +22,8 @@ const Game = () => {
   const [selectedMarbles, setSelectedMarbles] = useState([]); // Tracks which marbles are selected
   const [movesStack, setMovesStack] = useState([]); // Tracks player move history
   const [gameStarted, setGameStarted] = useState(false); // Tracks whether game has started
+  // const [currentPlayer, setCurrentPlayer] = useState('player1'); CLOCKSTUFF
+  // const [isPaused, setIsPaused] = useState(false);
 
   // Tracks configuration options
   const [config, setConfig] = useState({
@@ -33,6 +34,14 @@ const Game = () => {
     whiteTimeLimit: 15,
     moveLimit: 20
   });
+
+  // const togglePause = () => { CLOCKSTUFF
+  //   setIsPaused(!isPaused);
+  // };
+  //currently used to switch the turn and aggregate clocks, can merge it with config options
+  // const switchPlayer = () => {
+  //   setCurrentPlayer(currentPlayer === 'player1' ? 'player2' : 'player1');
+  // };
 
   const { board, setBoardArray } = useBoard(config.boardLayout); // import board state and setBoard function from useBoard hook
 
@@ -127,6 +136,12 @@ const Game = () => {
           onMoveSelection={onMoveSelection}
           selectedMarbles={selectedMarbles}
           setSelectedMarbles={setSelectedMarbles}
+
+          // for the clock controls
+          // currentPlayer={currentPlayer}
+          // isPaused={isPaused}
+          // togglePause={togglePause}
+          // switchPlayer={switchPlayer}
         />
       </Grid>
 
@@ -145,6 +160,11 @@ const Game = () => {
           setConfig={setConfig}
           movesStack={movesStack}
           aiMove={aiMove}
+
+          //for the clock controls
+          // currentPlayer={currentPlayer}
+          // isPaused={isPaused}
+          // togglePause={togglePause}
         />
       </Grid>
     </Grid>
