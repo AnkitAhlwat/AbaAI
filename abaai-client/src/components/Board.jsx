@@ -43,14 +43,12 @@ const marbleStyles = {
       backgroundColor: "rgba(130,180,100,255)", // Change hover color
     },
   },
-  possibleMoves: {
-    backgroundColor: "rgba(200,255,255,255)",
+  // Possible moves
+  3: {
+    backgroundColor: "yellow",
     boxShadow: "none",
     outline: "solid 2px black",
     flexShrink: 1,
-    "&:hover": {
-      backgroundColor: "rgba(130,180,100,255)", // Change hover color
-    },
   },
 
 };
@@ -58,6 +56,7 @@ const marbleStyles = {
 // Displays the playing board of the GUI
 const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
   const [possibleMoves, setPossibleMoves] = useState({});
+  const [validMoves, setValidMoves] = useState([]);
 
   const fetchPossibleMoves = useCallback(async () => {
     try {
@@ -90,14 +89,26 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
       if (selectedMarbles[0].state == 2) {
         turn = "white";
       }
-      console.log(possibleMoves[turn][myString]);
+      if (possibleMoves[turn][myString] !== undefined) {
+        setValidMoves(possibleMoves[turn][myString]);
+        console.log(validMoves);
+        console.log(possibleMoves[turn][myString]);
+        possibleMoves[turn][myString].forEach(move => {
+          if (move[0]) {
+            move = move[0];
+          }
+          let state = board[move.y][move.x];
+          state.state = 3;
+        });
+
+      }
     };
 
     // Call the update function if there are selected marbles
     if (selectedMarbles.length > 0) {
       updateHighlightedMoves();
     }
-  }, [selectedMarbles, possibleMoves, board]);
+  }, [possibleMoves, selectedMarbles]);
   // Callback when a marble is deselected
   const deselectMarbles = useCallback((marbles) => {
     for (const marble of marbles) {
@@ -199,7 +210,7 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
         </Fab>
       );
     },
-    [getSpaceStyle, onMarbleClick]
+    [getSpaceStyle, onMarbleClick, validMoves]
   );
 
   // A function that will render a row of the board
