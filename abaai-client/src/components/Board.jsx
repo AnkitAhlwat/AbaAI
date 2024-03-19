@@ -1,8 +1,9 @@
 import { Grid, Fab, Box } from "@mui/material";
 import PropTypes from "prop-types";
 import SpaceStates from "../constants/spaceStates";
-import { useCallback } from "react";
+import { useCallback, useState, useEffect } from "react";
 import Space from "../models/Space";
+import GameService from "../services/game.service";
 
 const marbleStyles = {
   // Black marble
@@ -42,10 +43,82 @@ const marbleStyles = {
       backgroundColor: "rgba(130,180,100,255)", // Change hover color
     },
   },
+  possibleMoves: {
+    backgroundColor: "rgba(200,255,255,255)",
+    boxShadow: "none",
+    outline: "solid 2px black",
+    flexShrink: 1,
+    "&:hover": {
+      backgroundColor: "rgba(130,180,100,255)", // Change hover color
+    },
+  },
+
 };
 
 // Displays the playing board of the GUI
 const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
+  const [possibleMoves, setPossibleMoves] = useState({});
+
+  const fetchPossibleMoves = useCallback(async () => {
+    try {
+      const responseData = await GameService.getPossibleMoves();
+      console.log(responseData);
+      setPossibleMoves(responseData);
+    } catch (error) {
+      console.error("Failed to fetch possible moves:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchPossibleMoves();
+  }, [fetchPossibleMoves])
+
+  useEffect(() => {
+    const updateHighlightedMoves = () => {
+      const updatedBoard = board.map((row) => row.map((space) => ({ ...space, highlighted: false })));
+      if (selectedMarbles.length === 1) {
+        const marble = selectedMarbles[0];
+        const marbleKey = `${marble.position.x},${marble.position.y}`;
+        let turn = "white";
+        if (marble.state == 1) {
+          turn = "black";
+        }
+        console.log(possibleMoves[turn][marbleKey]);
+        if (possibleMoves[marbleKey]) {
+          possibleMoves[marbleKey].forEach(move => {
+            updatedBoard[move.y][move.x].highlighted = true;
+          });
+        }
+      }
+      if (selectedMarbles.length > 1) {
+        selectedMarbles.sort((a, b) => {
+          if (a.position.x == b.position.x) {
+            return a.position.y - b.position.y;
+          }
+          return a.position.x - b.position.x;
+        });
+        let marbleKey = `(`
+        selectedMarbles.forEach(marble => {
+          marbleKey += `'${marble.position.x},${marble.position.y}', `;
+        });
+        marbleKey = marbleKey.slice(0, -2);
+        marbleKey += `)`;
+        let turn = "white";
+        if (selectedMarbles[0].state == 1) {
+          turn = "black";
+        }
+        console.log(marbleKey)
+        console.log(possibleMoves[turn][marbleKey]);
+
+      };
+
+    };
+
+    // Call the update function if there are selected marbles
+    if (selectedMarbles.length > 0) {
+      updateHighlightedMoves();
+    }
+  }, [selectedMarbles, possibleMoves, board]);
   // Callback when a marble is deselected
   const deselectMarbles = useCallback((marbles) => {
     for (const marble of marbles) {
@@ -55,6 +128,7 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
 
   const onMarbleClick = useCallback(
     (space) => {
+      console.log(space);
       // If the space is empty or the space is already selected, return
       if (space.state === SpaceStates.EMPTY) return;
 
@@ -123,6 +197,8 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
   const getSpaceStyle = useCallback((space) => {
     if (space.selected) {
       return marbleStyles.selected;
+    } else if (space.highlighted) {
+      return marbleStyles.possibleMoves;
     }
 
     return marbleStyles[space.state];
