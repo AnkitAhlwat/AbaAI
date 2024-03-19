@@ -80,7 +80,6 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
       selectedMarbles.forEach(marble => {
         marbleKey.push([marble.position.x, marble.position.y]);
       });
-      console.log(marbleKey);
       const sortedMarbleKey = marbleKey.sort();
       let myString = "[";
       sortedMarbleKey.forEach(marble => {
@@ -88,8 +87,7 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
       });
       myString = myString.slice(0, -2);
       myString += "]";
-      console.log(myString);
-      if (possibleMoves[selectedMarbles[0].state] == 2) {
+      if (selectedMarbles[0].state == 2) {
         turn = "white";
       }
       console.log(possibleMoves[turn][myString]);
@@ -109,7 +107,6 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
 
   const onMarbleClick = useCallback(
     (space) => {
-      console.log(space);
       // If the space is empty or the space is already selected, return
       if (space.state === SpaceStates.EMPTY) return;
 
