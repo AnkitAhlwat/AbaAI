@@ -40,6 +40,14 @@ const Game = () => {
     setActivePlayer(prev => prev === 'black' ? 'white' : 'black');
   };
 
+  //logic to start the game for the clocks
+  const startGame = useCallback(() => {
+    if (!gameStarted) {
+      setGameStarted(true);
+      // Logic to start the black player clock goes here
+    }
+  }, [gameStarted]);
+
   // const togglePause = () => { CLOCKSTUFF
   //   setIsPaused(!isPaused);
   // };
@@ -80,7 +88,7 @@ const Game = () => {
 
       //set gamestarted to true
       if (!gameStarted) {
-        setGameStarted(true);
+        startGame();
       }
 
       //toggle the active player turn
@@ -99,7 +107,7 @@ const Game = () => {
       setMovesStack(responseData.moves_stack);
       setBoardArray(responseData.board);
     },
-    [selectedMarbles, setBoardArray, updateAiMove, gameStarted]
+    [selectedMarbles, setBoardArray, updateAiMove, gameStarted, startGame, toggleActivePlayer]
   );
 
   // Handles move undo
@@ -173,6 +181,7 @@ const Game = () => {
           activePlayer={activePlayer}
           toggleActivePlayer={toggleActivePlayer}
           gameStarted={gameStarted}
+          startGame={startGame}
           // currentPlayer={currentPlayer}
           // isPaused={isPaused}
           // togglePause={togglePause}
