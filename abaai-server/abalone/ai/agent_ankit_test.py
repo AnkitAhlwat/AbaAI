@@ -1,40 +1,16 @@
-from itertools import combinations
 
 from abalone.ai.file_reader import FileReader
 from agent_ankit import LegalMoves
 from state_space_generator import StateSpaceGenerator
 
 
-def generate_all_black_moves(board, black_marbles_positions):
-    all_moves = {}
-
-    # 1marble moves
-    for pos in black_marbles_positions:
-        moves = LegalMoves.get_valid_moves(board.board, pos)
-        if moves:
-            all_moves[pos] = moves
-
-    # 2marble moves
-    for pos1, pos2 in combinations(black_marbles_positions, 2):
-        if LegalMoves.are_marbles_inline(pos1, pos2):
-            moves = LegalMoves.get_valid_moves(board.board, pos1, pos2)
-            if moves:
-                all_moves[(pos1, pos2)] = moves
-
-    # 3marble moves
-    for pos1, pos2, pos3 in combinations(black_marbles_positions, 3):
-        if LegalMoves.are_marbles_inline(pos1, pos2, pos3):
-            moves = LegalMoves.get_valid_moves(board.board, pos1, pos2, pos3)
-            if moves:
-                all_moves[(pos1, pos2, pos3)] = moves
-
-    return all_moves
 
 
 GameBoard = FileReader.convert_input_file_to_game_state('Test1.input')
 maxPlayer = StateSpaceGenerator.get_max_player_piece_positions(GameBoard,1)
 minPlayer = StateSpaceGenerator.get_min_player_piece_positions(GameBoard,2)
-# all_moves = StateSpaceGenerator.generate_all_moves(GameBoard, maxPlayer, minPlayer)
+all_moves = StateSpaceGenerator.generate_all_moves(GameBoard, maxPlayer, minPlayer)
+print(all_moves)
 sumitos = LegalMoves.generate_all_sumitos(GameBoard.board, maxPlayer, minPlayer)
 print(sumitos)
 sumitos2 = LegalMoves.generate_all_sumitos(GameBoard.board, minPlayer, maxPlayer)
