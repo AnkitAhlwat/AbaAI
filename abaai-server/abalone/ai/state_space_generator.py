@@ -40,16 +40,24 @@ class StateSpaceGenerator:
             for pos in positions:
                 moves = LegalMoves.get_valid_moves(board.board, pos)
                 if moves:
+                    pos = pos.to_string()
                     result[color][pos] = moves
 
             for pos1, pos2 in combinations(positions, 2):
                 moves = LegalMoves.get_valid_moves(board.board, pos1, pos2)
                 if moves:
-                    result[color][pos1, pos2] = moves
+                    pos1 = pos1.to_string()
+                    pos2 = pos2.to_string()
+                    new_key = (pos1, pos2).__str__()
+                    result[color][new_key] = moves
 
             for pos1, pos2, pos3 in combinations(positions, 3):
                 moves = LegalMoves.get_valid_moves(board.board, pos1, pos2, pos3)
                 if moves:
-                    result[color][pos1, pos2, pos3] = moves
+                    pos1 = pos1.to_string()
+                    pos2 = pos2.to_string()
+                    pos3 = pos3.to_string()
+                    new_key = (pos1, pos2, pos3).__str__()
+                    result[color][new_key] = moves
 
         return result

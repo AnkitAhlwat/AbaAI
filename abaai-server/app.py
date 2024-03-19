@@ -53,7 +53,7 @@ def reset_game():
 def possible_moves():
     board = app.game.board
     moves = app.game.get_possible_moves(board)
-    return jsonify(str(moves))
+    return jsonify(moves)
 
 
 
