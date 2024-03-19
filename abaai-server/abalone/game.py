@@ -1,3 +1,4 @@
+from abalone.ai.state_space_generator import StateSpaceGenerator
 from abalone.board import BoardLayout, Board
 from abalone.movement import Move, Piece
 from abalone.stack import Stack
@@ -13,9 +14,9 @@ class GameUpdate:
     def to_json(self):
         return {
             "ai_move": self._ai_move.to_json() if self._ai_move is not None else None,
-            "moves_stack": self._moves_stack.to_json(),
+            "moves_stack": self._moves_stack.to_json() if self._moves_stack is not None else None,
             "board": self._board.to_json() if self._board is not None else None,
-            "turn": self._turn.value if self._turn is not None else None
+            "turn": self._turn.value if self._turn is not None else None,
         }
 
 
@@ -113,3 +114,18 @@ class Game:
                                    {"x": 5, "y": 2 + cls.ai_increment},
                                    {"x": 5, "y": 1 + cls.ai_increment}],
                 "player": 2}
+
+    @staticmethod
+    def get_possible_moves(board):
+        black_positions = StateSpaceGenerator.get_max_player_piece_positions(board, 1)
+        white_positions = StateSpaceGenerator.get_min_player_piece_positions(board, 2)
+        return StateSpaceGenerator.generate_all_moves(board, black_positions, white_positions)
+
+
+    @property
+    def board(self):
+        return self._board
+
+    @property
+    def turn(self):
+        return self._turn

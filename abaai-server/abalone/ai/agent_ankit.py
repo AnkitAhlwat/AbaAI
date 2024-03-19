@@ -61,6 +61,7 @@ class LegalMoves:
             if all(LegalMoves.is_position_within_board(board, new_pos) for new_pos in new_positions) and \
                     all(LegalMoves.is_position_empty_or_vacating(board, new_pos, vacating_positions)
                         for new_pos in new_positions):
-                valid_moves.append(new_positions[0] if len(new_positions) == 1 else tuple(new_positions))
+                valid_moves.append(new_positions[0].to_json() if len(new_positions) == 1
+                                   else [pos.to_json() for pos in new_positions])
 
         return valid_moves

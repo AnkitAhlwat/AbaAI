@@ -29,16 +29,18 @@ def generate_all_black_moves(board, black_marbles_positions):
     return all_moves
 
 
-GameBoard = StateSpaceGenerator.convert_input_file_to_game_state('Ankit.input')
-maxPlayer = StateSpaceGenerator.get_max_player_piece_positions(GameBoard)
-
+# GameBoard = StateSpaceGenerator.convert_input_file_to_game_state('Ankit.input')
+# maxPlayer = StateSpaceGenerator.get_max_player_piece_positions(GameBoard)
+# minPlayer = StateSpaceGenerator.get_min_player_piece_positions(GameBoard)
+# all_moves = StateSpaceGenerator.generate_all_moves(GameBoard, maxPlayer, minPlayer)
+# print(all_moves)
 """Testing Ignore below"""
 
-GameBoard = StateSpaceGenerator.convert_input_file_to_game_state('Ankit.input')
+# GameBoard = StateSpaceGenerator.convert_input_file_to_game_state('Ankit.input')
 # print(GameBoard.board)
-# minPlayer = StateSpaceGenerator.get_min_player_piece_positions(GameBoard)
-moves = generate_all_black_moves(GameBoard, maxPlayer)
-print(moves)
+# # minPlayer = StateSpaceGenerator.get_min_player_piece_positions(GameBoard)
+# moves = generate_all_black_moves(GameBoard, maxPlayer)
+# print(moves)
 
 # # Test for are_marbles_inline
 # # Should be true

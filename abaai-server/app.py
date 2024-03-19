@@ -1,3 +1,5 @@
+import json
+
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
@@ -50,8 +52,8 @@ def reset_game():
 @app.route('/api/game/possibleMoves', methods=['GET'])
 def possible_moves():
     board = app.game.board
-    game_update = app.game.get_possible_moves(board)
-    return jsonify(game_update.to_json())
+    moves = app.game.get_possible_moves(board)
+    return jsonify(str(moves))
 
 
 
