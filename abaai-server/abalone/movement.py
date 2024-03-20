@@ -31,7 +31,7 @@ class Position:
         return {'x': self.x, 'y': self.y}
 
     def to_string(self):
-        return f'{self.x},{self.y}'
+        return f'({self.x},{self.y})'
     def __iter__(self):
         """Allow the Position object to be iterable, so it can be unpacked like a tuple."""
         return iter((self.x, self.y))

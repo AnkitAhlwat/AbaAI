@@ -7,13 +7,14 @@ from state_space_generator import StateSpaceGenerator
 
 
 GameBoard = FileReader.convert_input_file_to_game_state('Test1.input')
-maxPlayer = StateSpaceGenerator.get_max_player_piece_positions(GameBoard,1)
-minPlayer = StateSpaceGenerator.get_min_player_piece_positions(GameBoard,2)
-all_moves = StateSpaceGenerator.generate_all_moves(GameBoard, maxPlayer, minPlayer)
-print(all_moves)
-sumitos = LegalMoves.generate_all_sumitos(GameBoard.board, maxPlayer, minPlayer)
+
+player_piece = StateSpaceGenerator.get_player_piece_positions(GameBoard)
+movement = StateSpaceGenerator.generate_all_moves(GameBoard, player_piece)
+# all_moves =LegalMoves.get_valid_moves(GameBoard.board, playerMax, playerMin)
+print(movement)
+sumitos = LegalMoves.generate_all_sumitos(GameBoard.board, player_piece['player_max'], player_piece['player_min'])
 print(sumitos)
-sumitos2 = LegalMoves.generate_all_sumitos(GameBoard.board, minPlayer, maxPlayer)
+sumitos2 = LegalMoves.generate_all_sumitos(GameBoard.board, player_piece['player_min'], player_piece['player_max'])
 print(sumitos2)
 """Testing Ignore below"""
 
