@@ -11,7 +11,7 @@ class FileReader:
         with open(file_name, 'r', encoding="utf-8") as file:
             turn = Piece.BLACK if file.readline().strip().upper() == 'B' else Piece.WHITE
 
-            piece_positions = file.readline().strip().split(',')
+            piece_positions = file.readline().strip().replace(' ','').split(',')
 
             # Create a 9x9 board with the pieces in the correct positions, starting with empty board
             board = deepcopy(BoardLayout.EMPTY.value)
