@@ -4,7 +4,7 @@ from state_space_generator import StateSpaceGenerator
 
 
 def main():
-    input_file = '../../state_space_test_files/Test1.input'
+    input_file = '../../state_space_test_files/Test3.input'
 
     game_state = FileHandler.convert_input_file_to_game_state(input_file)
 

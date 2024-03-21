@@ -36,6 +36,8 @@ class FileHandler:
                 board_file.write(
                     FileHandler.__convert_board_object_to_board_notation(state_update.resulting_state.board) + '\n')
 
+        print(f'Output files created: {move_file_name} and {board_file_name}')
+
     # Private helpers
     @staticmethod
     def __convert_board_object_to_board_notation(board: Board) -> str:
