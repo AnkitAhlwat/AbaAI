@@ -6,17 +6,17 @@ from abalone.movement import Position, Move
 class StateSpaceGenerator:
 
     @staticmethod
-    def get_player_piece_positions(board) -> dict[str, list[Position]]:
-        player_max_value = board.turn.value
+    def get_player_piece_positions(game_state) -> dict[str, list[Position]]:
+        player_max_value = game_state.turn.value
         player_min_value = 2 if player_max_value == 1 else 1
         player_dict = {"player_max": player_max_value, "player_min": player_min_value}
         player_max_piece_positions = []
         player_min_piece_positions = []
         for y in range(9):
             for x in range(9):
-                if board.board[y][x] == player_max_value:
+                if game_state.board.array[y][x] == player_max_value:
                     player_max_piece_positions.append(Position(x, y))
-                elif board.board[y][x] == player_min_value:
+                elif game_state.board.array[y][x] == player_min_value:
                     player_min_piece_positions.append(Position(x, y))
         player_dict["player_max"] = player_max_piece_positions
         player_dict["player_min"] = player_min_piece_positions

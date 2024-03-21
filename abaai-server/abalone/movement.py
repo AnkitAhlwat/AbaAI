@@ -79,12 +79,12 @@ class Move:
         self._player = player
 
         # If sumito move, then the opponent positions will be provided
-        if previous_player_positions is None:
+        if previous_opponent_positions is None:
             self._previous_opponent_positions = []
         else:
             self._previous_opponent_positions = previous_opponent_positions
 
-        if next_player_positions is None:
+        if next_opponent_positions is None:
             self._next_opponent_positions = []
         else:
             self._next_opponent_positions = next_opponent_positions

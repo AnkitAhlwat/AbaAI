@@ -1,6 +1,8 @@
 from enum import Enum
 from copy import deepcopy
 
+from abalone.movement import Piece
+
 
 class BoardLayout(Enum):
     EMPTY = [
@@ -56,40 +58,51 @@ class SpaceState(Enum):
     EMPTY = 0
     MAX = 1
     MIN = 2
-    NONE = -1
+    OUT_OF_BOUNDS = -1
 
 
 class Board:
     def __init__(self, board_array: list[list[int]] = None):
         if board_array is None:
-            self._board = deepcopy(BoardLayout.DEFAULT.value)
+            self._array = deepcopy(BoardLayout.DEFAULT.value)
         else:
-            self._board = deepcopy(board_array)
+            self._array = deepcopy(board_array)
 
     def __repr__(self):
-        return str(self._board)
+        return str(self._array)
 
     @property
-    def board(self):
-        return self._board
+    def array(self):
+        return self._array
 
     def to_json(self):
-        return self._board
+        return self._array
 
     def get_space_state(self, x: int, y: int) -> SpaceState:
-        return SpaceState(self._board[y][x])
+        return SpaceState(self._array[y][x])
 
     def set_space_state(self, x: int, y: int, state: SpaceState):
-        self._board[y][x] = state.value
+        self._array[y][x] = state.value
 
     def make_move(self, move) -> list[list[int]]:
-        for position in move.previous_positions:
-            self.set_space_state(position.x, position.y, SpaceState.EMPTY)
+        player = move.player
+        opponent = Piece.WHITE if player == Piece.BLACK else Piece.BLACK
 
-        for position in move.next_positions:
-            self.set_space_state(position.x, position.y, SpaceState(move.player.value))
+        # Set the previous positions to empty for both player and opponent
+        for player_position in move.previous_player_positions:
+            self.set_space_state(player_position.x, player_position.y, SpaceState.EMPTY)
+        for opponent_position in move.previous_opponent_positions:
+            self.set_space_state(opponent_position.x, opponent_position.y, SpaceState.EMPTY)
 
-        return self._board
+        # Set the next positions to the player and opponent numbers if it is not out of bounds (-1)
+        for player_position in move.next_player_positions:
+            if self.get_space_state(player_position.x, player_position.y) != SpaceState.OUT_OF_BOUNDS:
+                self.set_space_state(player_position.x, player_position.y, SpaceState(player.value))
+        for opponent_position in move.next_opponent_positions:
+            if self.get_space_state(opponent_position.x, opponent_position.y) != SpaceState.OUT_OF_BOUNDS:
+                self.set_space_state(opponent_position.x, opponent_position.y, SpaceState(opponent.value))
+
+        return self._array
 
     def undo_move(self, move) -> list[list[int]]:
         for position in move.next_positions:
@@ -98,4 +111,4 @@ class Board:
         for position in move.previous_positions:
             self.set_space_state(position.x, position.y, SpaceState(move.player.value))
 
-        return self._board
+        return self._array

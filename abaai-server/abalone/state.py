@@ -36,7 +36,11 @@ class GameStateUpdate:
         return self._resulting_state
 
     def __generate_resulting_state(self):
-        resulting_board = deepcopy(self._previous_state.board.make_move(self._move))
+        resulting_board = Board(deepcopy(self._previous_state.board.make_move(self._move)))
         resulting_turn = Piece.WHITE if self._previous_state.turn == Piece.BLACK else Piece.BLACK
 
-        return GameState(Board(resulting_board), resulting_turn)
+        return GameState(resulting_board, resulting_turn)
+
+    @classmethod
+    def convert_moves_to_game_state_updates(cls, game_state: GameState, moves: list[Move]) -> list['GameStateUpdate']:
+        return [cls(game_state, move) for move in moves]
