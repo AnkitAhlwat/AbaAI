@@ -1,6 +1,6 @@
 from abalone.ai.file_handler import FileHandler
 from abalone.state import GameStateUpdate
-from state_space_generator import StateSpaceGenerator
+from abalone.ai.state_space_generator import StateSpaceGenerator
 import os
 
 
