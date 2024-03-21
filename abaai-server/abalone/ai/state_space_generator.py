@@ -75,12 +75,8 @@ class StateSpaceGenerator:
 
     @staticmethod
     def generate_all_sumitos(game_state, player_pieces):
-        if game_state.turn.value == 1:
-            max_positions = player_pieces["player_max"]
-            min_positions = player_pieces["player_min"]
-        else:
-            max_positions = player_pieces["player_min"]
-            min_positions = player_pieces["player_max"]
+        max_positions = player_pieces["player_max"]
+        min_positions = player_pieces["player_min"]
         return LegalMoves.generate_all_sumitos(game_state, max_positions, min_positions)
 
     @staticmethod
