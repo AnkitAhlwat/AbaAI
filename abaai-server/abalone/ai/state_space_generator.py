@@ -23,28 +23,6 @@ class StateSpaceGenerator:
         return player_dict
 
     @staticmethod
-    def get_max_player_piece_positions(game_state, turn) -> list[Position]:
-        max_player_value = turn
-        max_player_piece_positions = []
-        for y in range(9):
-            for x in range(9):
-                if game_state.board[y][x] == max_player_value:
-                    max_player_piece_positions.append(Position(x, y))
-
-        return max_player_piece_positions
-
-    @staticmethod
-    def get_min_player_piece_positions(game_state, turn) -> list[Position]:
-        min_player_value = turn
-        min_player_piece_positions = []
-        for y in range(9):
-            for x in range(9):
-                if game_state.board[y][x] == min_player_value:
-                    min_player_piece_positions.append(Position(x, y))
-
-        return min_player_piece_positions
-
-    @staticmethod
     def generate_all_moves(game_state, player_piece):
         if game_state.turn.value == 1:
             black_positions = player_piece['player_max']
@@ -80,6 +58,6 @@ class StateSpaceGenerator:
         return LegalMoves.generate_all_sumitos(game_state, max_positions, min_positions)
 
     @staticmethod
-    def generate_all_possible_moves(game_state,player_pieces):
-        return StateSpaceGenerator.generate_all_moves(game_state, player_pieces)\
+    def generate_all_possible_moves(game_state, player_pieces):
+        return StateSpaceGenerator.generate_all_moves(game_state, player_pieces) \
                + StateSpaceGenerator.generate_all_sumitos(game_state, player_pieces)
