@@ -1,4 +1,3 @@
-from abalone.ai.state_space_generator import StateSpaceGenerator
 from abalone.board import BoardLayout, Board
 from abalone.movement import Move, Piece
 from abalone.stack import Stack
@@ -116,9 +115,7 @@ class Game:
 
     @staticmethod
     def get_possible_moves(board):
-        black_positions = StateSpaceGenerator.get_max_player_piece_positions(board, 1)
-        white_positions = StateSpaceGenerator.get_min_player_piece_positions(board, 2)
-        return StateSpaceGenerator.generate_all_moves(board, black_positions, white_positions)
+        pass
 
     @property
     def board(self):

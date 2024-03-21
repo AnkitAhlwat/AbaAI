@@ -1,5 +1,3 @@
-import json
-
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
@@ -54,7 +52,6 @@ def possible_moves():
     board = app.game.board
     moves = app.game.get_possible_moves(board)
     return jsonify(moves)
-
 
 
 if __name__ == "__main__":
