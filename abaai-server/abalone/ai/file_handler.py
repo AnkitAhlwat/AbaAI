@@ -3,6 +3,8 @@ from copy import deepcopy
 from abalone.board import BoardLayout, Board
 from abalone.state import GameState, GameStateUpdate
 from abalone.movement import Piece, Position
+import re
+import os
 
 
 class FileHandler:
@@ -25,9 +27,9 @@ class FileHandler:
             return GameState(Board(board_array), turn)
 
     @staticmethod
-    def convert_game_state_updates_to_output_files(state_updates: list[GameStateUpdate], input_file_path: str):
-        move_file_name = input_file_path.replace('.input', '.move')
-        board_file_name = input_file_path.replace('.input', '.board')
+    def convert_game_state_updates_to_output_files(state_updates: list[GameStateUpdate], output_file_base: str):
+        move_file_name = f"{output_file_base}.move"
+        board_file_name = f"{output_file_base}.board"
 
         with open(move_file_name, 'w', encoding="utf-8") as move_file, \
                 open(board_file_name, 'w', encoding="utf-8") as board_file:
@@ -67,3 +69,9 @@ class FileHandler:
             for line in file:
                 new_set.add(line)
             print(len(new_set))
+
+    @staticmethod
+    def list_files_in_directory(directory):
+        pattern = re.compile(r'Test\d+\.input$')
+        return [os.path.join(directory, f) for f in os.listdir(directory) if pattern.match(f)]
+
