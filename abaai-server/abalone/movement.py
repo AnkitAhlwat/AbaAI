@@ -32,6 +32,7 @@ class Position:
 
     def to_string(self):
         return f'({self.x},{self.y})'
+
     def __iter__(self):
         """Allow the Position object to be iterable, so it can be unpacked like a tuple."""
         return iter((self.x, self.y))
@@ -54,6 +55,7 @@ class Position:
         if self.x == other.x:
             return self.y < other.y
         return self.x < other.x
+
     def __getitem__(self, index):
         if index == 0:
             return self.x

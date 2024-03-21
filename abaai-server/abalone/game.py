@@ -20,33 +20,32 @@ class GameUpdate:
         }
 
 
-class GameState:
-    def __init__(self, board: Board, turn: Piece):
-        self._board = board
-        self._turn = turn
+class GameOptions:
+    def __init__(self, board_layout: BoardLayout = None):
+        self._board_layout = board_layout
 
     @property
-    def board(self):
-        return self._board
-
-    @property
-    def turn(self):
-        return self._turn
+    def board_layout(self) -> BoardLayout:
+        return self._board_layout
 
 
 class Game:
     ai_increment = -1
 
-    def __init__(self, board: Board = None):
-        if board is None:
-            self._board = Board(BoardLayout.DEFAULT)
+    def __init__(self, game_options: GameOptions = None):
+        if game_options is None:
+            self._game_options = GameOptions()
+
+        if game_options.board_layout is None:
+            self._board = Board()
         else:
-            self._board = board
+            self._board = Board(game_options.board_layout.value)
 
         self._moves_stack = Stack()
         self._turn = None
+        self._game_options = None
 
-    def set_up(self, config):
+    def set_up(self, config) -> GameOptions:
         pass
 
     def make_move(self, move) -> GameUpdate:
@@ -120,7 +119,6 @@ class Game:
         black_positions = StateSpaceGenerator.get_max_player_piece_positions(board, 1)
         white_positions = StateSpaceGenerator.get_min_player_piece_positions(board, 2)
         return StateSpaceGenerator.generate_all_moves(board, black_positions, white_positions)
-
 
     @property
     def board(self):

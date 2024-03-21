@@ -1,6 +1,6 @@
 from itertools import combinations
-from abalone.ai.agent_ankit import LegalMoves
-from abalone.movement import Position
+from abalone.ai.legal_moves import LegalMoves
+from abalone.movement import Position, Move
 
 
 class StateSpaceGenerator:
@@ -23,7 +23,7 @@ class StateSpaceGenerator:
         return player_dict
 
     @staticmethod
-    def generate_all_moves(game_state, player_piece):
+    def generate_all_moves(game_state, player_piece) -> list[Move]:
         if game_state.turn.value == 1:
             black_positions = player_piece['player_max']
             white_positions = player_piece['player_min']
@@ -52,12 +52,16 @@ class StateSpaceGenerator:
         return possible_move_list
 
     @staticmethod
-    def generate_all_sumitos(game_state, player_pieces):
+    def generate_all_sumitos(game_state, player_pieces) -> list[Move]:
         max_positions = player_pieces["player_max"]
         min_positions = player_pieces["player_min"]
         return LegalMoves.generate_all_sumitos(game_state, max_positions, min_positions)
 
     @staticmethod
-    def generate_all_possible_moves(game_state, player_pieces):
-        return StateSpaceGenerator.generate_all_moves(game_state, player_pieces) \
-               + StateSpaceGenerator.generate_all_sumitos(game_state, player_pieces)
+    def generate_all_possible_moves(game_state) -> list[Move]:
+        player_pieces = StateSpaceGenerator.get_player_piece_positions(game_state)
+
+        player_piece_moves = StateSpaceGenerator.generate_all_moves(game_state, player_pieces)
+        sumito_moves = StateSpaceGenerator.generate_all_sumitos(game_state, player_pieces)
+
+        return player_piece_moves + sumito_moves

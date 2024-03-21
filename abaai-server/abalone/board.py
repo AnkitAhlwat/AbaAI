@@ -1,4 +1,5 @@
 from enum import Enum
+from copy import deepcopy
 
 
 class BoardLayout(Enum):
@@ -59,9 +60,14 @@ class SpaceState(Enum):
 
 
 class Board:
-    def __init__(self, layout: BoardLayout = BoardLayout.DEFAULT):
-        self._layout = layout
-        self._board = [row[:] for row in layout.value]
+    def __init__(self, board_array: list[list[int]] = None):
+        if board_array is None:
+            self._board = deepcopy(BoardLayout.DEFAULT.value)
+        else:
+            self._board = deepcopy(board_array)
+
+    def __repr__(self):
+        return str(self._board)
 
     @property
     def board(self):
@@ -76,16 +82,20 @@ class Board:
     def set_space_state(self, x: int, y: int, state: SpaceState):
         self._board[y][x] = state.value
 
-    def make_move(self, move):
+    def make_move(self, move) -> list[list[int]]:
         for position in move.previous_positions:
             self.set_space_state(position.x, position.y, SpaceState.EMPTY)
 
         for position in move.next_positions:
             self.set_space_state(position.x, position.y, SpaceState(move.player.value))
 
-    def undo_move(self, move):
+        return self._board
+
+    def undo_move(self, move) -> list[list[int]]:
         for position in move.next_positions:
             self.set_space_state(position.x, position.y, SpaceState.EMPTY)
 
         for position in move.previous_positions:
             self.set_space_state(position.x, position.y, SpaceState(move.player.value))
+
+        return self._board
