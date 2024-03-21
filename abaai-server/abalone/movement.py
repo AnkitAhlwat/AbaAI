@@ -11,6 +11,13 @@ class Position:
         self.x = x
         self.y = y
 
+    def to_notation(self):
+        return f'{Position.get_letter_from_y(self.y)}{Position.get_number_from_x(self.x)}'
+
+    @staticmethod
+    def to_notation_generic(x: int, y: int):
+        return f'{Position.get_letter_from_y(y)}{Position.get_number_from_x(x)}'
+
     @staticmethod
     def get_y_from_letter(letter: str):
         return (65 + 8) - ord(letter)
@@ -89,6 +96,9 @@ class Move:
         else:
             self._next_opponent_positions = next_opponent_positions
 
+    def __str__(self):
+        return self.__to_move_notation()
+
     @property
     def previous_player_positions(self):
         return self._previous_player_positions
@@ -139,3 +149,23 @@ class Move:
 
         player = Piece(json['player'])
         return cls(previous_positions, next_positions, player, previous_opponent_positions, next_opponent_positions)
+
+    def __to_move_notation(self):
+        previous_player_positions = self.__positions_to_notation(self._previous_player_positions)
+        previous_opponent_positions = f",{self.__positions_to_notation(self._previous_opponent_positions)}" \
+            if len(self._previous_opponent_positions) > 0 \
+            else ""
+
+        next_player_positions = self.__positions_to_notation(self._next_player_positions)
+        next_opponent_positions = f",{self.__positions_to_notation(self._next_opponent_positions)}" \
+            if len(self._next_opponent_positions) > 0 \
+            else ""
+
+        previous_positions = f"{previous_player_positions}{previous_opponent_positions}"
+        next_positions = f"{next_player_positions}{next_opponent_positions}"
+
+        return f"{previous_positions} -> {next_positions}"
+
+    @staticmethod
+    def __positions_to_notation(positions: list[Position]):
+        return "(" + ",".join([position.to_notation() for position in positions]) + ")"
