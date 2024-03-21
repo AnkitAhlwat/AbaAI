@@ -1,4 +1,4 @@
-from abalone.movement import Position
+from abalone.movement import Position, Move
 
 
 class LegalMoves:
@@ -45,8 +45,9 @@ class LegalMoves:
             return board[position.y][position.x] == 0 or position in vacating_positions
 
     @staticmethod
-    def get_valid_moves(board, *positions):
+    def get_valid_moves(game_state, *positions):
         """Get the valid moves for the given marbles(Currently only for movement.)"""
+        board = game_state.board
         if len(positions) > 1 and not LegalMoves.are_marbles_inline(*positions):
             return []
 
@@ -59,8 +60,13 @@ class LegalMoves:
             if all(LegalMoves.is_position_within_board(board, new_pos) for new_pos in new_positions) and \
                     all(LegalMoves.is_position_empty_or_vacating(board, new_pos, vacating_positions)
                         for new_pos in new_positions):
-                valid_moves.append(new_positions[0].to_json() if len(new_positions) == 1
-                                   else [pos.to_json() for pos in new_positions])
+
+                move = Move(
+                    vacating_positions,
+                    new_positions,
+                    game_state.turn
+                )
+                valid_moves.append(move)
 
         return valid_moves
 
@@ -117,18 +123,15 @@ class LegalMoves:
         return None
 
     @staticmethod
-    def generate_all_sumitos(board, player_positions, opponent_positions):
+    def generate_all_sumitos(game_state, player_positions, opponent_positions):
         """Generate all possible Sumitos given the current board state."""
-        sumitos = {}
-
+        board = game_state.board
+        sumito_move_list = []
         for start_pos in player_positions:
             for direction in LegalMoves.possible_moves:
                 sequence = LegalMoves.find_marble_sequence(board, start_pos, direction, player_positions,
                                                            opponent_positions)
                 if sequence and LegalMoves.can_sumito_occur(sequence, direction, board):
-                    player = sorted([sequence['player']])
-                    opponent = sorted([sequence['opponent']])
-                    key = player[0] + opponent[0]
 
                     new_positions_player = [Position(pos.x + direction[0], pos.y + direction[1]) for pos in
                                             sequence['player']]
@@ -137,12 +140,12 @@ class LegalMoves:
                                               if LegalMoves.is_position_within_board
                                               (board, Position(pos.x + direction[0], pos.y + direction[1]))]
 
-                    sumitos[f'{key}'] = {
-                        'previous_player_seq': sequence['player'],
-                        'new_player_seq': new_positions_player,
-                        'previous_opponent_seq': sequence['opponent'],
-                        'new_opponent_seq': new_positions_opponent,
-                        'direction': direction
-                    }
+                    sumito_move_list.append(Move(
+                        sequence['player'],
+                        new_positions_player,
+                        game_state.turn.value,
+                        sequence['opponent'],
+                        new_positions_opponent)
+                    )
 
-        return sumitos
+        return sumito_move_list

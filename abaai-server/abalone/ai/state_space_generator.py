@@ -45,40 +45,45 @@ class StateSpaceGenerator:
         return min_player_piece_positions
 
     @staticmethod
-    def generate_all_moves(board,player_piece):
-        if board.turn.value == 1:
+    def generate_all_moves(game_state, player_piece):
+        if game_state.turn.value == 1:
             black_positions = player_piece['player_max']
             white_positions = player_piece['player_min']
         else:
             black_positions = player_piece['player_min']
             white_positions = player_piece['player_max']
         all_moves = {
-            "black": black_positions,
-            "white": white_positions
-        }
+            "max": black_positions} if game_state.turn.value == 1 else {"max": white_positions}
 
-        result = {"black": {}, "white": {}}
-
+        possible_move_list = []
         for color, positions in all_moves.items():
             for pos in positions:
-                moves = LegalMoves.get_valid_moves(board.board, pos)
+                moves = LegalMoves.get_valid_moves(game_state, pos)
                 if moves:
-                    result[color][f'{[pos]}'] = moves
-
+                    possible_move_list.extend(moves)
             for pos1, pos2 in combinations(positions, 2):
-                moves = LegalMoves.get_valid_moves(board.board, pos1, pos2)
+                moves = LegalMoves.get_valid_moves(game_state, pos1, pos2)
                 if moves:
-                    key = sorted([[pos1, pos2]])
-                    result[color][f'{key[0]}'] = moves
+                    possible_move_list.extend(moves)
 
             for pos1, pos2, pos3 in combinations(positions, 3):
-                moves = LegalMoves.get_valid_moves(board.board, pos1, pos2, pos3)
+                moves = LegalMoves.get_valid_moves(game_state, pos1, pos2, pos3)
                 if moves:
-                    key = sorted([[pos1, pos2, pos3]])
-                    result[color][f'{key[0]}'] = moves
-        if board.turn.value == 1:
-            sumito = LegalMoves.generate_all_sumitos(board.board, black_positions, white_positions)
+                    possible_move_list.extend(moves)
+
+        return possible_move_list
+
+    @staticmethod
+    def generate_all_sumitos(game_state, player_pieces):
+        if game_state.turn.value == 1:
+            max_positions = player_pieces["player_max"]
+            min_positions = player_pieces["player_min"]
         else:
-            sumito = LegalMoves.generate_all_sumitos(board.board, white_positions, black_positions)
-        print(sumito)
-        return result
+            max_positions = player_pieces["player_min"]
+            min_positions = player_pieces["player_max"]
+        return LegalMoves.generate_all_sumitos(game_state, max_positions, min_positions)
+
+    @staticmethod
+    def generate_all_possible_moves(game_state,player_pieces):
+        return StateSpaceGenerator.generate_all_moves(game_state, player_pieces)\
+               + StateSpaceGenerator.generate_all_sumitos(game_state, player_pieces)

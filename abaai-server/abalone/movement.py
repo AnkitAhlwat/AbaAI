@@ -47,6 +47,13 @@ class Position:
 
     def __hash__(self):
         return hash((self.x, self.y))
+
+    def __lt__(self, other):
+        if not isinstance(other, Position):
+            return NotImplemented
+        if self.x == other.x:
+            return self.y < other.y
+        return self.x < other.x
     def __getitem__(self, index):
         if index == 0:
             return self.x
@@ -57,18 +64,44 @@ class Position:
 
 
 class Move:
-    def __init__(self, previous_positions: list[Position], next_positions: list[Position], player: Piece):
-        self._previous_positions = previous_positions
-        self._next_positions = next_positions
+    def __init__(
+            self,
+            previous_player_positions: list[Position],
+            next_player_positions: list[Position],
+            player: Piece,
+            previous_opponent_positions: list[Position] = None,
+            next_opponent_positions: list[Position] = None,
+    ):
+        self._previous_player_positions = previous_player_positions
+        self._next_player_positions = next_player_positions
         self._player = player
 
-    @property
-    def previous_positions(self):
-        return self._previous_positions
+        # If sumito move, then the opponent positions will be provided
+        if previous_player_positions is None:
+            self._previous_opponent_positions = []
+        else:
+            self._previous_opponent_positions = previous_opponent_positions
+
+        if next_player_positions is None:
+            self._next_opponent_positions = []
+        else:
+            self._next_opponent_positions = next_opponent_positions
 
     @property
-    def next_positions(self):
-        return self._next_positions
+    def previous_player_positions(self):
+        return self._previous_player_positions
+
+    @property
+    def next_player_positions(self):
+        return self._next_player_positions
+
+    @property
+    def previous_opponent_positions(self):
+        return self._previous_opponent_positions
+
+    @property
+    def next_opponent_positions(self):
+        return self._next_opponent_positions
 
     @property
     def player(self):
@@ -76,14 +109,31 @@ class Move:
 
     def to_json(self):
         return {
-            'previous_positions': [{'x': position.x, 'y': position.y} for position in self._previous_positions],
-            'next_positions': [{'x': position.x, 'y': position.y} for position in self._next_positions],
+            'previous_player_positions': [{'x': position.x, 'y': position.y} for position in
+                                          self._previous_player_positions],
+            'next_player_positions': [{'x': position.x, 'y': position.y} for position in self._next_player_positions],
+            'previous_opponent_positions': [{'x': position.x, 'y': position.y} for position in
+                                            self._previous_opponent_positions],
+            'next_opponent_positions': [{'x': position.x, 'y': position.y} for position in
+                                        self._next_opponent_positions],
             'player': self._player.value
         }
 
     @classmethod
     def from_json(cls, json):
-        previous_positions = [Position(position['x'], position['y']) for position in json['previous_positions']]
-        next_positions = [Position(position['x'], position['y']) for position in json['next_positions']]
+        previous_positions = [Position(position['x'], position['y']) for position in json['previous_player_positions']]
+        next_positions = [Position(position['x'], position['y']) for position in json['next_player_positions']]
+        if json['previous_opponent_positions']:
+            previous_opponent_positions = [Position(position['x'], position['y']) for position in
+                                           json['previous_opponent_positions']]
+        else:
+            previous_opponent_positions = None
+
+        if json['next_opponent_positions']:
+            next_opponent_positions = [Position(position['x'], position['y']) for position in
+                                       json['next_opponent_positions']]
+        else:
+            next_opponent_positions = None
+
         player = Piece(json['player'])
-        return cls(previous_positions, next_positions, player)
+        return cls(previous_positions, next_positions, player, previous_opponent_positions, next_opponent_positions)
