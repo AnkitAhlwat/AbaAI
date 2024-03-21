@@ -1,8 +1,9 @@
 import { Grid, Fab, Box } from "@mui/material";
 import PropTypes from "prop-types";
 import SpaceStates from "../constants/spaceStates";
-import { useCallback } from "react";
+import { useCallback, useState, useEffect } from "react";
 import Space from "../models/Space";
+import GameService from "../services/game.service";
 
 const marbleStyles = {
   // Black marble
@@ -32,6 +33,11 @@ const marbleStyles = {
     backgroundColor: "#ae694a",
     boxShadow: "none",
     flexShrink: 1,
+    highlighted: {
+      backgroundColor: "yellow",
+      boxShadow: "none",
+      flexShrink: 1,
+    },
   },
   selected: {
     backgroundColor: "rgba(115,149,82,255)",
@@ -42,12 +48,89 @@ const marbleStyles = {
       backgroundColor: "rgba(130,180,100,255)", // Change hover color
     },
   },
+  // Possible moves
+  3: {
+    backgroundColor: "yellow",
+    boxShadow: "none",
+    outline: "solid 2px black",
+    flexShrink: 1,
+  },
+
 };
 
 // Displays the playing board of the GUI
 const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
+  const [possibleMoves, setPossibleMoves] = useState({});
+  const [validMoves, setValidMoves] = useState([]);
+
+  const fetchPossibleMoves = useCallback(async () => {
+    try {
+      const responseData = await GameService.getPossibleMoves();
+      console.log(responseData);
+      setPossibleMoves(responseData);
+    } catch (error) {
+      console.error("Failed to fetch possible moves:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchPossibleMoves();
+  }, [fetchPossibleMoves])
+
+  useEffect(() => {
+    const updateHighlightedMoves = async () => {
+      let marbleKey = [];
+      let turn = "black"
+      selectedMarbles.forEach(marble => {
+        marbleKey.push([marble.position.x, marble.position.y]);
+      });
+      const sortedMarbleKey = marbleKey.sort();
+      let myString = "[";
+      sortedMarbleKey.forEach(marble => {
+        myString += `'${marble[0]},${marble[1]}', `;
+      });
+      myString = myString.slice(0, -2);
+      myString += "]";
+      if (selectedMarbles[0].state == 2) {
+        turn = "white";
+      }
+      setValidMoves(possibleMoves[turn][myString]);
+
+      if (possibleMoves[turn][myString] !== undefined) {
+        possibleMoves[turn][myString].forEach(move => {
+          if (move[0]) {
+            move = move[0];
+          }
+          let state = board[move.y][move.x];
+          if (state.state == 0) {
+            state.state = 3;
+          }
+        });
+
+      }
+    };
+
+    // Call the update function if there are selected marbles
+    if (selectedMarbles.length > 0) {
+      updateHighlightedMoves();
+    }
+  }, [possibleMoves, selectedMarbles]);
   // Callback when a marble is deselected
-  const deselectMarbles = useCallback((marbles) => {
+
+  const clearValidMoves = useCallback(async () => {
+    for (let move of board) {
+      console.log(move);
+      for (let space of move) {
+        if (space.state == 3) {
+          space.state = 0;
+        }
+      }
+    }
+  }, [setValidMoves, validMoves, setSelectedMarbles, selectedMarbles]);
+
+
+  const deselectMarbles = useCallback(async (marbles) => {
+    console.log("deselecting marbles");
     for (const marble of marbles) {
       marble.selected = false;
     }
@@ -76,9 +159,11 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
             space.selected = true;
             return [...previousSelectedMarbles, space];
           } else if (previousSelectedMarbles[0] === space) {
+            clearValidMoves();
             space.selected = false;
             return [];
           } else {
+            clearValidMoves();
             deselectMarbles(previousSelectedMarbles);
             space.selected = true;
             return [space];
@@ -102,6 +187,7 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
             space.selected = true;
             return [...previousSelectedMarbles, space];
           } else {
+            clearValidMoves();
             deselectMarbles(previousSelectedMarbles);
             space.selected = true;
             return [space];
@@ -113,10 +199,12 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
       else if (selectedMarbles.includes(space) || selectedMarbles.length >= 3) {
         deselectMarbles(selectedMarbles);
         setSelectedMarbles([space]);
+        clearValidMoves();
+
         space.selected = true;
       }
     },
-    [deselectMarbles, selectedMarbles, setSelectedMarbles]
+    [deselectMarbles, selectedMarbles, setSelectedMarbles, clearValidMoves]
   );
 
   // A function that will return the color of the marble based on the state
@@ -124,7 +212,6 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
     if (space.selected) {
       return marbleStyles.selected;
     }
-
     return marbleStyles[space.state];
   }, []);
 
@@ -145,7 +232,7 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
         </Fab>
       );
     },
-    [getSpaceStyle, onMarbleClick]
+    [getSpaceStyle, onMarbleClick, validMoves]
   );
 
   // A function that will render a row of the board
