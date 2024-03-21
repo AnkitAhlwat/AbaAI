@@ -55,3 +55,15 @@ class FileHandler:
                     white_piece_positions.append(position_notation)
 
         return ','.join(black_piece_positions + white_piece_positions)
+
+    @staticmethod
+    def test_output_files(first_file, second_file):
+        new_set = set()
+        with open(f'../../state_space_test_files/{first_file}', 'r') as file:
+            for line in file:
+                new_set.add(line)
+            print(len(new_set))
+        with open(f'../../state_space_test_files/{second_file}', 'r') as file:
+            for line in file:
+                new_set.add(line)
+            print(len(new_set))
