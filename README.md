@@ -15,6 +15,42 @@ You can access the application via the following url:
 
 NOTE: This is hosted using a free cloud hosting service, and may not respond properly all the time.
 
+## Running the State-Space Generator
+*Simplified instructions in GENERATOR_INSTRUCTIONS.md
+
+Can be run from AbaAI/abaai-server/abalone/ directly without the need for downloading if the repo is cloned (instructions below) 
+
+### Prerequisites
+- Working Test.input files 
+
+### Step 1: Download State_Space_Generator.zip
+
+1. Locate the file
+```
+On the repository main page, find State_Space_Generator.zip
+Alternatively, it may be located in:
+".\AbaAI\abaai-server\abalone\ai\State_Space_Generator.zip"
+```
+
+2. Download and unzip the file
+```
+Can be dowloaded directly in the directry if the repository is cloned, unzip the file by right-clicking it and selecting "Extract All..."
+Alternatively, select the .zip folder in the repository, then in the github code file header select the dowload icon 
+```
+
+3. Insert input files and run the Executable
+```
+Navigate into the downloaded "State_Space_Generator" folder
+Insert as many Test<#>.input files in the "input_files" folder as desired
+Run the executable by double-clicking it, or by opening the command prompt in the "State_Space_Generator" and typing:
+"state_space_generator_main.exe"
+```
+
+4. Find output files
+```
+Navigate to the "output_files" folder to find the Test<#>.move and Test<#>.board files for all input files
+```
+
 ## Local Installation
 
 ### Prerequisites
