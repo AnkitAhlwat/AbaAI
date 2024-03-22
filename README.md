@@ -8,7 +8,18 @@ AbaAI is an ambitious project aimed at developing a sophisticated AI to excel at
 - To explore various heuristics and algorithms to find the most effective strategies for winning.
 - To contribute to the AI and board game community by providing a fully open-source solution.
 
-## Getting started
+## Application Website
+You can access the application via the following url:
+
+[Aba AI](https://aba-ai.vercel.app/)
+
+NOTE: This is hosted using a free cloud hosting service, and may not respond properly all the time.
+
+## Local Installation
+
+### Prerequisites
+- Python 3.11 or higher is installed on your computer. [Install Python Here](https://www.python.org/downloads/?trk=cndc-detail)
+- Node 20.11 or higher is installed on your computer. [Install Node Here](https://nodejs.org/en/download/)
 
 ### Step 1: Clone the project to your computer and navigate to directory
 
@@ -49,12 +60,19 @@ cd <directory name>
     ```
 
 5. Start the application server
+- Windows
     ```
     python app.py
     ```
+- Linux/MaxOS
+    ```
+    python3 app.py
+    ```
 
 ### Step 3: Start the front end React server
-1. Change directory to the `abaai-client` directory.
+1. Open a separate terminal window
+
+2. Change directory to the `abaai-client` directory. (from root directory)
     ```
     cd abaai-client
     
@@ -62,11 +80,11 @@ cd <directory name>
     
     cd ../abaai-client // if navigating from abaai-server directory
     ```
-2. Install the node dependencies
+3. Install the node dependencies
     ```
     npm install
     ```
-3. Start the React server
+4. Start the React server
     ```
     npm run dev
     ```

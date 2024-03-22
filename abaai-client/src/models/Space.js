@@ -1,3 +1,4 @@
+// Represents the data of a game board space
 class Space {
     constructor(state, position) {
         this.state = state;
@@ -6,6 +7,7 @@ class Space {
         this.selected = false;
     }
 
+    // Returns adjacent spaces of the given space
     getAdjacentSpaces() {
         const adjacentSpaces = [];
         const { x, y } = this.position;
@@ -25,6 +27,7 @@ class Space {
         return adjacentSpaces;
     }
 
+    // Returns whether space is adjacent to parameter space
     isAdjacentTo(space) {
         const adjacentSpaces = this.getAdjacentSpaces();
         for (const adjacentSpace of adjacentSpaces) {
@@ -35,6 +38,7 @@ class Space {
         return false;
     }
 
+    // Returns whether group of spaces are in straight line
     static areInStraightLine(space1, space2, space3) {
         const x1 = space1.position.x;
         const y1 = space1.position.y;
@@ -43,21 +47,14 @@ class Space {
         const x3 = space3.position.x;
         const y3 = space3.position.y;
 
-        if (x1 === x2 && x2 === x3) {
-            return true;
-        }
-        if (y1 === y2 && y2 === y3) {
-            return true;
-        }
-        if (x1 - x2 === y1 - y2 && x2 - x3 === y2 - y3) {
-            return true;
-        }
-        if (x1 - x2 === y2 - y1 && x2 - x3 === y3 - y2) {
-            return true;
-        }
+        if (x1 === x2 && x2 === x3) return true;
+        if (y1 === y2 && y2 === y3) return true;
+        if (x1 - x2 === y1 - y2 && x2 - x3 === y2 - y3) return true;
+        if (x1 - x2 === y2 - y1 && x2 - x3 === y3 - y2) return true;
         return false;
     }
 
+    // Gets the game board position code
     static getCodeByPosition(position) {
         const letter = String.fromCharCode(65 + 8 - position.y);
         const number = position.x + 1;

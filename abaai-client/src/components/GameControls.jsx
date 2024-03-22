@@ -1,6 +1,7 @@
 import { Button, Stack } from "@mui/material";
 import PropTypes from "prop-types";
 
+// Displays the buttons that handle undo and reset
 const GameControls = ({ onReset, onUndo, movesStack }) => {
   return (
     <Stack
