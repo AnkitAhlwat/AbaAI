@@ -70,8 +70,3 @@ class FileHandler:
                 new_set.add(line)
             print(len(new_set))
 
-    @staticmethod
-    def list_files_in_directory(directory):
-        pattern = re.compile(r'Test\d+\.input$')
-        return [os.path.join(directory, f) for f in os.listdir(directory) if pattern.match(f)]
-
