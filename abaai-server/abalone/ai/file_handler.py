@@ -2,7 +2,9 @@ from copy import deepcopy
 
 from abalone.board import BoardLayout, Board
 from abalone.state import GameState, GameStateUpdate
-from abalone.movement import Piece, Position, Move
+from abalone.movement import Piece, Position
+import re
+import os
 
 
 class FileHandler:
@@ -25,9 +27,9 @@ class FileHandler:
             return GameState(Board(board_array), turn)
 
     @staticmethod
-    def convert_game_state_updates_to_output_files(state_updates: list[GameStateUpdate], input_file_path: str):
-        move_file_name = input_file_path.replace('.input', '.move')
-        board_file_name = input_file_path.replace('.input', '.board')
+    def convert_game_state_updates_to_output_files(state_updates: list[GameStateUpdate], output_file_base: str):
+        move_file_name = f"{output_file_base}.move"
+        board_file_name = f"{output_file_base}.board"
 
         with open(move_file_name, 'w', encoding="utf-8") as move_file, \
                 open(board_file_name, 'w', encoding="utf-8") as board_file:
@@ -55,3 +57,16 @@ class FileHandler:
                     white_piece_positions.append(position_notation)
 
         return ','.join(black_piece_positions + white_piece_positions)
+
+    @staticmethod
+    def test_output_files(first_file, second_file):
+        new_set = set()
+        with open(f'../../state_space_test_files/{first_file}', 'r') as file:
+            for line in file:
+                new_set.add(line)
+            print(len(new_set))
+        with open(f'../../state_space_test_files/{second_file}', 'r') as file:
+            for line in file:
+                new_set.add(line)
+            print(len(new_set))
+
