@@ -89,9 +89,8 @@ class Game:
         # clear the stack
         self._moves_stack.clear_stack()
 
-        # rest the board to be the default board
-        # TODO: reset to the position the plauyer has selected
-        self._board = Board(BoardLayout.DEFAULT)
+        # reset the board to be the selected board
+        self._board = Board(self._game_options.board_layout.value)
 
         # set the turn to be black
         self._turn = 1

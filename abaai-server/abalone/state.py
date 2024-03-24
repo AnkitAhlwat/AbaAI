@@ -16,6 +16,9 @@ class GameState:
         self._remaining_player_marbles = remaining_player_marbles
         self._remaining_opponent_marbles = remaining_opponent_marbles
 
+    def is_game_over(self):
+        return True if self._remaining_player_marbles <= 8 or self._remaining_opponent_marbles <= 8 else False
+
     @property
     def board(self):
         return self._board
