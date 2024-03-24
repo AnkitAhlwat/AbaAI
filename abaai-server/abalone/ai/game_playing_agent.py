@@ -6,7 +6,7 @@ class MiniMaxAgent:
     def __init__(self, max_depth):
         self.max_depth = max_depth
 
-    def minimax(self, game_state, depth, max_turn):
+    def minimax(self, game_state, depth, max_turn, alpha, beta):
         if depth == 0 or game_state.is_game_over():
             return self.evaluate(game_state)
 
@@ -14,15 +14,19 @@ class MiniMaxAgent:
             max_eval = float('-inf')
             for move in StateSpaceGenerator.generate_all_possible_moves(game_state):
                 next_state = GameStateUpdate(game_state, move).resulting_state
-                eval = self.minimax(next_state, depth - 1, False)
-                max_eval = max(max_eval, eval)
+                max_eval = max(max_eval, self.minimax(next_state, depth - 1, False, alpha, beta))
+                if max_eval > beta:
+                    return max_eval
+                alpha = max(alpha, max_eval)
             return max_eval
         else:
             min_eval = float('inf')
             for move in StateSpaceGenerator.generate_all_possible_moves(game_state):
                 next_state = GameStateUpdate(game_state, move).resulting_state
-                eval = self.minimax(next_state, depth - 1, True)
-                min_eval = max(min_eval, eval)
+                min_eval = min(min_eval, self.minimax(next_state, depth - 1, True, alpha, beta))
+                if min_eval < alpha:
+                    return min_eval
+                beta = min(beta, min_eval)
             return min_eval
 
     def get_best_move(self, game_state):
@@ -30,7 +34,7 @@ class MiniMaxAgent:
         max_eval = float('-inf')
         for move in StateSpaceGenerator.generate_all_possible_moves(game_state):
             successor_state = GameStateUpdate(game_state, move).resulting_state
-            eval = self.minimax(successor_state, self.max_depth, False)
+            eval = self.minimax(successor_state, self.max_depth, False, float('-inf'), float('inf'))
             if eval > max_eval:
                 max_eval = eval
                 best_move = move
