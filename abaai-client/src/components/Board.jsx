@@ -62,10 +62,11 @@ const marbleStyles = {
 };
 
 // Displays the playing board of the GUI
-const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
+const Board = ({ board, selectedMarbles, setSelectedMarbles, onMoveSelection }) => {
   // ------------------- State -------------------
   const [allPossibleMoves, setAllPossibleMoves] = useState({});
   const [validMovesForSelectedMarbles, setValidMovesForSelectedMarbles] = useState([]);
+
 
   const fetchPossibleMoves = useCallback(async () => {
     try {
@@ -115,10 +116,32 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
     }
   }, []);
 
+
+  // A function that will execute the move if it is valid
+  const executeMoveIfValid = useCallback((space) => {
+    const isValidMoveClick = validMovesForSelectedMarbles.some(move =>
+      move.next_player_positions.some(position => position.x === space.position.x && position.y === space.position.y)
+    );
+
+    console.log("Is valid move click:", isValidMoveClick);
+    if (isValidMoveClick && selectedMarbles.length > 0) {
+
+      const move = {
+        from: selectedMarbles.map(marble => ({ x: marble.position.x, y: marble.position.y })),
+        to: validMovesForSelectedMarbles.map(move => move.next_player_positions.map(position => ({ x: position.x, y: position.y })))[0]
+      };
+      onMoveSelection(move);
+      return true;
+    }
+
+    return false;
+  }, [validMovesForSelectedMarbles, selectedMarbles, onMoveSelection]);
+
   const onMarbleClick = useCallback(
     (space) => {
-      console.log("Marble clicked:", space);
-      // If the space is empty or the space is already selected, return
+      if (executeMoveIfValid(space)) {
+        return;
+      }
       if (space.state === SpaceStates.EMPTY) return;
 
       // If there are no selected marbles, select the current marble
@@ -180,8 +203,9 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
         space.selected = true;
       }
     },
-    [deselectMarbles, selectedMarbles, setSelectedMarbles]
+    [deselectMarbles, selectedMarbles, setSelectedMarbles, executeMoveIfValid]
   );
+
 
   // A function that will return the color of the marble based on the state
   const getSpaceStyle = useCallback((space) => {

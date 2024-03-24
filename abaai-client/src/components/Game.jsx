@@ -56,25 +56,21 @@ const Game = () => {
   const onMoveSelection = useCallback(
     async (move) => {
       // get the previous and new positions of the selected marbles
-      const previousPositions = selectedMarbles.map(
-        (marble) => marble.position
-      );
-      const newPositions = previousPositions.map((position) => ({
-        x: position.x + move.x,
-        y: position.y + move.y,
-      }));
+      console.log("Move:", move);
       const marbleState = selectedMarbles[0].state;
-
       //set gamestarted to true
       if (!gameStarted) {
         setGameStarted(true);
       }
 
       setSelectedMarbles([]);
+      console.log(move.from, move.to, marbleState)
 
       // send post request to the server
-      const moveObj = new Move(previousPositions, newPositions, marbleState);
+      const moveObj = new Move(move.from, move.to, marbleState);
+      console.log(moveObj);
       const responseData = await GameService.postMove(moveObj);
+      console.log(responseData);
 
       // set the ai move card to show what the ai did
       updateAiMove(responseData.ai_move);
