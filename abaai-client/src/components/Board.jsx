@@ -65,8 +65,7 @@ const marbleStyles = {
 const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
   // ------------------- State -------------------
   const [allPossibleMoves, setAllPossibleMoves] = useState({});
-  const [validMovesForSelectedMarbles, setValidMovesForSelectedMarbles] =
-    useState([]);
+  const [validMovesForSelectedMarbles, setValidMovesForSelectedMarbles] = useState([]);
 
   const fetchPossibleMoves = useCallback(async () => {
     try {
@@ -104,6 +103,9 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
     const validMovesForSelectedMarbles = allPossibleMoves[key];
     if (validMovesForSelectedMarbles !== undefined) {
       setValidMovesForSelectedMarbles(validMovesForSelectedMarbles);
+    }
+    if (validMovesForSelectedMarbles === undefined) {
+      setValidMovesForSelectedMarbles([]);
     }
   }, [allPossibleMoves, convertSelectedMarblesToKey, selectedMarbles]);
 
@@ -200,6 +202,8 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
   }, [fetchPossibleMoves]);
 
   useEffect(() => {
+    console.log("valid moves for selected marbles:", validMovesForSelectedMarbles);
+    console.log("selected marbles:", selectedMarbles);
     const clearHighlight = () => {
       for (let row of board) {
         for (let space of row) {
@@ -210,7 +214,7 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
       }
     };
     clearHighlight();
-  }, [validMovesForSelectedMarbles, selectedMarbles, onMarbleClick]);
+  }, [validMovesForSelectedMarbles, onMarbleClick]);
 
   // ------------------- Render -------------------
   const renderMarble = useCallback(
