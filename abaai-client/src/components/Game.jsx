@@ -23,6 +23,9 @@ const Game = () => {
   const [selectedMarbles, setSelectedMarbles] = useState([]); // Tracks which marbles are selected
   const [movesStack, setMovesStack] = useState([]); // Tracks player move history
   const [gameStarted, setGameStarted] = useState(false); // Tracks whether game has started
+  const [activePlayer, setActivePlayer] = useState('black'); // Tracks which player's turn it is for clock logic, potentially temporary
+  // const [currentPlayer, setCurrentPlayer] = useState('player1'); CLOCKSTUFF
+  // const [isPaused, setIsPaused] = useState(false);
   const [possibleMoves, setPossibleMoves] = useState([]);
 
   // Tracks configuration options
@@ -34,6 +37,26 @@ const Game = () => {
     whiteTimeLimit: 15,
     moveLimit: 20
   });
+
+  const toggleActivePlayer = () => {
+    setActivePlayer(prev => prev === 'black' ? 'white' : 'black');
+  };
+
+  //logic to start the game for the clocks
+  const startGame = useCallback(() => {
+    if (!gameStarted) {
+      setGameStarted(true);
+      // Logic to start the black player clock goes here
+    }
+  }, [gameStarted]);
+
+  // const togglePause = () => { CLOCKSTUFF
+  //   setIsPaused(!isPaused);
+  // };
+  //currently used to switch the turn and aggregate clocks, can merge it with config options
+  // const switchPlayer = () => {
+  //   setCurrentPlayer(currentPlayer === 'player1' ? 'player2' : 'player1');
+  // };
 
   const { board, setBoardArray } = useBoard(config.boardLayout); // import board state and setBoard function from useBoard hook
 
@@ -67,8 +90,11 @@ const Game = () => {
 
       //set gamestarted to true
       if (!gameStarted) {
-        setGameStarted(true);
+        startGame();
       }
+
+      //toggle the active player turn
+      toggleActivePlayer();
 
       setSelectedMarbles([]);
 
@@ -83,7 +109,7 @@ const Game = () => {
       setMovesStack(responseData.moves_stack);
       setBoardArray(responseData.board);
     },
-    [selectedMarbles, setBoardArray, updateAiMove, gameStarted]
+    [selectedMarbles, setBoardArray, updateAiMove, gameStarted, startGame, toggleActivePlayer]
   );
 
   // Handles move undo
@@ -146,6 +172,15 @@ const Game = () => {
           setConfig={setConfig}
           movesStack={movesStack}
           aiMove={aiMove}
+
+          //for the clock controls
+          activePlayer={activePlayer}
+          toggleActivePlayer={toggleActivePlayer}
+          gameStarted={gameStarted}
+          startGame={startGame}
+          // currentPlayer={currentPlayer}
+          // isPaused={isPaused}
+          // togglePause={togglePause}
         />
       </Grid>
     </Grid>

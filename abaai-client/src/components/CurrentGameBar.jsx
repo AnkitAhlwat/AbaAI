@@ -2,10 +2,13 @@ import MoveHistory from "./MoveHistory";
 import AIMoveDisplay from "./AiMove";
 import GameClock from "./Clock";
 import Proptypes from "prop-types";
-import { Divider, Typography } from "@mui/material";
+import { Divider, Typography, Button } from "@mui/material";
 
 const CurrentGameBar = (props) => {
-  const { movesStack, aiMove } = props;
+  const { movesStack, aiMove, activePlayer, toggleActivePlayer, gameStarted, startGame } = props;
+  //const { movesStack, aiMove, currentPlayer, isPaused, togglePause} = props; CLOCK
+  const blackPlayerTime = 180; 
+  const whitePlayerTime = 180;
 
   const dummyMovesStack = [
     {
@@ -64,9 +67,35 @@ const CurrentGameBar = (props) => {
     );
   };
 
+  const handleClockResume = () => {
+    if (!gameStarted) {
+      startGame();
+    } else {
+      toggleActivePlayer();
+      console.log("Resuming game"); // Placeholder action
+    }
+  };
+
   return (
     <>
-      <GameClock />
+      <GameClock 
+        initialTime={blackPlayerTime} 
+        isActive={activePlayer === 'black'}
+        playerId="black" 
+        onMoveMade={toggleActivePlayer}
+        gameStarted = {gameStarted}
+        />
+      <GameClock 
+        initialTime={whitePlayerTime}
+        isActive={activePlayer === 'white'}
+        playerId="white" 
+        onMoveMade={toggleActivePlayer} 
+        gameStarted = {gameStarted}
+        />
+      <Button onClick={handleClockResume} color="primary" variant="contained">
+        {gameStarted ? "Resume" : "Start Game"}
+      </Button>
+      {/* <GameClock currentPlayer={currentPlayer} isPaused={isPaused} togglePause={togglePause} /> */}
       {centerDivider("AI Suggested Move")}
       <AIMoveDisplay aiMove={aiMove} />
       {centerDivider("Move History")}
@@ -78,6 +107,9 @@ const CurrentGameBar = (props) => {
 CurrentGameBar.propTypes = {
   movesStack: Proptypes.array.isRequired,
   aiMove: Proptypes.string.isRequired,
+  // currentPlayer: Proptypes.string, CLOCKSTUFF
+  // isPaused: Proptypes.bool,
+  // togglePause: Proptypes.func,
 };
 
 export default CurrentGameBar;
