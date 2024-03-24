@@ -107,15 +107,15 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
     }
   }, [allPossibleMoves, convertSelectedMarblesToKey, selectedMarbles]);
 
-  // const clearValidMoves = useCallback(async () => {
-  //   for (let move of board) {
-  //     for (let space of move) {
-  //       if (space.state == 3) {
-  //         space.state = 0;
-  //       }
-  //     }
-  //   }
-  // }, [board]);
+  const clearValidMoves = useCallback(async () => {
+    for (let move of board) {
+      for (let space of move) {
+        if (space.state == 3) {
+          space.state = 0;
+        }
+      }
+    }
+  }, [board]);
 
   const deselectMarbles = useCallback(async (marbles) => {
     console.log("deselecting marbles");
@@ -200,6 +200,9 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
     if (space.selected) {
       return marbleStyles.selected;
     }
+    if (space.state === 3) {
+      return marbleStyles[3];
+    }
     return marbleStyles[space.state];
   }, []);
 
@@ -281,7 +284,8 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
 
         {validMovesForSelectedMarbles.map((move) => {
           move.next_player_positions.map((space) => {
-            board[space.y][space.x].state = 3;
+            if (board[space.y][space.x].state !== 1 && board[space.y][space.x].state !== 2)
+              board[space.y][space.x].state = 3;
           })
         }
         )}
