@@ -110,7 +110,6 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
   }, [allPossibleMoves, convertSelectedMarblesToKey, selectedMarbles]);
 
   const deselectMarbles = useCallback((marbles) => {
-    console.log("deselecting marbles");
     for (const marble of marbles) {
       marble.selected = false;
     }
@@ -202,8 +201,6 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
   }, [fetchPossibleMoves]);
 
   useEffect(() => {
-    console.log("valid moves for selected marbles:", validMovesForSelectedMarbles);
-    console.log("selected marbles:", selectedMarbles);
     const clearHighlight = () => {
       for (let row of board) {
         for (let space of row) {
