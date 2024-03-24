@@ -107,18 +107,19 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
     }
   }, [allPossibleMoves, convertSelectedMarblesToKey, selectedMarbles]);
 
-  const clearValidMoves = useCallback(async () => {
-    for (let move of board) {
-      for (let space of move) {
-        if (space.state == 3) {
-          space.state = 0;
-        }
-      }
-    }
-  }, [board]);
+  // const clearValidMoves = useCallback(() => {
+  //   for (let move of board) {
+  //     for (let space of move) {
+  //       if (space.state == 3) {
+  //         space.state = 0;
+  //       }
+  //     }
+  //   }
+  // }, [board]);
 
-  const deselectMarbles = useCallback(async (marbles) => {
+  const deselectMarbles = useCallback((marbles) => {
     console.log("deselecting marbles");
+    // clearValidMoves();
     for (const marble of marbles) {
       marble.selected = false;
     }
@@ -126,11 +127,14 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
 
   const onMarbleClick = useCallback(
     (space) => {
+      console.log("Marble clicked:", space);
+      // clearValidMoves();
       // If the space is empty or the space is already selected, return
       if (space.state === SpaceStates.EMPTY) return;
 
       // If there are no selected marbles, select the current marble
       if (selectedMarbles.length === 0) {
+        // clearValidMoves();
         space.selected = true;
         setSelectedMarbles([space]);
       }
@@ -200,9 +204,6 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
     if (space.selected) {
       return marbleStyles.selected;
     }
-    if (space.state === 3) {
-      return marbleStyles[3];
-    }
     return marbleStyles[space.state];
   }, []);
 
@@ -215,6 +216,18 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
     fetchPossibleMoves();
   }, [fetchPossibleMoves]);
 
+  useEffect(() => {
+    const clearHighlight = () => {
+      for (let row of board) {
+        for (let space of row) {
+          if (space.state === 3) {
+            space.state = 0;
+          }
+        }
+      }
+    };
+    clearHighlight();
+  }, [validMovesForSelectedMarbles, selectedMarbles, onMarbleClick]);
 
   // ------------------- Render -------------------
   const renderMarble = useCallback(
