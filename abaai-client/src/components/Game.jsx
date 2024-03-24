@@ -8,6 +8,7 @@ import { Grid } from "@mui/material";
 import GameService from "../services/game.service";
 import Move from "../models/Move";
 import GameControls from "./GameControls";
+import GameClock from "./Clock";
 import MoveButtons from "./MoveButtons";
 import AIMoveDisplay from "./AiMove";
 import Space from "../models/Space";
@@ -25,6 +26,7 @@ const Game = () => {
   const [activePlayer, setActivePlayer] = useState('black'); // Tracks which player's turn it is for clock logic, potentially temporary
   // const [currentPlayer, setCurrentPlayer] = useState('player1'); CLOCKSTUFF
   // const [isPaused, setIsPaused] = useState(false);
+  const [possibleMoves, setPossibleMoves] = useState([]);
 
   // Tracks configuration options
   const [config, setConfig] = useState({
@@ -152,12 +154,6 @@ const Game = () => {
           onMoveSelection={onMoveSelection}
           selectedMarbles={selectedMarbles}
           setSelectedMarbles={setSelectedMarbles}
-
-          // for the clock controls
-          // currentPlayer={currentPlayer}
-          // isPaused={isPaused}
-          // togglePause={togglePause}
-          // switchPlayer={switchPlayer}
         />
       </Grid>
 

@@ -66,11 +66,11 @@ const ConfigMenu = ({ config, setConfig }) => {
       <br /><br />
       <SelectInput label="White Player" value={config.whitePlayer} onChange={(e) => handlePlayerChange(e, 'whitePlayer')} options={["Human", "Computer"]} />
       <br /><br />
-      <NumberInput id="black-time-limit" label="Black Time Limit (Seconds)" value={blackTimeLimit} onChange={(e) => handleTimeChange(e, setBlackTimeLimit)} />
+      <NumberInput id="black-time-limit" label="Black Time Limit (Seconds)" value={blackTimeLimit} onChange={(e) => {if (e.target.value >= 0) handleTimeChange(e, setBlackTimeLimit)}}  />
       <br /><br />
-      <NumberInput id="white-time-limit" label="White Time Limit (Seconds)" value={whiteTimeLimit} onChange={(e) => handleTimeChange(e, setWhiteTimeLimit)} />
+      <NumberInput id="white-time-limit" label="White Time Limit (Seconds)" value={whiteTimeLimit} onChange={(e) => {if (e.target.value >= 0) handleTimeChange(e, setWhiteTimeLimit)}} />
       <br /><br />
-      <NumberInput id="move-limit" label="Move Limit" value={moveLimit} onChange={(e) => setMoveLimit(e.target.value)} />
+      <NumberInput id="move-limit" label="Move Limit" value={moveLimit} onChange={(e) => {if (e.target.value >= 0) setMoveLimit(e.target.value)}} />
       <br /><br />
       <FormControl variant='filled'>
         <Button variant="contained" onClick={handleSubmit}>
