@@ -52,8 +52,12 @@ const marbleStyles = {
   3: {
     backgroundColor: "yellow",
     boxShadow: "none",
-    outline: "solid 2px black",
     flexShrink: 1,
+    highlighted: {
+      backgroundColor: "yellow",
+      boxShadow: "none",
+      flexShrink: 1,
+    },
   },
 };
 
@@ -97,23 +101,21 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
 
   const updateValidMoves = useCallback(() => {
     const key = convertSelectedMarblesToKey(selectedMarbles);
-
     const validMovesForSelectedMarbles = allPossibleMoves[key];
     if (validMovesForSelectedMarbles !== undefined) {
       setValidMovesForSelectedMarbles(validMovesForSelectedMarbles);
     }
   }, [allPossibleMoves, convertSelectedMarblesToKey, selectedMarbles]);
 
-  const clearValidMoves = useCallback(async () => {
-    for (let move of board) {
-      console.log(move);
-      for (let space of move) {
-        if (space.state == 3) {
-          space.state = 0;
-        }
-      }
-    }
-  }, [board]);
+  // const clearValidMoves = useCallback(async () => {
+  //   for (let move of board) {
+  //     for (let space of move) {
+  //       if (space.state == 3) {
+  //         space.state = 0;
+  //       }
+  //     }
+  //   }
+  // }, [board]);
 
   const deselectMarbles = useCallback(async (marbles) => {
     console.log("deselecting marbles");
@@ -145,11 +147,11 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
             space.selected = true;
             return [...previousSelectedMarbles, space];
           } else if (previousSelectedMarbles[0] === space) {
-            clearValidMoves();
+            // clearValidMoves();
             space.selected = false;
             return [];
           } else {
-            clearValidMoves();
+            // clearValidMoves();
             deselectMarbles(previousSelectedMarbles);
             space.selected = true;
             return [space];
@@ -173,7 +175,7 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
             space.selected = true;
             return [...previousSelectedMarbles, space];
           } else {
-            clearValidMoves();
+            // clearValidMoves();
             deselectMarbles(previousSelectedMarbles);
             space.selected = true;
             return [space];
@@ -185,12 +187,12 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
       else if (selectedMarbles.includes(space) || selectedMarbles.length >= 3) {
         deselectMarbles(selectedMarbles);
         setSelectedMarbles([space]);
-        clearValidMoves();
+        // clearValidMoves();
 
         space.selected = true;
       }
     },
-    [deselectMarbles, selectedMarbles, setSelectedMarbles, clearValidMoves]
+    [deselectMarbles, selectedMarbles, setSelectedMarbles]
   );
 
   // A function that will return the color of the marble based on the state
@@ -210,44 +212,6 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
     fetchPossibleMoves();
   }, [fetchPossibleMoves]);
 
-  // useEffect(() => {
-  //   const updateHighlightedMoves = async () => {
-  //     let marbleKey = [];
-  //     let turn = "black";
-  //     selectedMarbles.forEach((marble) => {
-  //       marbleKey.push([marble.position.x, marble.position.y]);
-  //     });
-  //     const sortedMarbleKey = marbleKey.sort();
-  //     let myString = "[";
-  //     sortedMarbleKey.forEach((marble) => {
-  //       myString += `'${marble[0]},${marble[1]}', `;
-  //     });
-  //     myString = myString.slice(0, -2);
-  //     myString += "]";
-  //     if (selectedMarbles[0].state == 2) {
-  //       turn = "white";
-  //     }
-  //     setValidMovesForSelectedMarbles(allPossibleMoves[turn][myString]);
-
-  //     if (allPossibleMoves[turn][myString] !== undefined) {
-  //       allPossibleMoves[turn][myString].forEach((move) => {
-  //         if (move[0]) {
-  //           move = move[0];
-  //         }
-  //         let state = board[move.y][move.x];
-  //         if (state.state == 0) {
-  //           state.state = 3;
-  //         }
-  //       });
-  //     }
-  //   };
-
-  //   // Call the update function if there are selected marbles
-  //   if (selectedMarbles.length > 0) {
-  //     updateHighlightedMoves();
-  //   }
-  // }, [allPossibleMoves, board, selectedMarbles]);
-  // Callback when a marble is deselected
 
   // ------------------- Render -------------------
   const renderMarble = useCallback(
@@ -314,6 +278,14 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
         }}
       >
         {board.map((row, index) => renderRow(row, index))}
+
+        {validMovesForSelectedMarbles.map((move) => {
+          move.next_player_positions.map((space) => {
+            board[space.y][space.x].state = 3;
+          })
+        }
+        )}
+
       </Box>
     </>
   );
