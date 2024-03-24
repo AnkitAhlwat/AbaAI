@@ -107,19 +107,8 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
     }
   }, [allPossibleMoves, convertSelectedMarblesToKey, selectedMarbles]);
 
-  // const clearValidMoves = useCallback(() => {
-  //   for (let move of board) {
-  //     for (let space of move) {
-  //       if (space.state == 3) {
-  //         space.state = 0;
-  //       }
-  //     }
-  //   }
-  // }, [board]);
-
   const deselectMarbles = useCallback((marbles) => {
     console.log("deselecting marbles");
-    // clearValidMoves();
     for (const marble of marbles) {
       marble.selected = false;
     }
@@ -128,13 +117,11 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
   const onMarbleClick = useCallback(
     (space) => {
       console.log("Marble clicked:", space);
-      // clearValidMoves();
       // If the space is empty or the space is already selected, return
       if (space.state === SpaceStates.EMPTY) return;
 
       // If there are no selected marbles, select the current marble
       if (selectedMarbles.length === 0) {
-        // clearValidMoves();
         space.selected = true;
         setSelectedMarbles([space]);
       }
@@ -151,11 +138,9 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
             space.selected = true;
             return [...previousSelectedMarbles, space];
           } else if (previousSelectedMarbles[0] === space) {
-            // clearValidMoves();
             space.selected = false;
             return [];
           } else {
-            // clearValidMoves();
             deselectMarbles(previousSelectedMarbles);
             space.selected = true;
             return [space];
@@ -179,7 +164,6 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
             space.selected = true;
             return [...previousSelectedMarbles, space];
           } else {
-            // clearValidMoves();
             deselectMarbles(previousSelectedMarbles);
             space.selected = true;
             return [space];
@@ -191,7 +175,6 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
       else if (selectedMarbles.includes(space) || selectedMarbles.length >= 3) {
         deselectMarbles(selectedMarbles);
         setSelectedMarbles([space]);
-        // clearValidMoves();
 
         space.selected = true;
       }
