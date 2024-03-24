@@ -93,7 +93,7 @@ class Game:
     def format_possible_moves(moves: list[Move]) -> dict[str, list[dict]]:
         moves_dict = {}
         for move in moves:
-            position_notation_list = [pos.to_notation() for pos in move.previous_player_positions]
+            position_notation_list = sorted([pos.to_notation() for pos in move.previous_player_positions])
             key = str(position_notation_list)
 
             if key not in moves_dict.keys():
