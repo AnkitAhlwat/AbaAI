@@ -143,6 +143,9 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles, onMoveSelection }) 
 
     if (matchingMove) {
       console.log("Sumito can occur");
+      const newSelectedMarbles = [...selectedMarbles, ...matchingMove.previous_opponent_positions.map(position => board[position.y][position.x])];
+      console.log(validMovesForSelectedMarbles)
+      setSelectedMarbles(newSelectedMarbles);
       return true;
     }
 
@@ -228,7 +231,9 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles, onMoveSelection }) 
         newSelectedMarbles = [space];
         setSelectedMarbles(newSelectedMarbles);
       }
-      canSumitoOccur(newSelectedMarbles);
+      if (canSumitoOccur(newSelectedMarbles)) {
+
+      }
     },
     [executeMoveIfValid, selectedMarbles, setSelectedMarbles, deselectMarbles]
   );
@@ -332,6 +337,10 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles, onMoveSelection }) 
 
         {validMovesForSelectedMarbles.map((move) => {
           move.next_player_positions.map((space) => {
+            if (board[space.y][space.x].state !== 1 && board[space.y][space.x].state !== 2)
+              board[space.y][space.x].state = 3;
+          })
+          move.next_opponent_positions.map((space) => {
             if (board[space.y][space.x].state !== 1 && board[space.y][space.x].state !== 2)
               board[space.y][space.x].state = 3;
           })
