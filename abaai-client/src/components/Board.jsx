@@ -118,17 +118,38 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles, onMoveSelection }) 
 
 
   // A function that will execute the move if it is valid
-  const executeMoveIfValid = useCallback((space) => {
-    const isValidMoveClick = validMovesForSelectedMarbles.some(move =>
-      move.next_player_positions.some(position => position.x === space.position.x && position.y === space.position.y)
-    );
+  const executeMoveIfValid = useCallback((clickedSpace) => {
+    let moveDirection = null;
+    let exactMove = null;
 
-    console.log("Is valid move click:", isValidMoveClick);
-    if (isValidMoveClick && selectedMarbles.length > 0) {
+    if (clickedSpace.state === 1 || clickedSpace.state === 2) return false;
+    if (selectedMarbles.length > 0) {
+      const firstSelectedMarble = selectedMarbles[0];
 
+      // Calculate the direction of the move
+      const directionX = clickedSpace.position.x - firstSelectedMarble.position.x;
+      const directionY = clickedSpace.position.y - firstSelectedMarble.position.y;
+
+      // normalize direction to -1, 0, or 1
+      moveDirection = {
+        x: Math.sign(directionX),
+        y: Math.sign(directionY)
+      };
+
+      // Find the exact move that matches both the direction and ends in the clicked space
+      validMovesForSelectedMarbles.forEach(move => {
+        move.next_player_positions.forEach(position => {
+          if (position.x === clickedSpace.position.x && position.y === clickedSpace.position.y) {
+            exactMove = move;
+          }
+        });
+      });
+    }
+
+    if (exactMove && selectedMarbles.length > 0) {
       const move = {
         from: selectedMarbles.map(marble => ({ x: marble.position.x, y: marble.position.y })),
-        to: validMovesForSelectedMarbles.map(move => move.next_player_positions.map(position => ({ x: position.x, y: position.y })))[0]
+        to: exactMove.next_player_positions.map(position => ({ x: position.x, y: position.y }))
       };
       onMoveSelection(move);
       return true;
@@ -136,6 +157,7 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles, onMoveSelection }) 
 
     return false;
   }, [validMovesForSelectedMarbles, selectedMarbles, onMoveSelection]);
+
 
   const onMarbleClick = useCallback(
     (space) => {
