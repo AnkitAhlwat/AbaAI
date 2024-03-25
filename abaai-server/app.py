@@ -49,8 +49,7 @@ def reset_game():
 
 @app.route('/api/game/possibleMoves', methods=['GET'])
 def possible_moves():
-    board = app.game.board
-    moves = app.game.get_possible_moves(board)
+    moves = app.game.get_possible_moves()
     return jsonify(moves)
 
 

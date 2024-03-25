@@ -52,160 +52,201 @@ const marbleStyles = {
   3: {
     backgroundColor: "yellow",
     boxShadow: "none",
-    outline: "solid 2px black",
     flexShrink: 1,
+    highlighted: {
+      backgroundColor: "yellow",
+      boxShadow: "none",
+      flexShrink: 1,
+    },
   },
-
+  4: {
+    backgroundColor: "red",
+    boxShadow: "none",
+    flexShrink: 1,
+    highlighted: {
+      backgroundColor: "yellow",
+      boxShadow: "none",
+      flexShrink: 1,
+    },
+  },
 };
 
 // Displays the playing board of the GUI
-const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
-  const [possibleMoves, setPossibleMoves] = useState({});
-  const [validMoves, setValidMoves] = useState([]);
+const Board = ({ board, selectedMarbles, setSelectedMarbles, onMoveSelection }) => {
+  // ------------------- State -------------------
+  const [allPossibleMoves, setAllPossibleMoves] = useState({});
+  const [validMovesForSelectedMarbles, setValidMovesForSelectedMarbles] = useState([]);
+
 
   const fetchPossibleMoves = useCallback(async () => {
     try {
       const responseData = await GameService.getPossibleMoves();
       console.log(responseData);
-      setPossibleMoves(responseData);
+      setAllPossibleMoves(responseData);
     } catch (error) {
       console.error("Failed to fetch possible moves:", error);
     }
+  }, [board]);
+
+  // ------------------- Functions/Callbacks -------------------
+  const convertSelectedMarblesToKey = useCallback((selectedMarbles) => {
+    const marbleNotationArray = selectedMarbles
+      .map((marble) => {
+        return marble.str;
+      })
+      .sort();
+
+    // Create the proper key
+    let key = "[";
+    for (let i = 0; i < marbleNotationArray.length; i++) {
+      key += `'${marbleNotationArray[i]}'`;
+      if (i < marbleNotationArray.length - 1) {
+        key += ", ";
+      }
+    }
+    key += "]";
+
+    return key;
   }, []);
 
-  useEffect(() => {
-    fetchPossibleMoves();
-  }, [fetchPossibleMoves])
-
-  useEffect(() => {
-    const updateHighlightedMoves = async () => {
-      let marbleKey = [];
-      let turn = "black"
-      selectedMarbles.forEach(marble => {
-        marbleKey.push([marble.position.x, marble.position.y]);
-      });
-      const sortedMarbleKey = marbleKey.sort();
-      let myString = "[";
-      sortedMarbleKey.forEach(marble => {
-        myString += `'${marble[0]},${marble[1]}', `;
-      });
-      myString = myString.slice(0, -2);
-      myString += "]";
-      if (selectedMarbles[0].state == 2) {
-        turn = "white";
-      }
-      setValidMoves(possibleMoves[turn][myString]);
-
-      if (possibleMoves[turn][myString] !== undefined) {
-        possibleMoves[turn][myString].forEach(move => {
-          if (move[0]) {
-            move = move[0];
-          }
-          let state = board[move.y][move.x];
-          if (state.state == 0) {
-            state.state = 3;
-          }
-        });
-
-      }
-    };
-
-    // Call the update function if there are selected marbles
-    if (selectedMarbles.length > 0) {
-      updateHighlightedMoves();
+  const updateValidMoves = useCallback(() => {
+    const key = convertSelectedMarblesToKey(selectedMarbles);
+    const validMovesForSelectedMarbles = allPossibleMoves[key];
+    if (validMovesForSelectedMarbles !== undefined) {
+      setValidMovesForSelectedMarbles(validMovesForSelectedMarbles);
     }
-  }, [possibleMoves, selectedMarbles]);
-  // Callback when a marble is deselected
-
-  const clearValidMoves = useCallback(async () => {
-    for (let move of board) {
-      console.log(move);
-      for (let space of move) {
-        if (space.state == 3) {
-          space.state = 0;
-        }
-      }
+    if (validMovesForSelectedMarbles === undefined) {
+      setValidMovesForSelectedMarbles([]);
     }
-  }, [setValidMoves, validMoves, setSelectedMarbles, selectedMarbles]);
+  }, [allPossibleMoves, convertSelectedMarblesToKey, selectedMarbles]);
 
-
-  const deselectMarbles = useCallback(async (marbles) => {
-    console.log("deselecting marbles");
+  const deselectMarbles = useCallback((marbles) => {
     for (const marble of marbles) {
       marble.selected = false;
     }
   }, []);
 
+  const arraysAreEqual = (array1, array2) => {
+    if (array1.length !== array2.length) {
+      return false;
+    }
+
+    for (let i = 0; i < array1.length; i++) {
+      if (JSON.stringify(array1[i]) !== JSON.stringify(array2[i])) {
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  const canSumitoOccur = useCallback((selectedMarbles) => {
+    const convertedMarbles = selectedMarbles.map(marble => ({
+      x: marble.position.x,
+      y: marble.position.y
+    })).sort((a, b) => (a.x - b.x) || (a.y - b.y))
+
+    const matchingMove = validMovesForSelectedMarbles.find(move => {
+      if (move.previous_opponent_positions.length === 0) return false;
+      return arraysAreEqual(move.previous_player_positions, convertedMarbles);
+    });
+
+    if (matchingMove) {
+      console.log("Sumito can occur");
+      const newSelectedMarbles = [...selectedMarbles, ...matchingMove.previous_opponent_positions.map(position => board[position.y][position.x])];
+      console.log(validMovesForSelectedMarbles)
+      setSelectedMarbles(newSelectedMarbles);
+      return true;
+    }
+
+    return false;
+
+  }, []);
+
+  // A function that will execute the move if it is valid
+  const executeMoveIfValid = useCallback((clickedSpace) => {
+    let moveDirection = null;
+    let exactMove = null;
+
+    if (clickedSpace.state === 1 || clickedSpace.state === 2) return false;
+    if (selectedMarbles.length > 0) {
+      const firstSelectedMarble = selectedMarbles[0];
+
+
+      // Find the exact move that matches both the direction and ends in the clicked space
+      validMovesForSelectedMarbles.forEach(move => {
+        move.next_opponent_positions.forEach(position => {
+          if (position.x === clickedSpace.position.x && position.y === clickedSpace.position.y) {
+            exactMove = move;
+          }
+        });
+        move.next_player_positions.forEach(position => {
+          if (position.x === clickedSpace.position.x && position.y === clickedSpace.position.y) {
+            exactMove = move;
+          }
+        });
+      });
+
+    }
+    if (exactMove && selectedMarbles.length > 0) {
+      const move = {
+        previous_player_positions: exactMove.previous_player_positions.map(position => ({ x: position.x, y: position.y })),
+        next_player_positions: exactMove.next_player_positions.map(position => ({ x: position.x, y: position.y })),
+        previous_opponent_positions: exactMove.previous_opponent_positions.map(position => ({ x: position.x, y: position.y })),
+        next_opponent_positions: exactMove.next_opponent_positions.map(position => ({ x: position.x, y: position.y })),
+      };
+      console.log("Move:", move);
+      onMoveSelection(move);
+      return true;
+    }
+
+    return false;
+  }, [validMovesForSelectedMarbles, selectedMarbles, onMoveSelection]);
+
+
   const onMarbleClick = useCallback(
     (space) => {
-      // If the space is empty or the space is already selected, return
-      if (space.state === SpaceStates.EMPTY) return;
-
-      // If there are no selected marbles, select the current marble
-      if (selectedMarbles.length === 0) {
-        space.selected = true;
-        setSelectedMarbles([space]);
+      let newSelectedMarbles = [];
+      // Early return if the space is empty or the move is valid.
+      if (space.state === SpaceStates.EMPTY || executeMoveIfValid(space)) {
+        executeMoveIfValid(space);
       }
 
-      // If there is one selected marble, select the current marble if it is adjacent to the selected marble
-      // Otherwise selected the current marble and deselect the previous marble
-      else if (selectedMarbles.length === 1) {
-        setSelectedMarbles((previousSelectedMarbles) => {
-          if (
-            previousSelectedMarbles[0].isAdjacentTo(space) &&
-            !space.selected &&
-            space.state === previousSelectedMarbles[0].state
-          ) {
-            space.selected = true;
-            return [...previousSelectedMarbles, space];
-          } else if (previousSelectedMarbles[0] === space) {
-            clearValidMoves();
-            space.selected = false;
-            return [];
-          } else {
-            clearValidMoves();
-            deselectMarbles(previousSelectedMarbles);
-            space.selected = true;
-            return [space];
-          }
-        });
+      // Deselect if the same marble is clicked again.
+      if (selectedMarbles.includes(space)) {
+        deselectMarbles([space]);
+        setSelectedMarbles(selectedMarbles.filter(marble => marble !== space));
+        return;
       }
 
-      // If there are two selected marbles, select the current marble if it is in a straight line with the selected marbles
-      // Otherwise deselect all the marbles and select the current marble
-      else if (selectedMarbles.length === 2) {
-        setSelectedMarbles((previousSelectedMarbles) => {
-          if (
-            Space.areInStraightLine(
-              previousSelectedMarbles[0],
-              previousSelectedMarbles[1],
-              space
-            ) &&
-            !space.selected &&
-            space.state === previousSelectedMarbles[0].state
-          ) {
-            space.selected = true;
-            return [...previousSelectedMarbles, space];
-          } else {
-            clearValidMoves();
-            deselectMarbles(previousSelectedMarbles);
-            space.selected = true;
-            return [space];
-          }
-        });
-      }
-
-      // If the marble is already selected or there are more than two selected marbles, deselect all the marbles and select the current marble
-      else if (selectedMarbles.includes(space) || selectedMarbles.length >= 3) {
+      // Handle marble selection logic.
+      if (selectedMarbles.length < 3) {
+        const lastSelectedMarble = selectedMarbles[selectedMarbles.length - 1];
+        // If adjacent or in a straight line, select the current marble.
+        if (!lastSelectedMarble || lastSelectedMarble.isAdjacentTo(space) ||
+          (selectedMarbles.length === 2 && Space.areInStraightLine(selectedMarbles[0], selectedMarbles[1], space))) {
+          space.selected = true;
+          newSelectedMarbles = [...selectedMarbles, space];
+          setSelectedMarbles(newSelectedMarbles);
+        } else { // Otherwise, deselect all and select the current marble.
+          deselectMarbles(selectedMarbles);
+          space.selected = true;
+          newSelectedMarbles = [space];
+          setSelectedMarbles(newSelectedMarbles);
+        }
+      } else { // If more than two marbles are already selected, reset and select the current one.
         deselectMarbles(selectedMarbles);
-        setSelectedMarbles([space]);
-        clearValidMoves();
-
         space.selected = true;
+        newSelectedMarbles = [space];
+        setSelectedMarbles(newSelectedMarbles);
+      }
+      if (canSumitoOccur(newSelectedMarbles)) {
+
       }
     },
-    [deselectMarbles, selectedMarbles, setSelectedMarbles, clearValidMoves]
+    [executeMoveIfValid, selectedMarbles, setSelectedMarbles, deselectMarbles]
   );
+
 
   // A function that will return the color of the marble based on the state
   const getSpaceStyle = useCallback((space) => {
@@ -215,6 +256,32 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
     return marbleStyles[space.state];
   }, []);
 
+  // ------------------- Effects -------------------
+  useEffect(() => {
+    updateValidMoves();
+  }, [updateValidMoves]);
+
+  useEffect(() => {
+    fetchPossibleMoves();
+  }, [fetchPossibleMoves]);
+
+  useEffect(() => {
+    const clearHighlight = () => {
+      for (let row of board) {
+        for (let space of row) {
+          if (space.state === 3) {
+            space.state = 0;
+          }
+          if (space.state === 4) {
+            space.state = 0;
+          }
+        }
+      }
+    };
+    clearHighlight();
+  }, [validMovesForSelectedMarbles, onMarbleClick]);
+
+  // ------------------- Render -------------------
   const renderMarble = useCallback(
     (space) => {
       return (
@@ -232,7 +299,7 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
         </Fab>
       );
     },
-    [getSpaceStyle, onMarbleClick, validMoves]
+    [getSpaceStyle, onMarbleClick]
   );
 
   // A function that will render a row of the board
@@ -279,6 +346,19 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles }) => {
         }}
       >
         {board.map((row, index) => renderRow(row, index))}
+
+        {validMovesForSelectedMarbles.map((move) => {
+          move.next_player_positions.map((space) => {
+            if (board[space.y][space.x].state !== 1 && board[space.y][space.x].state !== 2)
+              board[space.y][space.x].state = 3;
+          })
+          move.next_opponent_positions.map((space) => {
+            if (board[space.y][space.x].state !== 1 && board[space.y][space.x].state !== 2)
+              board[space.y][space.x].state = 4;
+          })
+        }
+        )}
+
       </Box>
     </>
   );

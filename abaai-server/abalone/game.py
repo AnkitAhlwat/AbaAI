@@ -1,26 +1,28 @@
+from abalone.ai.state_space_generator import StateSpaceGenerator
 from abalone.board import BoardLayout, Board
 from abalone.movement import Move, Piece
 from abalone.stack import Stack
+from abalone.state import GameState, GameStateUpdate
 
 
 class GameUpdate:
-    def __init__(self, ai_move: Move = None, moves_stack: Stack = None, board: Board = None, turn: Piece = None):
+    def __init__(self, ai_move: Move = None, moves_stack: Stack = None, game_state: GameState = None):
+        self._game_state = game_state
         self._ai_move = ai_move
         self._moves_stack = moves_stack
-        self._board = board
-        self._turn = turn
 
     def to_json(self):
         return {
             "ai_move": self._ai_move.to_json() if self._ai_move is not None else None,
             "moves_stack": self._moves_stack.to_json() if self._moves_stack is not None else None,
-            "board": self._board.to_json() if self._board is not None else None,
-            "turn": self._turn.value if self._turn is not None else None,
+            "game_state": self._game_state.to_json() if self._game_state is not None else None
         }
 
 
 class GameOptions:
     def __init__(self, board_layout: BoardLayout = None):
+        if board_layout is None:
+            board_layout = BoardLayout.DEFAULT
         self._board_layout = board_layout
 
     @property
@@ -29,20 +31,12 @@ class GameOptions:
 
 
 class Game:
-    ai_increment = -1
-
     def __init__(self, game_options: GameOptions = None):
         if game_options is None:
-            self._game_options = GameOptions()
-
-        if game_options.board_layout is None:
-            self._board = Board()
-        else:
-            self._board = Board(game_options.board_layout.value)
-
+            game_options = GameOptions()
+        self._game_options = game_options
         self._moves_stack = Stack()
-        self._turn = None
-        self._game_options = None
+        self._current_game_state = GameState(Board(game_options.board_layout.value), Piece.BLACK)
 
     def set_up(self, config) -> GameOptions:
         pass
@@ -55,31 +49,27 @@ class Game:
             print(e)
             return GameUpdate(None, self._moves_stack)
 
+        # make the move and push it to the stack
         self._moves_stack.push(move_obj)
-        self._board.make_move(move_obj)
+        self._current_game_state = GameStateUpdate(self._current_game_state, move_obj).resulting_state
 
+        # let the ai decide on it's next move
         try:
             ai_move_obj = self.make_ai_move()
         except Exception as e:
             print(e)
             ai_move_obj = None
 
-        return GameUpdate(ai_move_obj, self._moves_stack, board=self._board)
+        return GameUpdate(ai_move_obj, self._moves_stack, self._current_game_state)
 
     def undo_move(self) -> GameUpdate:
         move = self._moves_stack.pop()
-        self._board.undo_move(move)
+        self._current_game_state.undo_move(move)
 
-        return GameUpdate(None, self._moves_stack, self._board)
+        return GameUpdate(None, self._moves_stack, self._current_game_state)
 
     def make_ai_move(self) -> Move:
-        hard_coded_move = Game.get_default_ai_move()
-        ai_move_obj = Move.from_json(hard_coded_move)
-
-        self._moves_stack.push(ai_move_obj)
-        self._board.make_move(ai_move_obj)
-
-        return ai_move_obj
+        pass
 
     def reset_game(self):
         """
@@ -90,36 +80,25 @@ class Game:
         self._moves_stack.clear_stack()
 
         # reset the board to be the selected board
-        self._board = Board(self._game_options.board_layout.value)
+        board = Board(self._game_options.board_layout.value)
+        self._current_game_state = GameState(board)
 
-        # set the turn to be black
-        self._turn = 1
-        self.reset_ai_increment()
-        return GameUpdate(None, self._moves_stack, board=self._board)
+        return GameUpdate(None, self._moves_stack, self._current_game_state)
 
-    @classmethod
-    def reset_ai_increment(cls):
-        cls.ai_increment = -1
-
-    @classmethod
-    def get_default_ai_move(cls):
-        cls.ai_increment += 1
-        return {"previous_positions": [{"x": 5, "y": 2 + cls.ai_increment},
-                                       {"x": 5, "y": 1 + cls.ai_increment},
-                                       {"x": 5, "y": 0 + cls.ai_increment}],
-                "next_positions": [{"x": 5, "y": 3 + cls.ai_increment},
-                                   {"x": 5, "y": 2 + cls.ai_increment},
-                                   {"x": 5, "y": 1 + cls.ai_increment}],
-                "player": 2}
+    def get_possible_moves(self):
+        list_of_moves = StateSpaceGenerator.generate_all_possible_moves(self._current_game_state)
+        return Game.format_possible_moves(list_of_moves)
 
     @staticmethod
-    def get_possible_moves(board):
-        pass
+    def format_possible_moves(moves: list[Move]) -> dict[str, list[dict]]:
+        moves_dict = {}
+        for move in moves:
+            position_notation_list = sorted([pos.to_notation() for pos in move.previous_player_positions])
+            key = str(position_notation_list)
 
-    @property
-    def board(self):
-        return self._board
+            if key not in moves_dict.keys():
+                moves_dict[key] = [move.to_json()]
+            else:
+                moves_dict[key].append(move.to_json())
 
-    @property
-    def turn(self):
-        return self._turn
+        return moves_dict

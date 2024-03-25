@@ -1,23 +1,23 @@
+from copy import deepcopy
+
 from abalone.board import Board
 from abalone.movement import Move, Piece
-from copy import deepcopy
 
 
 class GameState:
     def __init__(
             self,
-            board: Board,
-            turn: Piece,
+            board: Board = None,
+            turn: Piece = Piece.BLACK,
             remaining_player_marbles: int = 14,
             remaining_opponent_marbles: int = 14
     ):
+        if board is None:
+            board = Board()
         self._board = board
         self._turn = turn
         self._remaining_player_marbles = remaining_player_marbles
         self._remaining_opponent_marbles = remaining_opponent_marbles
-
-    def is_game_over(self):
-        return True if self._remaining_player_marbles <= 8 or self._remaining_opponent_marbles <= 8 else False
 
     @property
     def board(self):
@@ -34,6 +34,25 @@ class GameState:
     @property
     def remaining_opponent_marbles(self) -> int:
         return self._remaining_opponent_marbles
+
+    def is_game_over(self):
+        return True if self._remaining_player_marbles <= 8 or self._remaining_opponent_marbles <= 8 else False
+
+    def undo_move(self, move: Move):
+        self._board = Board(self._board.undo_move(move))
+        self._turn = Piece.WHITE if self._turn == Piece.BLACK else Piece.BLACK
+
+        # Check if a sumito move pushed a marble off the board
+        if len(move.previous_opponent_positions) > len(move.next_opponent_positions):
+            self._remaining_opponent_marbles += 1
+
+    def to_json(self):
+        return {
+            'board': self._board.to_json(),
+            'turn': self._turn.value,
+            'remaining_player_marbles': self._remaining_player_marbles,
+            'remaining_opponent_marbles': self._remaining_opponent_marbles
+        }
 
 
 class GameStateUpdate:
