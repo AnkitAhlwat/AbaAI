@@ -3,38 +3,66 @@ import { useCountdown } from '../hooks/useCountdown';
 import { Box, Typography, Button } from '@mui/material';
 
 const GameClock = (props) => {
-  const { initialTime, isActive, playerId, onMoveMade, gameStarted} = props;
+  const { initialTime, isTurn, playerId, activePlayer, gameStarted, isActive, resetClockSignal} = props;
+  // const { initialTime, isActive, playerId, onMoveMade, gameStarted, onTurnEnd} = props;
   const { start: startClock, stop: stopClock, pause: pauseClock,  resume: resumeClock, currentTime, isRunning } = useCountdown(initialTime);
   // { start, stop, pause, resume, currentTime, isRunning };
   const [initialStart , setInitialStart] = React.useState(true);
 
-    /* Current behaviour of the resume function, currently uses pausing function as well to simulate
-     when a player makes a move, the clock will pause and the other player's clock will start    
-     */
+  //start the game clock
   useEffect(() => {
     // Handle initial start separately
-    if (gameStarted && isActive && !isRunning && initialStart) {
+    if (gameStarted && isTurn && !isRunning && initialStart) {
       console.log(`Starting clock for player ${playerId}`);
       startClock();
       setInitialStart(false); // Prevent further starts
     }
-  }, [gameStarted, isActive, isRunning, initialStart, startClock]);
+  }, [gameStarted, isActive, isRunning, initialStart, activePlayer]);
 
+    //pause or resume the game clock
+    useEffect(() => {
+      if (!isActive && isTurn) {
+        pauseClock();
+      } else if (isActive && isTurn) {
+        resumeClock();
+      } if (!isTurn) {
+        pauseClock();
+      }
+    }, [isActive, isTurn, activePlayer]);
+
+    //stop the game clock, currently same as reset
+    useEffect(() => {
+        stopClock();
+        setInitialStart(true);
+    }, [resetClockSignal]);
+
+    //reset the game clock
+    useEffect(() => {
+        stopClock();
+        setInitialStart(true);
+    }, [resetClockSignal]);
+
+  //triggered when the active status of the game is changed for taking turns 
   useEffect(() => {
-    // Assuming gameStarted indicates the game has officially begun
     if (gameStarted) {
       if (isActive) {
         console.log(`Toggling clock for player ${playerId}`);
-        if (!isRunning) {
-          resumeClock();
+        if (isRunning) {
+          pauseClock();
         }
-      } else if (isRunning) {
-        pauseClock();
+      } else if (!isRunning) {
+        resumeClock();
       }
     }
-  }, [gameStarted, isActive, isRunning, pauseClock, resumeClock]);
+  // }, [isActive]);
+}, []);
 
-  
+
+
+  // Expose the pause and resume functionality to currentGameBar
+  // useEffect(() => {
+  //   onTurnEnd(pauseClock, resumeClock);
+  // }, [onTurnEnd, pauseClock, resumeClock]);
 
 
   return (

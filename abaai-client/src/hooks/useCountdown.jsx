@@ -38,7 +38,9 @@ export const useCountdown = (totalSeconds) => {
   }, [isRunning, formatTime, getRemainingMilliseconds]);
 
   const start = useCallback(() => {
+    console.log("Start called")
     if (!isRunning) {
+      console.log("Starting clock")
       startTimeRef.current = Date.now();
       elapsedPauseTimeRef.current = 0;
       setIsRunning(true);
@@ -56,6 +58,7 @@ export const useCountdown = (totalSeconds) => {
 
   const pause = useCallback(() => {
     if (isRunning) {
+      console.log("Pausing clock")
       setIsRunning(false);
       pauseStartTimeRef.current = Date.now();
       cancelAnimationFrame(requestRef.current);
@@ -64,6 +67,7 @@ export const useCountdown = (totalSeconds) => {
 
   const resume = useCallback(() => {
     if (!isRunning && pauseStartTimeRef.current !== 0) {
+      console.log("Resuming clock")
       elapsedPauseTimeRef.current += Date.now() - pauseStartTimeRef.current;
       pauseStartTimeRef.current = 0;
       setIsRunning(true);
