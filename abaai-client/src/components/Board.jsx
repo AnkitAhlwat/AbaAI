@@ -59,6 +59,16 @@ const marbleStyles = {
       flexShrink: 1,
     },
   },
+  4: {
+    backgroundColor: "red",
+    boxShadow: "none",
+    flexShrink: 1,
+    highlighted: {
+      backgroundColor: "yellow",
+      boxShadow: "none",
+      flexShrink: 1,
+    },
+  },
 };
 
 // Displays the playing board of the GUI
@@ -263,6 +273,9 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles, onMoveSelection }) 
           if (space.state === 3) {
             space.state = 0;
           }
+          if (space.state === 4) {
+            space.state = 0;
+          }
         }
       }
     };
@@ -342,7 +355,7 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles, onMoveSelection }) 
           })
           move.next_opponent_positions.map((space) => {
             if (board[space.y][space.x].state !== 1 && board[space.y][space.x].state !== 2)
-              board[space.y][space.x].state = 3;
+              board[space.y][space.x].state = 4;
           })
         }
         )}
