@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 // Displays the buttons that handle start,  pause,  stop, undo and reset
 // temporarily has the taketurn button for testing turn changing and delay for server behaviour 
-const GameControls = ({ onTakeTurn, onStart, onPause, onResume, onStop, isGameActive, 
+const GameControls = ({ onTakeTurn, toggleActivePlayer, onStart, onPause, onResume, onStop, isGameActive, 
   isCurrentPlayerActive, onReset, onUndo, gameStarted, movesStack }) => {
     if (!gameStarted) {
       return (
@@ -27,6 +27,13 @@ const GameControls = ({ onTakeTurn, onStart, onPause, onResume, onStop, isGameAc
 
     return (
       <Stack
+        direction="column" // Stack the button groups vertically
+        spacing={2} // Adjust spacing between the button groups
+        justifyContent="center"
+        alignItems="center"
+        sx={{ marginTop: "40px" }}
+      >
+      <Stack
         direction="row"
         spacing={2}
         justifyContent="center"
@@ -49,7 +56,7 @@ const GameControls = ({ onTakeTurn, onStart, onPause, onResume, onStop, isGameAc
         </Button>
         <Button variant="contained" 
         onClick={onReset} 
-        color="warning">
+        color="info">
           Reset
         </Button>
         <Button
@@ -59,14 +66,14 @@ const GameControls = ({ onTakeTurn, onStart, onPause, onResume, onStop, isGameAc
         >
           Undo
         </Button>
-        {/* <Button
+      </Stack>
+      <Button
           variant="contained"
-          // onClick={handleClockResume}
+          onClick={toggleActivePlayer}
           color="info"
-          disabled={movesStack.length === 0}
         >
           Take Turn
-        </Button> */}
+      </Button>
       </Stack>
     );
   };

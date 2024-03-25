@@ -8,7 +8,7 @@ import CurrentGameBar from "./CurrentGameBar";
 const RightSideBar = (props) => {
   const { config, setConfig, movesStack, aiMove, 
     activePlayer, toggleActivePlayer, gameStarted, gameActive, startGame, stopGame,pauseGame,
-    resumeGame, resetGame, undoMove, blackClock, whiteClock
+    resumeGame, resetGame, undoMove, blackClock, whiteClock, resetClockSignal
   } = props;
 
   const [value, setValue] = useState("2");
@@ -37,6 +37,7 @@ const RightSideBar = (props) => {
             gameActive={gameActive}
             startGame={startGame}
             stopGame={stopGame}
+            resetClockSignal={resetClockSignal}
             pauseGame={pauseGame}
             resumeGame={resumeGame}
             resetGame={resetGame}

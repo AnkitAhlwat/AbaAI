@@ -8,7 +8,7 @@ import { Undo } from "@mui/icons-material";
 
 const CurrentGameBar = (props) => {
   const { movesStack, aiMove, activePlayer, toggleActivePlayer, gameStarted, gameActive, startGame,
-    stopGame, pauseGame, resumeGame, resetGame, undoMove, blackClock, whiteClock 
+    stopGame, resetClockSignal, pauseGame, resumeGame, resetGame, undoMove, blackClock, whiteClock, 
   } = props;
 
 
@@ -91,21 +91,26 @@ const CurrentGameBar = (props) => {
     <>
       <GameClock 
         initialTime={blackClock.time} 
-        isActive={activePlayer === 'black'}
+        isTurn={activePlayer === 'black'}
         playerId="black" 
-        onMoveMade={toggleActivePlayer}
+        activePlayer={activePlayer}
         gameStarted = {gameStarted}
+        isActive = {gameActive}
+        resetClockSignal={resetClockSignal}
         />
       <GameClock 
         initialTime={whiteClock.time}
-        isActive={activePlayer === 'white'}
+        isTurn={activePlayer === 'white'}
         playerId="white" 
-        onMoveMade={toggleActivePlayer} 
+        activePlayer={activePlayer}
         gameStarted = {gameStarted}
+        isActive = {gameActive}
+        resetClockSignal={resetClockSignal}
         />
 
         <GameControls
         onTakeTurn={handlePlayerChange}
+        toggleActivePlayer={toggleActivePlayer}
         onStart={startGame}
         onPause={() => pauseGame(activePlayer)}
         onResume={() => resumeGame(activePlayer)}

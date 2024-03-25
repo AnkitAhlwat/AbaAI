@@ -26,6 +26,7 @@ const Game = () => {
   const [activePlayer, setActivePlayer] = useState('black'); // Tracks which player's turn it is for clock logic, potentially temporary
   // const [currentPlayer, setCurrentPlayer] = useState('player1'); CLOCKSTUFF
   const [isGameActive, setIsGameActive] = useState(false);
+  const [resetClockSignal, setResetClockSignal] = useState(0);
   const [possibleMoves, setPossibleMoves] = useState([]);
 
   // Tracks configuration options
@@ -42,13 +43,13 @@ const Game = () => {
     setActivePlayer(prev => prev === 'black' ? 'white' : 'black');
   };
 
-  //Defines clock states for each player
+  //Defines aggregate clock states for each player, temporary
   const [blackClock, setBlackClock] = useState({
-    time: 180, // Starting time in seconds
+    time: 180,
     isRunning: false,
   });
   const [whiteClock, setWhiteClock] = useState({
-    time: 180, // Starting time in seconds
+    time: 180,
     isRunning: false,
   });
 
@@ -75,15 +76,18 @@ const Game = () => {
   //reset the game and clocks
   const resetGame = () => {
     //reset the board logic here
-    setBlackClock({ time: config.blackTimeLimit, isRunning: false });
-    setWhiteClock({ time: config.whiteTimeLimit, isRunning: false });
+    setBlackClock({ time: blackClock.time, isRunning: false });
+    setWhiteClock({ time: whiteClock.time, isRunning: false });
     setGameStarted(false);
+    setResetClockSignal(prev => prev + 1);
   };
 
-  //stop the game and reset the clocks
+  //stop the game and reset the clocks, this should also completely reset the game state
   const stopGame = () => {
+    setBlackClock({ time: blackClock.time, isRunning: false });
+    setWhiteClock({ time: whiteClock.time, isRunning: false });
     setGameStarted(false);
-    resetClocks();
+    setResetClockSignal(prev => prev + 1);
   }
 
   //undo the last move
@@ -104,6 +108,7 @@ const Game = () => {
   const startGame = useCallback(() => {
     if (!gameStarted) {
       setGameStarted(true);
+      setIsGameActive(true);
       resumeGame('black');
     }
   }, [gameStarted, resumeGame]);
@@ -233,6 +238,7 @@ const Game = () => {
           gameActive={isGameActive}
           startGame={startGame}
           stopGame={stopGame}
+          resetClockSignal={resetClockSignal}
           pauseGame={pauseGame}
           resumeGame={resumeGame}
           resetGame={resetGame}
