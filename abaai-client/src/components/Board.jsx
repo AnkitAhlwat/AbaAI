@@ -116,6 +116,39 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles, onMoveSelection }) 
     }
   }, []);
 
+  const arraysAreEqual = (array1, array2) => {
+    if (array1.length !== array2.length) {
+      return false;
+    }
+
+    for (let i = 0; i < array1.length; i++) {
+      if (JSON.stringify(array1[i]) !== JSON.stringify(array2[i])) {
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  const canSumitoOccur = useCallback((selectedMarbles) => {
+    const convertedMarbles = selectedMarbles.map(marble => ({
+      x: marble.position.x,
+      y: marble.position.y
+    })).sort((a, b) => (a.x - b.x) || (a.y - b.y))
+
+    const matchingMove = validMovesForSelectedMarbles.find(move => {
+      if (move.previous_opponent_positions.length === 0) return false;
+      return arraysAreEqual(move.previous_player_positions, convertedMarbles);
+    });
+
+    if (matchingMove) {
+      console.log("Sumito can occur");
+      return true;
+    }
+
+    return false;
+
+  }, []);
 
   // A function that will execute the move if it is valid
   const executeMoveIfValid = useCallback((clickedSpace) => {
@@ -161,71 +194,43 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles, onMoveSelection }) 
 
   const onMarbleClick = useCallback(
     (space) => {
-      if (executeMoveIfValid(space)) {
+      let newSelectedMarbles = [];
+      // Early return if the space is empty or the move is valid.
+      if (space.state === SpaceStates.EMPTY || executeMoveIfValid(space)) {
+        executeMoveIfValid(space);
+      }
+
+      // Deselect if the same marble is clicked again.
+      if (selectedMarbles.includes(space)) {
+        deselectMarbles([space]);
+        setSelectedMarbles(selectedMarbles.filter(marble => marble !== space));
         return;
       }
-      if (space.state === SpaceStates.EMPTY) return;
 
-      // If there are no selected marbles, select the current marble
-      if (selectedMarbles.length === 0) {
-        space.selected = true;
-        setSelectedMarbles([space]);
-      }
-
-      // If there is one selected marble, select the current marble if it is adjacent to the selected marble
-      // Otherwise selected the current marble and deselect the previous marble
-      else if (selectedMarbles.length === 1) {
-        setSelectedMarbles((previousSelectedMarbles) => {
-          if (
-            previousSelectedMarbles[0].isAdjacentTo(space) &&
-            !space.selected &&
-            space.state === previousSelectedMarbles[0].state
-          ) {
-            space.selected = true;
-            return [...previousSelectedMarbles, space];
-          } else if (previousSelectedMarbles[0] === space) {
-            space.selected = false;
-            return [];
-          } else {
-            deselectMarbles(previousSelectedMarbles);
-            space.selected = true;
-            return [space];
-          }
-        });
-      }
-
-      // If there are two selected marbles, select the current marble if it is in a straight line with the selected marbles
-      // Otherwise deselect all the marbles and select the current marble
-      else if (selectedMarbles.length === 2) {
-        setSelectedMarbles((previousSelectedMarbles) => {
-          if (
-            Space.areInStraightLine(
-              previousSelectedMarbles[0],
-              previousSelectedMarbles[1],
-              space
-            ) &&
-            !space.selected &&
-            space.state === previousSelectedMarbles[0].state
-          ) {
-            space.selected = true;
-            return [...previousSelectedMarbles, space];
-          } else {
-            deselectMarbles(previousSelectedMarbles);
-            space.selected = true;
-            return [space];
-          }
-        });
-      }
-
-      // If the marble is already selected or there are more than two selected marbles, deselect all the marbles and select the current marble
-      else if (selectedMarbles.includes(space) || selectedMarbles.length >= 3) {
+      // Handle marble selection logic.
+      if (selectedMarbles.length < 3) {
+        const lastSelectedMarble = selectedMarbles[selectedMarbles.length - 1];
+        // If adjacent or in a straight line, select the current marble.
+        if (!lastSelectedMarble || lastSelectedMarble.isAdjacentTo(space) ||
+          (selectedMarbles.length === 2 && Space.areInStraightLine(selectedMarbles[0], selectedMarbles[1], space))) {
+          space.selected = true;
+          newSelectedMarbles = [...selectedMarbles, space];
+          setSelectedMarbles(newSelectedMarbles);
+        } else { // Otherwise, deselect all and select the current marble.
+          deselectMarbles(selectedMarbles);
+          space.selected = true;
+          newSelectedMarbles = [space];
+          setSelectedMarbles(newSelectedMarbles);
+        }
+      } else { // If more than two marbles are already selected, reset and select the current one.
         deselectMarbles(selectedMarbles);
-        setSelectedMarbles([space]);
-
         space.selected = true;
+        newSelectedMarbles = [space];
+        setSelectedMarbles(newSelectedMarbles);
       }
+      canSumitoOccur(newSelectedMarbles);
     },
-    [deselectMarbles, selectedMarbles, setSelectedMarbles, executeMoveIfValid]
+    [executeMoveIfValid, selectedMarbles, setSelectedMarbles, deselectMarbles]
   );
 
 
