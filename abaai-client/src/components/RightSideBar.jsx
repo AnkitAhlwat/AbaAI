@@ -6,7 +6,10 @@ import { Box, Tab } from "@mui/material";
 import CurrentGameBar from "./CurrentGameBar";
 
 const RightSideBar = (props) => {
-  const { config, setConfig, movesStack, aiMove } = props;
+  const { config, setConfig, movesStack, aiMove, 
+    activePlayer, toggleActivePlayer, gameStarted, gameActive, startGame, stopGame,pauseGame,
+    resumeGame, resetGame, undoMove, blackClock, whiteClock, resetClockSignal
+  } = props;
 
   const [value, setValue] = useState("2");
   const handleChange = (event, newValue) => {
@@ -23,7 +26,29 @@ const RightSideBar = (props) => {
           </TabList>
         </Box>
         <TabPanel value="1">
-          <CurrentGameBar movesStack={movesStack} aiMove={aiMove} />
+        <CurrentGameBar
+            movesStack={movesStack}
+            aiMove={aiMove}
+
+            //clock controls
+            activePlayer={activePlayer}
+            toggleActivePlayer={toggleActivePlayer}
+            gameStarted={gameStarted}
+            gameActive={gameActive}
+            startGame={startGame}
+            stopGame={stopGame}
+            resetClockSignal={resetClockSignal}
+            pauseGame={pauseGame}
+            resumeGame={resumeGame}
+            resetGame={resetGame}
+            undoMove={undoMove}
+            blackClock={blackClock}
+            whiteClock={whiteClock}
+            // currentPlayer={currentPlayer}
+            // isPaused={isPaused}
+            // togglePause={togglePause}
+          />
+          
         </TabPanel>
         <TabPanel value="2">
           <ConfigMenu config={config} setConfig={setConfig} />
