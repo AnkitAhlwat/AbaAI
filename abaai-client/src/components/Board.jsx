@@ -76,7 +76,7 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles, onMoveSelection }) 
     } catch (error) {
       console.error("Failed to fetch possible moves:", error);
     }
-  }, []);
+  }, [selectedMarbles]);
 
   // ------------------- Functions/Callbacks -------------------
   const convertSelectedMarblesToKey = useCallback((selectedMarbles) => {
