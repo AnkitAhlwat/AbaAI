@@ -25,7 +25,7 @@ const Game = () => {
   const [gameStarted, setGameStarted] = useState(false); // Tracks whether game has started
   const [activePlayer, setActivePlayer] = useState('black'); // Tracks which player's turn it is for clock logic, potentially temporary
   // const [currentPlayer, setCurrentPlayer] = useState('player1'); CLOCKSTUFF
-  // const [isPaused, setIsPaused] = useState(false);
+  const [isGameActive, setIsGameActive] = useState(false);
   const [possibleMoves, setPossibleMoves] = useState([]);
 
   // Tracks configuration options
@@ -38,25 +38,76 @@ const Game = () => {
     moveLimit: 20
   });
 
-  const toggleActivePlayer = () => {
+  const toggleTurn = () => {
     setActivePlayer(prev => prev === 'black' ? 'white' : 'black');
   };
 
-  //logic to start the game for the clocks
+  //Defines clock states for each player
+  const [blackClock, setBlackClock] = useState({
+    time: 180, // Starting time in seconds
+    isRunning: false,
+  });
+  const [whiteClock, setWhiteClock] = useState({
+    time: 180, // Starting time in seconds
+    isRunning: false,
+  });
+
+  // Pause the game
+  const pauseGame = (player) => {
+    setIsGameActive(false);
+    if (player === 'black') {
+      setBlackClock(clock => ({ ...clock, isRunning: false }));
+    } else {
+      setWhiteClock(clock => ({ ...clock, isRunning: false }));
+    }
+  };
+
+  // Resume Game
+  const resumeGame = (player) => {
+    setIsGameActive(true);
+    if (player === 'black') {
+      setBlackClock(clock => ({ ...clock, isRunning: true }));
+    } else {
+      setWhiteClock(clock => ({ ...clock, isRunning: true }));
+    }
+  };
+
+  //reset the game and clocks
+  const resetGame = () => {
+    //reset the board logic here
+    setBlackClock({ time: config.blackTimeLimit, isRunning: false });
+    setWhiteClock({ time: config.whiteTimeLimit, isRunning: false });
+    setGameStarted(false);
+  };
+
+  //stop the game and reset the clocks
+  const stopGame = () => {
+    setGameStarted(false);
+    resetClocks();
+  }
+
+  //undo the last move
+  const undoMove = (player) => {
+    //undo the last move logic here
+    //reset the turn clocks
+    //reset the board to the last state
+    //add back the time that the last turn took to the previous player's clock
+    //need to be able to do this multiple times
+    if (player === 'black') {
+      setBlackClock(clock => ({ ...clock, isRunning: false }));
+    } else {
+      setWhiteClock(clock => ({ ...clock, isRunning: false }));
+    }
+  };
+
+  //logic to start the game and black game clock
   const startGame = useCallback(() => {
     if (!gameStarted) {
       setGameStarted(true);
-      // Logic to start the black player clock goes here
+      resumeGame('black');
     }
-  }, [gameStarted]);
+  }, [gameStarted, resumeGame]);
 
-  // const togglePause = () => { CLOCKSTUFF
-  //   setIsPaused(!isPaused);
-  // };
-  //currently used to switch the turn and aggregate clocks, can merge it with config options
-  // const switchPlayer = () => {
-  //   setCurrentPlayer(currentPlayer === 'player1' ? 'player2' : 'player1');
-  // };
 
   const { board, setBoardArray } = useBoard(config.boardLayout); // import board state and setBoard function from useBoard hook
 
@@ -88,13 +139,8 @@ const Game = () => {
       }));
       const marbleState = selectedMarbles[0].state;
 
-      //set gamestarted to true
-      if (!gameStarted) {
-        startGame();
-      }
-
       //toggle the active player turn
-      toggleActivePlayer();
+      toggleTurn();
 
       setSelectedMarbles([]);
 
@@ -109,7 +155,7 @@ const Game = () => {
       setMovesStack(responseData.moves_stack);
       setBoardArray(responseData.board);
     },
-    [selectedMarbles, setBoardArray, updateAiMove, gameStarted, startGame, toggleActivePlayer]
+    [selectedMarbles, setBoardArray, updateAiMove, gameStarted, startGame, toggleTurn]
   );
 
   // Handles move undo
@@ -154,6 +200,13 @@ const Game = () => {
           onMoveSelection={onMoveSelection}
           selectedMarbles={selectedMarbles}
           setSelectedMarbles={setSelectedMarbles}
+
+          //for the clock controls
+          // blackClock={blackClock}
+          // whiteClock={whiteClock}
+          // pauseClock={pauseClock}
+          // resumeClock={resumeClock}
+          // resetClocks={resetClocks}
         />
       </Grid>
 
@@ -175,9 +228,17 @@ const Game = () => {
 
           //for the clock controls
           activePlayer={activePlayer}
-          toggleActivePlayer={toggleActivePlayer}
+          toggleActivePlayer={toggleTurn}
           gameStarted={gameStarted}
+          gameActive={isGameActive}
           startGame={startGame}
+          stopGame={stopGame}
+          pauseGame={pauseGame}
+          resumeGame={resumeGame}
+          resetGame={resetGame}
+          undoMove={onUndoLastMove}
+          blackClock={blackClock}
+          whiteClock={whiteClock}
           // currentPlayer={currentPlayer}
           // isPaused={isPaused}
           // togglePause={togglePause}

@@ -4,6 +4,7 @@ import { Box, Typography, Button } from '@mui/material';
 
 const GameClock = (props) => {
   const { initialTime, isActive, playerId, onMoveMade, gameStarted} = props;
+  // const { initialTime, isActive, playerId, onMoveMade, gameStarted, onTurnEnd} = props;
   const { start: startClock, stop: stopClock, pause: pauseClock,  resume: resumeClock, currentTime, isRunning } = useCountdown(initialTime);
   // { start, stop, pause, resume, currentTime, isRunning };
   const [initialStart , setInitialStart] = React.useState(true);
@@ -20,21 +21,24 @@ const GameClock = (props) => {
     }
   }, [gameStarted, isActive, isRunning, initialStart, startClock]);
 
+  //triggered when the active status of the game is changed
   useEffect(() => {
-    // Assuming gameStarted indicates the game has officially begun
     if (gameStarted) {
       if (isActive) {
         console.log(`Toggling clock for player ${playerId}`);
-        if (!isRunning) {
-          resumeClock();
+        if (isRunning) {
+          pauseClock();
         }
-      } else if (isRunning) {
-        pauseClock();
+      } else if (!isRunning) {
+        resumeClock();
       }
     }
-  }, [gameStarted, isActive, isRunning, pauseClock, resumeClock]);
+  }, [isActive]);
 
-  
+  // Expose the pause and resume functionality to currentGameBar
+  // useEffect(() => {
+  //   onTurnEnd(pauseClock, resumeClock);
+  // }, [onTurnEnd, pauseClock, resumeClock]);
 
 
   return (
