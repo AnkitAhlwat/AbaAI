@@ -73,11 +73,11 @@ const Game = () => {
       console.log(responseData);
 
       // set the ai move card to show what the ai did
-      updateAiMove(responseData.ai_move);
+      // updateAiMove(responseData.ai_move);
 
       // update the board and moves stack
       setMovesStack(responseData.moves_stack);
-      setBoardArray(responseData.board);
+      setBoardArray(responseData.game_state.board);
     },
     [selectedMarbles, setBoardArray, updateAiMove, gameStarted]
   );

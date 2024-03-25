@@ -135,17 +135,17 @@ class Move:
     def from_json(cls, json):
         previous_positions = [Position(position['x'], position['y']) for position in json['previous_player_positions']]
         next_positions = [Position(position['x'], position['y']) for position in json['next_player_positions']]
-        if json['previous_opponent_positions']:
-            previous_opponent_positions = [Position(position['x'], position['y']) for position in
-                                           json['previous_opponent_positions']]
-        else:
-            previous_opponent_positions = None
-
-        if json['next_opponent_positions']:
-            next_opponent_positions = [Position(position['x'], position['y']) for position in
-                                       json['next_opponent_positions']]
-        else:
-            next_opponent_positions = None
+        # if json['previous_opponent_positions']:
+        #     previous_opponent_positions = [Position(position['x'], position['y']) for position in
+        #                                    json['previous_opponent_positions']]
+        # else:
+        previous_opponent_positions = None
+        #
+        # if json['next_opponent_positions']:
+        #     next_opponent_positions = [Position(position['x'], position['y']) for position in
+        #                                json['next_opponent_positions']]
+        # else:
+        next_opponent_positions = None
 
         player = Piece(json['player'])
         return cls(previous_positions, next_positions, player, previous_opponent_positions, next_opponent_positions)
