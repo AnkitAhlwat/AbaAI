@@ -14,9 +14,8 @@ app.game = Game()
 def configure_game():
     if request.is_json:
         data = request.get_json()
-        return jsonify(data)
-        # response = app.game.set_up(data)
-        # return jsonify(response)
+        response = app.game.set_up(data)
+        return jsonify(response)
 
     return jsonify({"error": "Invalid JSON"}), 400
 

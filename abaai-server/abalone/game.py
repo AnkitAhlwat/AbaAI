@@ -29,6 +29,10 @@ class GameOptions:
     def board_layout(self) -> BoardLayout:
         return self._board_layout
 
+    @board_layout.setter
+    def board_layout(self, value):
+        self._board_layout = value
+
 
 class Game:
     def __init__(self, game_options: GameOptions = None):
@@ -38,8 +42,13 @@ class Game:
         self._moves_stack = Stack()
         self._current_game_state = GameState(Board(game_options.board_layout.value), Piece.BLACK)
 
-    def set_up(self, config) -> GameOptions:
-        pass
+    def set_up(self, config):
+        if config['boardLayout'] == "Default":
+            self._game_options.board_layout = BoardLayout.DEFAULT
+        elif config['boardLayout'] == "Belgian Daisy":
+            self._game_options.board_layout = BoardLayout.BELGIAN_DAISY
+        else:
+            self._game_options.board_layout = BoardLayout.GERMAN_DAISY
 
     def make_move(self, move) -> GameUpdate:
         # convert the move to a Move object
@@ -53,7 +62,7 @@ class Game:
         self._moves_stack.push(move_obj)
         self._current_game_state = GameStateUpdate(self._current_game_state, move_obj).resulting_state
 
-        # let the ai decide on it's next move
+        # let the AI decide on it's next move
         try:
             ai_move_obj = self.make_ai_move()
         except Exception as e:
