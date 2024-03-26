@@ -45,8 +45,41 @@ class MiniMaxAgent:
 class HeuristicFunction:
     weights = {
         "terminal_state": 100_000,
-        "piece_count": 1,
-        "manhattan_distance": 1
+        "piece_count": 1_000,
+        "pieces_near_edge": 100,
+        "manhattan_distance": 10,
+        "clumping": 1,
+        "sumito": 1,
+        "triples": 1,
+        "doubles": 1
+    }
+
+    # format: (y, x) -> (row, col)
+    # board_boundary_array_coords = [
+    #     (-1, 4), (-1, 5), (-1, 6), (-1, 7), (-1, 8),
+    #     (0, 3), (0, 9),
+    #     (1, 2), (1, 9),
+    #     (2, 1), (2, 9),
+    #     (3, 0), (3, 9),
+    #     (4, -1), (4, 9),
+    #     (5, -1), (5, 8),
+    #     (6, -1), (6, 7),
+    #     (7, -1), (7, 6),
+    #     (8, -1), (8, 5),
+    #     (9, 0), (9, 1), (9, 2), (9, 3), (9, 4)
+    # ]
+
+    # the dictionary keys are the rows of the board and the values are list of out of bounds positions for that row
+    board_boundary_coords = {
+        0: [(-1, 4), (-1, 5), (-1, 6), (-1, 7), (-1, 8), (0, 3), (0, 9)],
+        1: [(1, 2), (1, 9)],
+        2: [(2, 1), (2, 9)],
+        3: [(3, 0), (3, 9)],
+        4: [(4, -1), (4, 9)],
+        5: [(5, -1), (5, 8)],
+        6: [(6, -1), (6, 7)],
+        7: [(7, -1), (7, 6)],
+        8: [(8, -1), (8, 5), (9, 0), (9, 1), (9, 2), (9, 3), (9, 4)],
     }
 
     @staticmethod
@@ -54,21 +87,18 @@ class HeuristicFunction:
         # NOTE: Any function that is a good thing will add to value, bad things will subtract from value
         value = 0
 
-        # Get the positions of the min and max player pieces
-        player_piece_positions = StateSpaceGenerator.get_player_piece_positions(game_state)
-        max_player_piece_positions = player_piece_positions["player_max"]
-        min_player_piece_positions = player_piece_positions["player_min"]
-
         # 1. Terminal state: if player won large positive, if opponent won small negative, if game not over 0
-        value += HeuristicFunction.terminal_state(game_state)
+        value += HeuristicFunction.terminal_state(game_state) * HeuristicFunction.weights["terminal_state"]
 
         # 2. Piece counts: 1 point for each player piece, -1 point for each opponent piece
-        value += HeuristicFunction.piece_count(game_state)
+        value += HeuristicFunction.piece_count(game_state) * HeuristicFunction.weights["piece_count"]
 
         # 3. Pieces near edge: can our pieces be pushed off soon, can we push off opponent pieces soon
+        value += HeuristicFunction.pieces_near_edge(game_state) * HeuristicFunction.weights["pieces_near_edge"]
 
         # 4. Manhattan distance from center: +(4 - distance) player pieces, -(4 - distance) for opponent pieces
-        value += HeuristicFunction.manhattan_distance(max_player_piece_positions, min_player_piece_positions)
+        value += HeuristicFunction.manhattan_distance(game_state) * \
+                 HeuristicFunction.weights["manhattan_distance"]
 
         # 5. Clumping: get our pieces close together, spread out opponent pieces
 
@@ -82,9 +112,9 @@ class HeuristicFunction:
 
     # Heuristic functions
     @staticmethod
-    def terminal_state(game_state):
+    def terminal_state(game_state) -> float:
         """
-        If the current player won return a large positive value, if the opponent won return a small negative value,
+        If the current player won return a positive value, if the opponent won return a negative value,
         if the game is not over yet, return 0.
 
         :param game_state: the current game state
@@ -96,16 +126,16 @@ class HeuristicFunction:
 
         # if the player wins
         if game_state.remaining_opponent_marbles <= loser_marble_count:
-            return 100_000
+            return 1
         # if the opponent wins
         elif game_state.remaining_player_marbles <= loser_marble_count:
-            return -100_000
+            return -1
         # if the game is not over yet
         else:
             return 0
 
     @staticmethod
-    def piece_count(game_state):
+    def piece_count(game_state) -> float:
         """
         For each player piece, add 1 point, for each opponent piece, subtract 1 point.
 
@@ -114,17 +144,37 @@ class HeuristicFunction:
         """
         return game_state.remaining_player_marbles - game_state.remaining_opponent_marbles
 
+    # TODO: This may not be necessary because having manhattan distance from center should cover this
+    @staticmethod
+    def pieces_near_edge(game_state) -> float:
+        """
+        For each player piece near the edge, add 1 point for the opponent, subtract 1 point for the player.
+
+        :param game_state: the current game state
+        :return: a float representing the value of the pieces near the edge
+        """
+        player_pieces = game_state.player_marble_positions
+        opponent_pieces = game_state.opponent_marble_positions
+
+        num_player_pieces_close = 0
+        num_opponent_pieces_close = 0
+        for player_position in player_pieces:
+            num_player_pieces_close += 1 if HeuristicFunction.__is_close_to_edge(player_position) else 0
+        for opponent_position in opponent_pieces:
+            num_opponent_pieces_close += 1 if HeuristicFunction.__is_close_to_edge(opponent_position) else 0
+
+        return float(num_opponent_pieces_close - num_player_pieces_close)
+
     @staticmethod
     def manhattan_distance(
-            player_piece_positions: list[Position],
-            opponent_piece_positions: list[Position]
+            game_state: GameState
     ) -> float:
         player_value = 0
         opponent_value = 0
-        for player_position in player_piece_positions:
-            player_value += MiniMaxAgent.__manhattan_distance_from_center(player_position)
-        for opponent_position in opponent_piece_positions:
-            opponent_value += MiniMaxAgent.__manhattan_distance_from_center(opponent_position)
+        for player_position in game_state.player_marble_positions:
+            player_value += HeuristicFunction.__manhattan_distance_from_center(player_position)
+        for opponent_position in game_state.opponent_marble_positions:
+            opponent_value += HeuristicFunction.__manhattan_distance_from_center(opponent_position)
 
         # the smaller value the better
         # e.g. player distance = 2, opponent distance = 4, the value should be +2 because player is closer to the center
@@ -132,6 +182,22 @@ class HeuristicFunction:
 
     # Private helper functions
     @staticmethod
-    def __manhattan_distance_from_center(position: Position):
+    def __is_close_to_edge(position: Position) -> bool:
+        """
+        If the position is within 2 spaces of the edge, return true, otherwise false.
+
+        :param position: the position to check
+        :return: True if the position is close to the edge, False otherwise
+        """
+        boundaries_in_this_row = HeuristicFunction.board_boundary_coords[position.y]
+        min_distance_from_edge = min(
+            [abs(position.x - boundary_x) for boundary_y, boundary_x in boundaries_in_this_row]
+        )
+        number_of_spaces_considered_close_to_edge = 2
+
+        return min_distance_from_edge <= number_of_spaces_considered_close_to_edge
+
+    @staticmethod
+    def __manhattan_distance_from_center(position: Position) -> float:
         center_position_x, center_position_y = 4, 4
         return abs(position.x - center_position_x) + abs(position.y - center_position_y)

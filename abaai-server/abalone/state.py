@@ -1,7 +1,7 @@
 from copy import deepcopy
 
 from abalone.board import Board
-from abalone.movement import Move, Piece
+from abalone.movement import Move, Piece, Position
 
 
 class GameState:
@@ -9,15 +9,11 @@ class GameState:
             self,
             board: Board = None,
             turn: Piece = Piece.BLACK,
-            remaining_player_marbles: int = 14,
-            remaining_opponent_marbles: int = 14
     ):
         if board is None:
             board = Board()
         self._board = board
         self._turn = turn
-        self._remaining_player_marbles = remaining_player_marbles
-        self._remaining_opponent_marbles = remaining_opponent_marbles
 
     @property
     def board(self):
@@ -28,30 +24,43 @@ class GameState:
         return self._turn
 
     @property
+    def player_marble_positions(self) -> list[Position]:
+        return self._get_marble_positions(self._turn)
+
+    @property
+    def opponent_marble_positions(self) -> list[Position]:
+        return self._get_marble_positions(Piece.WHITE if self._turn == Piece.BLACK else Piece.BLACK)
+
+    @property
     def remaining_player_marbles(self) -> int:
-        return self._remaining_player_marbles
+        return len(self.player_marble_positions)
 
     @property
     def remaining_opponent_marbles(self) -> int:
-        return self._remaining_opponent_marbles
-
-    def is_game_over(self):
-        return True if self._remaining_player_marbles <= 8 or self._remaining_opponent_marbles <= 8 else False
+        return len(self.opponent_marble_positions)
 
     def undo_move(self, move: Move):
         self._board = Board(self._board.undo_move(move))
         self._turn = Piece.WHITE if self._turn == Piece.BLACK else Piece.BLACK
 
-        # Check if a sumito move pushed a marble off the board
-        if len(move.previous_opponent_positions) > len(move.next_opponent_positions):
-            self._remaining_opponent_marbles += 1
+    def _get_marble_positions(self, piece: Piece):
+        positions = []
+
+        for y in range(9):
+            for x in range(9):
+                if self._board.array[y][x] == piece.value:
+                    positions.append(Position(x, y))
+
+        return positions
 
     def to_json(self):
         return {
             'board': self._board.to_json(),
             'turn': self._turn.value,
-            'remaining_player_marbles': self._remaining_player_marbles,
-            'remaining_opponent_marbles': self._remaining_opponent_marbles
+            'remaining_player_marbles': self.remaining_player_marbles,
+            'remaining_opponent_marbles': self.remaining_opponent_marbles,
+            'player_marble_positions': [position.to_json() for position in self.player_marble_positions],
+            'opponent_marble_positions': [position.to_json() for position in self.opponent_marble_positions]
         }
 
 
@@ -78,16 +87,9 @@ class GameStateUpdate:
         resulting_turn = Piece.WHITE if self._previous_state.turn == Piece.BLACK else Piece.BLACK
 
         # Check if a sumito move pushed a marble off the board
-        if len(self._move.previous_opponent_positions) > len(self._move.next_opponent_positions):
-            new_remaining_opponent_marbles = self._previous_state.remaining_opponent_marbles - 1
-        else:
-            new_remaining_opponent_marbles = self._previous_state.remaining_opponent_marbles
-
         return GameState(
             resulting_board,
             resulting_turn,
-            self._previous_state.remaining_player_marbles,
-            new_remaining_opponent_marbles
         )
 
     @classmethod
