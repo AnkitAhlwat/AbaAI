@@ -27,6 +27,11 @@ class LegalMoves:
         return initial_direction in LegalMoves.possible_moves
 
     @staticmethod
+    def is_position_out_of_bounds(board, position):
+        """Check if a position is empty or out of bounds."""
+        return not LegalMoves.is_position_within_board(board, position) or board[position.y][position.x] == -1
+
+    @staticmethod
     def is_position_within_board(board, position):
         """Check if the position is within the board boundaries."""
         return 0 <= position.y < len(board) and 0 <= position.x < len(board[position.y])
@@ -84,7 +89,8 @@ class LegalMoves:
         push_target_pos = Position(last_opponent_pos.x + direction[0], last_opponent_pos.y + direction[1])
 
         return not LegalMoves.is_position_within_board(board, push_target_pos) \
-            or LegalMoves.is_position_empty(board, push_target_pos)
+            or LegalMoves.is_position_empty(board, push_target_pos) \
+            or LegalMoves.is_position_out_of_bounds(board, push_target_pos)
 
     @staticmethod
     def find_marble_sequence(board, start_pos, direction, player_positions, opponent_positions):

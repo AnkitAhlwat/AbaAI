@@ -135,30 +135,31 @@ const Game = () => {
   const onMoveSelection = useCallback(
     async (move) => {
       // get the previous and new positions of the selected marbles
-      const previousPositions = selectedMarbles.map(
-        (marble) => marble.position
-      );
-      const newPositions = previousPositions.map((position) => ({
-        x: position.x + move.x,
-        y: position.y + move.y,
-      }));
+      console.log("Move:", move);
       const marbleState = selectedMarbles[0].state;
-
       //toggle the active player turn
       toggleTurn();
+
+      //set gamestarted to true
+      if (!gameStarted) {
+        setGameStarted(true);
+      }
 
       setSelectedMarbles([]);
 
       // send post request to the server
-      const moveObj = new Move(previousPositions, newPositions, marbleState);
+      const moveObj = new Move(move.previous_player_positions, move.next_player_positions, marbleState,
+        move.previous_opponent_positions, move.next_opponent_positions);
+      console.log(moveObj);
       const responseData = await GameService.postMove(moveObj);
+      console.log(responseData);
 
       // set the ai move card to show what the ai did
-      updateAiMove(responseData.ai_move);
+      // updateAiMove(responseData.ai_move);
 
       // update the board and moves stack
       setMovesStack(responseData.moves_stack);
-      setBoardArray(responseData.board);
+      setBoardArray(responseData.game_state.board);
     },
     [selectedMarbles, setBoardArray, updateAiMove, gameStarted, startGame, toggleTurn]
   );
@@ -206,12 +207,12 @@ const Game = () => {
           selectedMarbles={selectedMarbles}
           setSelectedMarbles={setSelectedMarbles}
 
-          //for the clock controls
-          // blackClock={blackClock}
-          // whiteClock={whiteClock}
-          // pauseClock={pauseClock}
-          // resumeClock={resumeClock}
-          // resetClocks={resetClocks}
+        //for the clock controls
+        // blackClock={blackClock}
+        // whiteClock={whiteClock}
+        // pauseClock={pauseClock}
+        // resumeClock={resumeClock}
+        // resetClocks={resetClocks}
         />
       </Grid>
 
@@ -245,9 +246,9 @@ const Game = () => {
           undoMove={onUndoLastMove}
           blackClock={blackClock}
           whiteClock={whiteClock}
-          // currentPlayer={currentPlayer}
-          // isPaused={isPaused}
-          // togglePause={togglePause}
+        // currentPlayer={currentPlayer}
+        // isPaused={isPaused}
+        // togglePause={togglePause}
         />
       </Grid>
     </Grid>
