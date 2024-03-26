@@ -3,6 +3,18 @@ import axios from 'axios';
 // Handles requests to the server end
 class GameService {
 
+    // Posts config options to python server
+    static async postConfig(config) {
+        try {
+            const url = `${import.meta.env.VITE_API_BASE_URL}/game/configure`
+            const response = await axios.post(url, config)
+            console.log(response.data)
+        } catch (error) {
+            console.error('Error setting config')
+        }
+    }
+
+
     // Posts move request to python server
     static async postMove(move) {
         try {
@@ -35,6 +47,7 @@ class GameService {
             console.error('Error resetting game:', error);
         }
     }
+
     static async getPossibleMoves() {
         try {
             const url = `${import.meta.env.VITE_API_BASE_URL}/game/possibleMoves`;
