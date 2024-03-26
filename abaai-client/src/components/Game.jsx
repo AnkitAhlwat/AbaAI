@@ -149,7 +149,7 @@ const Game = () => {
 
       // send post request to the server
       const moveObj = new Move(move.previous_player_positions, move.next_player_positions, marbleState,
-        move.previous_opponent_positions, move.next_opponent_positions);
+      move.previous_opponent_positions, move.next_opponent_positions);
       console.log(moveObj);
       const responseData = await GameService.postMove(moveObj);
       console.log(responseData);

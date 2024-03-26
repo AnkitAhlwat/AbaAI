@@ -9,6 +9,7 @@ import { BoardLayouts } from "../constants/boardLayouts";
 import PropTypes from "prop-types";
 import { useState } from "react";
 import { TextField } from "@mui/material";
+import GameService from '../services/game.service';
 
 
 const SelectInput = ({ label, value, onChange, options }) => (
@@ -55,6 +56,8 @@ const ConfigMenu = ({ config, setConfig }) => {
       whiteTimeLimit: parseInt(whiteTimeLimit),
       moveLimit: parseInt(moveLimit)
     });
+
+    GameService.postConfig(config)
   }
 
   
