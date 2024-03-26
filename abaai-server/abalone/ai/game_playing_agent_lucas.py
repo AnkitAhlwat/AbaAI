@@ -41,7 +41,16 @@ class MiniMaxAgent:
                 beta = min(beta, min_eval)
             return min_eval
 
-    def evaluate(self, game_state: GameState) -> float:
+
+class HeuristicFunction:
+    weights = {
+        "terminal_state": 100_000,
+        "piece_count": 1,
+        "manhattan_distance": 1
+    }
+
+    @staticmethod
+    def evaluate(game_state: GameState) -> float:
         # NOTE: Any function that is a good thing will add to value, bad things will subtract from value
         value = 0
 
@@ -51,15 +60,15 @@ class MiniMaxAgent:
         min_player_piece_positions = player_piece_positions["player_min"]
 
         # 1. Terminal state: if player won large positive, if opponent won small negative, if game not over 0
-        value += MiniMaxAgent.terminal_state(game_state)
+        value += HeuristicFunction.terminal_state(game_state)
 
         # 2. Piece counts: 1 point for each player piece, -1 point for each opponent piece
-        value += MiniMaxAgent.piece_counts(game_state)
+        value += HeuristicFunction.piece_count(game_state)
 
         # 3. Pieces near edge: can our pieces be pushed off soon, can we push off opponent pieces soon
 
         # 4. Manhattan distance from center: +(4 - distance) player pieces, -(4 - distance) for opponent pieces
-        value += MiniMaxAgent.manhattan_distance(max_player_piece_positions, min_player_piece_positions)
+        value += HeuristicFunction.manhattan_distance(max_player_piece_positions, min_player_piece_positions)
 
         # 5. Clumping: get our pieces close together, spread out opponent pieces
 
@@ -96,7 +105,7 @@ class MiniMaxAgent:
             return 0
 
     @staticmethod
-    def piece_counts(game_state):
+    def piece_count(game_state):
         """
         For each player piece, add 1 point, for each opponent piece, subtract 1 point.
 
