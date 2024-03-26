@@ -44,6 +44,7 @@ class MiniMaxAgent:
 
 class HeuristicFunction:
     DEFAULT_WEIGHTS = [1000000, 10000, 10, 10, 2, 2, 1]
+    TEST_WEIGHTS = [1000000, 1000, 50, 10, 100, 80, 50]
 
     @classmethod
     def evaluate(cls, game_state: GameState) -> float:
@@ -65,6 +66,11 @@ class HeuristicFunction:
         score = 0
         score += current_weights[0] * cls.win_condition(game_state)
         score += current_weights[1] * cls.piece_value(player_piece_locations, opponent_piece_locations)
+        score += current_weights[2] * cls.avg_centre_dist(player_piece_locations)
+        score += current_weights[4] * cls.concentration_score(player_piece_locations)
+        score -= current_weights[5] * cls.concentration_score(opponent_piece_locations)
+        score -= current_weights[6] * cls.num_sumitos(player_piece_locations, opponent_piece_locations)
+        return score
 
     @staticmethod
     def win_condition(game_state: GameState) -> int:
@@ -79,5 +85,17 @@ class HeuristicFunction:
         player_pieces = len(player_piece_locations)
         opponent_pieces = len(opponent_piece_locations)
         return player_pieces - opponent_pieces
+
+    @classmethod
+    def avg_centre_dist(cls, player_piece_locations):
+        return 0
+
+    @classmethod
+    def concentration_score(cls, player_piece_locations):
+        return 0
+
+    @classmethod
+    def num_sumitos(cls, player_piece_locations, opponent_piece_locations):
+        return 0
 
 
