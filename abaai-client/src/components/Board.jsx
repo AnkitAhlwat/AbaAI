@@ -38,6 +38,9 @@ const marbleStyles = {
       boxShadow: "none",
       flexShrink: 1,
     },
+    "&:hover": {
+      backgroundColor: "#767271", // Change hover color
+    },
   },
   selected: {
     backgroundColor: "rgba(115,149,82,255)",
@@ -73,16 +76,28 @@ const marbleStyles = {
 
 // Displays the playing board of the GUI
 const Board = ({
-  board,
+  boardArray,
   selectedMarbles,
   setSelectedMarbles,
   onMoveSelection,
   isGameActive,
+  currentTurn,
 }) => {
   // ------------------- State -------------------
   const [allPossibleMoves, setAllPossibleMoves] = useState({});
   const [validMovesForSelectedMarbles, setValidMovesForSelectedMarbles] =
     useState([]);
+  const [board, setBoard] = useState([]);
+
+  // ------------------- Functions/Callbacks -------------------
+  const generateBoard = useCallback(() => {
+    const newBoard = boardArray.map((row, rowIndex) => {
+      return row.map((state, columnIndex) => {
+        return new Space(state, { y: rowIndex, x: columnIndex });
+      });
+    });
+    setBoard(newBoard);
+  }, [boardArray]);
 
   const fetchPossibleMoves = useCallback(async () => {
     try {
@@ -92,9 +107,8 @@ const Board = ({
     } catch (error) {
       console.error("Failed to fetch possible moves:", error);
     }
-  }, [board]);
+  }, [boardArray]);
 
-  // ------------------- Functions/Callbacks -------------------
   const convertSelectedMarblesToKey = useCallback((selectedMarbles) => {
     const marbleNotationArray = selectedMarbles
       .map((marble) => {
@@ -280,8 +294,8 @@ const Board = ({
         newSelectedMarbles = [space];
         setSelectedMarbles(newSelectedMarbles);
       }
-      if (canSumitoOccur(newSelectedMarbles)) {
-      }
+      // if (canSumitoOccur(newSelectedMarbles)) {
+      // }
     },
     [executeMoveIfValid, selectedMarbles, setSelectedMarbles, deselectMarbles]
   );
@@ -295,6 +309,10 @@ const Board = ({
   }, []);
 
   // ------------------- Effects -------------------
+  useEffect(() => {
+    generateBoard();
+  }, [generateBoard]);
+
   useEffect(() => {
     updateValidMoves();
   }, [updateValidMoves]);
@@ -375,6 +393,26 @@ const Board = ({
     [renderMarble]
   );
 
+  useEffect(() => {
+    setBoard((prevBoard) => {
+      validMovesForSelectedMarbles.map((move) => {
+        move.next_player_positions.map((space) => {
+          const opponentNum = currentTurn === 1 ? 2 : 1;
+
+          const spaceObj = prevBoard[space.y][space.x];
+
+          if (spaceObj.state === opponentNum) {
+            spaceObj.state = 4;
+          } else if (spaceObj.state !== currentTurn && spaceObj.state !== 4) {
+            spaceObj.state = 3;
+          }
+        });
+      });
+
+      return [...prevBoard];
+    });
+  }, [currentTurn, setBoard, validMovesForSelectedMarbles]);
+
   // Return a grid that will render the board by looping through all the rows in the board and rendering each row
   return (
     <>
@@ -387,34 +425,18 @@ const Board = ({
         }}
       >
         {board.map((row, index) => renderRow(row, index))}
-
-        {validMovesForSelectedMarbles.map((move) => {
-          move.next_player_positions.map((space) => {
-            if (
-              board[space.y][space.x].state !== 1 &&
-              board[space.y][space.x].state !== 2
-            )
-              board[space.y][space.x].state = 3;
-          });
-          move.next_opponent_positions.map((space) => {
-            if (
-              board[space.y][space.x].state !== 1 &&
-              board[space.y][space.x].state !== 2
-            )
-              board[space.y][space.x].state = 4;
-          });
-        })}
       </Box>
     </>
   );
 };
 
 Board.propTypes = {
-  board: PropTypes.array.isRequired,
+  boardArray: PropTypes.array.isRequired,
   onMoveSelection: PropTypes.func.isRequired,
   selectedMarbles: PropTypes.array.isRequired,
   setSelectedMarbles: PropTypes.func.isRequired,
   isGameActive: PropTypes.bool,
+  currentTurn: PropTypes.number,
 };
 
 export { Board };

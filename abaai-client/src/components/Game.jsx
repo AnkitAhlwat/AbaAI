@@ -21,6 +21,7 @@ const Game = () => {
   const [config, setConfig] = useState(null); // Tracks configuration options
   const [numCapturedBlackMarbles, setNumCapturedBlackMarbles] = useState(0); // Tracks number of black marbles captured
   const [numCapturedWhiteMarbles, setNumCapturedWhiteMarbles] = useState(0); // Tracks number of white marbles captured
+  const [currentTurn, setCurrentTurn] = useState(0); // Tracks current turn
   //Defines aggregate clock states for each player, temporary
   const [blackClock, setBlackClock] = useState({
     time: 180,
@@ -32,7 +33,7 @@ const Game = () => {
   });
 
   // ##################### Custom Hooks #####################
-  const { board, setBoardArray } = useBoard(config?.boardLayout); // import board state and setBoard function from useBoard hook
+  const { boardArray, setBoardArray } = useBoard(config?.boardLayout); // import board state and setBoard function from useBoard hook
 
   // ##################### Functions/Callbacks #####################
   // When the page loads, we want to fetch the state of the game from the server and update accordingly
@@ -53,6 +54,9 @@ const Game = () => {
 
       // Set the board state
       setBoardArray(gameStatus.game_state.board);
+
+      // Set the player turn
+      setCurrentTurn(gameStatus.game_state.turn);
 
       // Set the moves stack
       setMovesStack(gameStatus.moves_stack);
@@ -213,13 +217,14 @@ const Game = () => {
         }}
       >
         <GameplaySection
-          board={board}
+          boardArray={boardArray}
           onMoveSelection={onMoveSelection}
           selectedMarbles={selectedMarbles}
           setSelectedMarbles={setSelectedMarbles}
           numCapturedBlackMarbles={numCapturedBlackMarbles}
           numCapturedWhiteMarbles={numCapturedWhiteMarbles}
           isGameActive={isGameActive}
+          currentTurn={currentTurn}
 
           //for the clock controls
           // blackClock={blackClock}

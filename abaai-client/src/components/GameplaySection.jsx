@@ -5,13 +5,14 @@ import Proptypes from "prop-types";
 
 const GameplaySection = (props) => {
   const {
-    board,
+    boardArray,
     onMoveSelection,
     selectedMarbles,
     setSelectedMarbles,
     numCapturedBlackMarbles,
     numCapturedWhiteMarbles,
     isGameActive,
+    currentTurn,
   } = props;
 
   return (
@@ -34,11 +35,12 @@ const GameplaySection = (props) => {
         }}
       >
         <Board
-          board={board}
+          boardArray={boardArray}
           onMoveSelection={onMoveSelection}
           selectedMarbles={selectedMarbles}
           setSelectedMarbles={setSelectedMarbles}
           isGameActive={isGameActive}
+          currentTurn={currentTurn}
         />
       </Grid>
       <Grid item xs={12}>
@@ -54,13 +56,14 @@ const GameplaySection = (props) => {
 };
 
 GameplaySection.propTypes = {
-  board: Proptypes.array.isRequired,
+  boardArray: Proptypes.array.isRequired,
   onMoveSelection: Proptypes.func.isRequired,
   selectedMarbles: Proptypes.array.isRequired,
   setSelectedMarbles: Proptypes.func.isRequired,
   numCapturedBlackMarbles: Proptypes.number.isRequired,
   numCapturedWhiteMarbles: Proptypes.number.isRequired,
   isGameActive: Proptypes.bool.isRequired,
+  currentTurn: Proptypes.number.isRequired,
 };
 
 export default GameplaySection;
