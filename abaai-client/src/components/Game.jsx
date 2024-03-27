@@ -184,7 +184,7 @@ const Game = () => {
       <Grid
         container
         item
-        xs={9}
+        xs={8}
         sx={{
           justifyContent: "center",
           alignItems: "center",
@@ -209,7 +209,7 @@ const Game = () => {
 
       <Grid
         item
-        xs={3}
+        xs={4}
         sx={{
           height: "95vh",
           padding: "5px",
