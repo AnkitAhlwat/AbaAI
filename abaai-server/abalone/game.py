@@ -8,14 +8,20 @@ from abalone.state import GameState, GameStateUpdate
 
 
 class GameOptions:
+    board_layout_map = {
+        "Default": BoardLayout.DEFAULT,
+        "Belgian Daisy": BoardLayout.BELGIAN_DAISY,
+        "German Daisy": BoardLayout.GERMAN_DAISY
+    }
+
     def __init__(
             self,
             board_layout: BoardLayout = None,
             black_ai: bool = False,
-            white_ai: bool = False,
-            black_time_limit_seconds: int = 0,
-            white_time_limit_seconds: int = 0,
-            move_limit: int = 0
+            white_ai: bool = True,
+            black_time_limit_seconds: int = 20,
+            white_time_limit_seconds: int = 20,
+            move_limit: int = 20
     ):
         if board_layout is None:
             board_layout = BoardLayout.DEFAULT
@@ -52,14 +58,8 @@ class GameOptions:
 
     @classmethod
     def from_json(cls, json_obj: dict) -> 'GameOptions':
-        board_layout = BoardLayout.DEFAULT
-        if json_obj['boardLayout'] == "Belgian Daisy":
-            board_layout = BoardLayout.BELGIAN_DAISY
-        elif json_obj['boardLayout'] == "German Daisy":
-            board_layout = BoardLayout.GERMAN_DAISY
-
         return cls(
-            board_layout,
+            GameOptions.board_layout_map[json_obj['boardLayout']],
             json_obj['blackPlayer'] == "Computer",
             json_obj['whitePlayer'] == "Computer",
             json_obj['blackTimeLimit'],
@@ -68,8 +68,14 @@ class GameOptions:
         )
 
     def to_json(self) -> dict:
+        board_layout_name = None
+        for key, value in GameOptions.board_layout_map.items():
+            if value == self._board_layout:
+                board_layout_name = key
+                break
+
         return {
-            "boardLayout": self._board_layout.value,
+            "boardLayout": board_layout_name,
             "blackPlayer": "Computer" if self._is_black_ai else "Human",
             "whitePlayer": "Computer" if self._is_white_ai else "Human",
             "blackTimeLimit": self._black_time_limit_seconds,
@@ -80,14 +86,17 @@ class GameOptions:
 
 class Game:
     def __init__(self):
-        self._game_options = None
+        self._game_options = GameOptions()
         self._moves_stack = Stack()
-        self._current_game_state = GameState(Board(BoardLayout.DEFAULT.value), Piece.BLACK)
+        self._current_game_state = GameState(Board(self._game_options.board_layout.value))
         self._game_started = False
+        self._game_configured = False
 
     def set_up(self, config) -> dict:
         self._game_options = GameOptions.from_json(config)
         self._current_game_state = GameState(Board(self._game_options.board_layout.value), Piece.BLACK)
+
+        self._game_configured = True
 
         return self.__to_json()
 
@@ -132,6 +141,9 @@ class Game:
         # clear the stack
         self._moves_stack.clear_stack()
 
+        # set started to false
+        self._game_started = False
+
         # reset the board to be the selected board
         board = Board(self._game_options.board_layout.value)
         self._current_game_state = GameState(board)
@@ -146,6 +158,7 @@ class Game:
         return {
             "game_options": self._game_options.to_json() if self._game_options is not None else None,
             "game_started": self._game_started,
+            "game_configured": self._game_configured,
             "game_state": self._current_game_state.to_json(),
             "moves_stack": self._moves_stack.to_json()
         }

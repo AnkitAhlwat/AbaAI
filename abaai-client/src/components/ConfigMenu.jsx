@@ -48,27 +48,17 @@ const NumberInput = ({ id, label, value, onChange }) => (
 );
 
 const ConfigMenu = ({ config, setConfig, updateGame, switchToGameTab }) => {
-  const [blackTimeLimit, setBlackTimeLimit] = useState("");
-  const [whiteTimeLimit, setWhiteTimeLimit] = useState("");
-  const [moveLimit, setMoveLimit] = useState("");
-
   const handleLayoutChange = (event) =>
     setConfig({ ...config, boardLayout: event.target.value });
   const handlePlayerChange = (event, player) =>
     setConfig({ ...config, [player]: event.target.value });
-  const handleTimeChange = (event, setter) => setter(event.target.value);
   const handleSubmit = async () => {
-    setConfig({
-      ...config,
-      blackTimeLimit: parseInt(blackTimeLimit),
-      whiteTimeLimit: parseInt(whiteTimeLimit),
-      moveLimit: parseInt(moveLimit),
-    });
-
     const gameStatus = await GameService.postConfig(config);
     updateGame(gameStatus);
     switchToGameTab();
   };
+
+  if (!config) return null;
 
   return (
     <Box style={{ margin: "auto", textAlign: "center" }}>
@@ -99,9 +89,13 @@ const ConfigMenu = ({ config, setConfig, updateGame, switchToGameTab }) => {
       <NumberInput
         id="black-time-limit"
         label="Black Time Limit (Seconds)"
-        value={blackTimeLimit}
+        value={config.blackTimeLimit}
         onChange={(e) => {
-          if (e.target.value >= 0) handleTimeChange(e, setBlackTimeLimit);
+          if (e.target.value && e.target.value >= 0) {
+            setConfig({ ...config, blackTimeLimit: parseInt(e.target.value) });
+          } else {
+            setConfig({ ...config, blackTimeLimit: "" });
+          }
         }}
       />
       <br />
@@ -109,9 +103,13 @@ const ConfigMenu = ({ config, setConfig, updateGame, switchToGameTab }) => {
       <NumberInput
         id="white-time-limit"
         label="White Time Limit (Seconds)"
-        value={whiteTimeLimit}
+        value={config.whiteTimeLimit}
         onChange={(e) => {
-          if (e.target.value >= 0) handleTimeChange(e, setWhiteTimeLimit);
+          if (e.target.value && e.target.value >= 0) {
+            setConfig({ ...config, whiteTimeLimit: parseInt(e.target.value) });
+          } else {
+            setConfig({ ...config, whiteTimeLimit: "" });
+          }
         }}
       />
       <br />
@@ -119,9 +117,13 @@ const ConfigMenu = ({ config, setConfig, updateGame, switchToGameTab }) => {
       <NumberInput
         id="move-limit"
         label="Move Limit"
-        value={moveLimit}
+        value={config.moveLimit}
         onChange={(e) => {
-          if (e.target.value >= 0) setMoveLimit(e.target.value);
+          if (e.target.value && e.target.value >= 0) {
+            setConfig({ ...config, moveLimit: parseInt(e.target.value) });
+          } else {
+            setConfig({ ...config, moveLimit: "" });
+          }
         }}
       />
       <br />
@@ -136,7 +138,7 @@ const ConfigMenu = ({ config, setConfig, updateGame, switchToGameTab }) => {
 };
 
 ConfigMenu.propTypes = {
-  config: PropTypes.object.isRequired,
+  config: PropTypes.object,
   setConfig: PropTypes.func.isRequired,
   updateGame: PropTypes.func.isRequired,
   switchToGameTab: PropTypes.func.isRequired,

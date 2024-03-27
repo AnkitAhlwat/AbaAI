@@ -58,7 +58,6 @@ def undo_move():
 def reset_game():
     if request:
         # data = request.get_json()
-        print("In da reset")
         game_status = app.game.reset_game()
         return jsonify(game_status)
 

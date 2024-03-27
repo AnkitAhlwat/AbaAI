@@ -36,7 +36,7 @@ const AIMoveDisplay = ({ aiMove }) => {
 };
 
 AIMoveDisplay.propTypes = {
-  aiMove: Proptypes.string.isRequired,
+  aiMove: Proptypes.object,
 };
 
 export default AIMoveDisplay;

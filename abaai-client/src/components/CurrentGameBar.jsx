@@ -111,7 +111,7 @@ const CurrentGameBar = (props) => {
 
 CurrentGameBar.propTypes = {
   movesStack: Proptypes.array.isRequired,
-  aiMove: Proptypes.string.isRequired,
+  aiMove: Proptypes.object,
   // activePlayer: PropTypes.string.isRequired,
   // toggleActivePlayer: PropTypes.func.isRequired,
   // gameStarted: PropTypes.bool.isRequired,

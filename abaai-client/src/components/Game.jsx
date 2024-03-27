@@ -10,7 +10,7 @@ import RightSideBar from "./RightSideBar";
 // Displays complete assembly of the GUI
 const Game = () => {
   // ##################### States #####################
-  const [aiMove, setAiMove] = useState({}); // Tracks AI move history
+  const [aiMove, setAiMove] = useState(null); // Tracks AI move history
   const [selectedMarbles, setSelectedMarbles] = useState([]); // Tracks which marbles are selected
   const [movesStack, setMovesStack] = useState([]); // Tracks player move history
   const [gameStarted, setGameStarted] = useState(false); // Tracks whether game has started
@@ -18,14 +18,7 @@ const Game = () => {
   const [isGameActive, setIsGameActive] = useState(false);
   const [isGameConfigured, setIsGameConfigured] = useState(false); // Tracks whether game has been configured
   const [resetClockSignal, setResetClockSignal] = useState(0);
-  const [config, setConfig] = useState({
-    boardLayout: BoardLayouts.DEFAULT,
-    blackPlayer: "Human",
-    whitePlayer: "Computer",
-    blackTimeLimit: 15,
-    whiteTimeLimit: 15,
-    moveLimit: 20,
-  }); // Tracks configuration options
+  const [config, setConfig] = useState(null); // Tracks configuration options
   const [numCapturedBlackMarbles, setNumCapturedBlackMarbles] = useState(0); // Tracks number of black marbles captured
   const [numCapturedWhiteMarbles, setNumCapturedWhiteMarbles] = useState(0); // Tracks number of white marbles captured
   //Defines aggregate clock states for each player, temporary
@@ -39,7 +32,7 @@ const Game = () => {
   });
 
   // ##################### Custom Hooks #####################
-  const { board, setBoardArray } = useBoard(config.boardLayout); // import board state and setBoard function from useBoard hook
+  const { board, setBoardArray } = useBoard(config?.boardLayout); // import board state and setBoard function from useBoard hook
 
   // ##################### Functions/Callbacks #####################
   // When the page loads, we want to fetch the state of the game from the server and update accordingly
@@ -49,9 +42,14 @@ const Game = () => {
         gameStatus = await GameService.getGameStatus();
       }
 
+      console.log("Game Status:", gameStatus);
+
+      // Set the configuration options
+      setConfig(gameStatus.game_options);
+
       // Set the state of the game
       setIsGameActive(gameStatus.game_started);
-      setIsGameConfigured(!!gameStatus.game_options);
+      setIsGameConfigured(gameStatus.game_configured);
 
       // Set the board state
       setBoardArray(gameStatus.game_state.board);
@@ -91,12 +89,17 @@ const Game = () => {
   };
 
   //reset the game and clocks
-  const resetGame = () => {
+  const resetGame = async () => {
+    const gameStatus = await GameService.postResetGame();
+    updateGame(gameStatus);
+
     //reset the board logic here
     setBlackClock({ time: blackClock.time, isRunning: false });
     setWhiteClock({ time: whiteClock.time, isRunning: false });
     setGameStarted(false);
+    setIsGameActive(false);
     setResetClockSignal((prev) => prev + 1);
+    setAiMove(null);
   };
 
   //stop the game and reset the clocks, this should also completely reset the game state
@@ -104,6 +107,7 @@ const Game = () => {
     setBlackClock({ time: blackClock.time, isRunning: false });
     setWhiteClock({ time: whiteClock.time, isRunning: false });
     setGameStarted(false);
+    setIsGameActive(false);
     setResetClockSignal((prev) => prev + 1);
   };
 
