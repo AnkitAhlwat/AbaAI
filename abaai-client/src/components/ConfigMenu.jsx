@@ -47,7 +47,7 @@ const NumberInput = ({ id, label, value, onChange }) => (
   </FormControl>
 );
 
-const ConfigMenu = ({ config, setConfig }) => {
+const ConfigMenu = ({ config, setConfig, updateGame, switchToGameTab }) => {
   const [blackTimeLimit, setBlackTimeLimit] = useState("");
   const [whiteTimeLimit, setWhiteTimeLimit] = useState("");
   const [moveLimit, setMoveLimit] = useState("");
@@ -57,7 +57,7 @@ const ConfigMenu = ({ config, setConfig }) => {
   const handlePlayerChange = (event, player) =>
     setConfig({ ...config, [player]: event.target.value });
   const handleTimeChange = (event, setter) => setter(event.target.value);
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setConfig({
       ...config,
       blackTimeLimit: parseInt(blackTimeLimit),
@@ -65,7 +65,9 @@ const ConfigMenu = ({ config, setConfig }) => {
       moveLimit: parseInt(moveLimit),
     });
 
-    GameService.postConfig(config);
+    const gameStatus = await GameService.postConfig(config);
+    updateGame(gameStatus);
+    switchToGameTab();
   };
 
   return (
@@ -136,6 +138,8 @@ const ConfigMenu = ({ config, setConfig }) => {
 ConfigMenu.propTypes = {
   config: PropTypes.object.isRequired,
   setConfig: PropTypes.func.isRequired,
+  updateGame: PropTypes.func.isRequired,
+  switchToGameTab: PropTypes.func.isRequired,
 };
 
 export default ConfigMenu;

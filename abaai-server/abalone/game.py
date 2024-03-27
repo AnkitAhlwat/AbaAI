@@ -144,7 +144,7 @@ class Game:
 
     def __to_json(self) -> dict:
         return {
-            "game_options": self._game_options.__dict__ if self._game_options is not None else None,
+            "game_options": self._game_options.to_json() if self._game_options is not None else None,
             "game_started": self._game_started,
             "game_state": self._current_game_state.to_json(),
             "moves_stack": self._moves_stack.to_json()

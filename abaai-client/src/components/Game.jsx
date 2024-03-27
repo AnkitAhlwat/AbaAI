@@ -16,6 +16,7 @@ const Game = () => {
   const [gameStarted, setGameStarted] = useState(false); // Tracks whether game has started
   const [activePlayer, setActivePlayer] = useState("black"); // Tracks which player's turn it is for clock logic, potentially temporary
   const [isGameActive, setIsGameActive] = useState(false);
+  const [isGameConfigured, setIsGameConfigured] = useState(false); // Tracks whether game has been configured
   const [resetClockSignal, setResetClockSignal] = useState(0);
   const [config, setConfig] = useState({
     boardLayout: BoardLayouts.DEFAULT,
@@ -32,23 +33,28 @@ const Game = () => {
   const { board, setBoardArray } = useBoard(config.boardLayout); // import board state and setBoard function from useBoard hook
 
   // When the page loads, we want to fetch the state of the game from the server and update accordingly
-  const updateGame = useCallback(async () => {
-    const gameStatus = await GameService.getGameStatus();
-    console.log("game status: ", gameStatus);
+  const updateGame = useCallback(
+    async (gameStatus) => {
+      if (!gameStatus) {
+        gameStatus = await GameService.getGameStatus();
+      }
 
-    // Set the state of the game
-    setIsGameActive(gameStatus.game_started);
+      // Set the state of the game
+      setIsGameActive(gameStatus.game_started);
+      setIsGameConfigured(!!gameStatus.game_options);
 
-    // Set the board state
-    setBoardArray(gameStatus.game_state.board);
+      // Set the board state
+      setBoardArray(gameStatus.game_state.board);
 
-    // Set the moves stack
-    setMovesStack(gameStatus.moves_stack);
+      // Set the moves stack
+      setMovesStack(gameStatus.moves_stack);
 
-    // Set the captured marbles
-    setNumCapturedBlackMarbles(gameStatus.game_state.captured_black_marbles);
-    setNumCapturedWhiteMarbles(gameStatus.game_state.captured_white_marbles);
-  }, [setBoardArray]);
+      // Set the captured marbles
+      setNumCapturedBlackMarbles(gameStatus.game_state.captured_black_marbles);
+      setNumCapturedWhiteMarbles(gameStatus.game_state.captured_white_marbles);
+    },
+    [setBoardArray]
+  );
 
   const toggleTurn = () => {
     setActivePlayer((prev) => (prev === "black" ? "white" : "black"));
@@ -242,6 +248,7 @@ const Game = () => {
           toggleActivePlayer={toggleTurn}
           gameStarted={gameStarted}
           gameActive={isGameActive}
+          gameConfigured={isGameConfigured}
           startGame={startGame}
           stopGame={stopGame}
           resetClockSignal={resetClockSignal}
@@ -251,6 +258,7 @@ const Game = () => {
           undoMove={onUndoLastMove}
           blackClock={blackClock}
           whiteClock={whiteClock}
+          updateGame={updateGame}
           // currentPlayer={currentPlayer}
           // isPaused={isPaused}
           // togglePause={togglePause}

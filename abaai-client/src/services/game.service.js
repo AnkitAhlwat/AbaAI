@@ -8,7 +8,7 @@ class GameService {
         try {
             const url = `${import.meta.env.VITE_API_BASE_URL}/game/configure`
             const response = await axios.post(url, config)
-            console.log(response.data)
+            return response.data;
         } catch (error) {
             console.error('Error setting config')
         }
