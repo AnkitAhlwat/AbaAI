@@ -23,7 +23,7 @@ const Game = () => {
   const [selectedMarbles, setSelectedMarbles] = useState([]); // Tracks which marbles are selected
   const [movesStack, setMovesStack] = useState([]); // Tracks player move history
   const [gameStarted, setGameStarted] = useState(false); // Tracks whether game has started
-  const [activePlayer, setActivePlayer] = useState('black'); // Tracks which player's turn it is for clock logic, potentially temporary
+  const [activePlayer, setActivePlayer] = useState("black"); // Tracks which player's turn it is for clock logic, potentially temporary
   // const [currentPlayer, setCurrentPlayer] = useState('player1'); CLOCKSTUFF
   const [isGameActive, setIsGameActive] = useState(false);
   const [resetClockSignal, setResetClockSignal] = useState(0);
@@ -36,11 +36,11 @@ const Game = () => {
     whitePlayer: "Computer",
     blackTimeLimit: 15,
     whiteTimeLimit: 15,
-    moveLimit: 20
+    moveLimit: 20,
   });
 
   const toggleTurn = () => {
-    setActivePlayer(prev => prev === 'black' ? 'white' : 'black');
+    setActivePlayer((prev) => (prev === "black" ? "white" : "black"));
   };
 
   //Defines aggregate clock states for each player, temporary
@@ -56,20 +56,20 @@ const Game = () => {
   // Pause the game
   const pauseGame = (player) => {
     setIsGameActive(false);
-    if (player === 'black') {
-      setBlackClock(clock => ({ ...clock, isRunning: false }));
+    if (player === "black") {
+      setBlackClock((clock) => ({ ...clock, isRunning: false }));
     } else {
-      setWhiteClock(clock => ({ ...clock, isRunning: false }));
+      setWhiteClock((clock) => ({ ...clock, isRunning: false }));
     }
   };
 
   // Resume Game
   const resumeGame = (player) => {
     setIsGameActive(true);
-    if (player === 'black') {
-      setBlackClock(clock => ({ ...clock, isRunning: true }));
+    if (player === "black") {
+      setBlackClock((clock) => ({ ...clock, isRunning: true }));
     } else {
-      setWhiteClock(clock => ({ ...clock, isRunning: true }));
+      setWhiteClock((clock) => ({ ...clock, isRunning: true }));
     }
   };
 
@@ -79,7 +79,7 @@ const Game = () => {
     setBlackClock({ time: blackClock.time, isRunning: false });
     setWhiteClock({ time: whiteClock.time, isRunning: false });
     setGameStarted(false);
-    setResetClockSignal(prev => prev + 1);
+    setResetClockSignal((prev) => prev + 1);
   };
 
   //stop the game and reset the clocks, this should also completely reset the game state
@@ -87,8 +87,8 @@ const Game = () => {
     setBlackClock({ time: blackClock.time, isRunning: false });
     setWhiteClock({ time: whiteClock.time, isRunning: false });
     setGameStarted(false);
-    setResetClockSignal(prev => prev + 1);
-  }
+    setResetClockSignal((prev) => prev + 1);
+  };
 
   //undo the last move
   const undoMove = (player) => {
@@ -97,10 +97,10 @@ const Game = () => {
     //reset the board to the last state
     //add back the time that the last turn took to the previous player's clock
     //need to be able to do this multiple times
-    if (player === 'black') {
-      setBlackClock(clock => ({ ...clock, isRunning: false }));
+    if (player === "black") {
+      setBlackClock((clock) => ({ ...clock, isRunning: false }));
     } else {
-      setWhiteClock(clock => ({ ...clock, isRunning: false }));
+      setWhiteClock((clock) => ({ ...clock, isRunning: false }));
     }
   };
 
@@ -109,26 +109,15 @@ const Game = () => {
     if (!gameStarted) {
       setGameStarted(true);
       setIsGameActive(true);
-      resumeGame('black');
+      resumeGame("black");
     }
   }, [gameStarted, resumeGame]);
-
 
   const { board, setBoardArray } = useBoard(config.boardLayout); // import board state and setBoard function from useBoard hook
 
   // Handles new AI move
   const updateAiMove = useCallback((aiMove) => {
-    const aiMoveNext = aiMove.next_positions;
-    const aiMovePrev = aiMove.previous_positions;
-    const prev_moves = aiMovePrev.map((position) => {
-      return Space.getCodeByPosition(position);
-    });
-    const next_moves = aiMoveNext.map((position) => {
-      return Space.getCodeByPosition(position);
-    });
-
-    const moveCode = `${prev_moves} -> ${next_moves}`;
-    setAiMove(moveCode);
+    setAiMove(Move.toNotation(aiMove));
   }, []);
 
   // Handles move selection
@@ -148,20 +137,22 @@ const Game = () => {
       setSelectedMarbles([]);
 
       // send post request to the server
-      const moveObj = new Move(move.previous_player_positions, move.next_player_positions, marbleState,
-      move.previous_opponent_positions, move.next_opponent_positions);
-      console.log(moveObj);
+      const moveObj = new Move(
+        move.previous_player_positions,
+        move.next_player_positions,
+        marbleState,
+        move.previous_opponent_positions,
+        move.next_opponent_positions
+      );
       const responseData = await GameService.postMove(moveObj);
-      console.log(responseData);
-
-      // set the ai move card to show what the ai did
-      // updateAiMove(responseData.ai_move);
-
-      // update the board and moves stack
       setMovesStack(responseData.moves_stack);
       setBoardArray(responseData.game_state.board);
+
+      // set the ai move card to display the move that the ai generated
+      const aiMove = await GameService.getAiMoveForCurrentState();
+      updateAiMove(aiMove);
     },
-    [selectedMarbles, setBoardArray, updateAiMove, gameStarted, startGame, toggleTurn]
+    [selectedMarbles, gameStarted, setBoardArray, updateAiMove]
   );
 
   // Handles move undo
@@ -193,7 +184,7 @@ const Game = () => {
       <Grid
         container
         item
-        xs={9}
+        xs={8}
         sx={{
           justifyContent: "center",
           alignItems: "center",
@@ -207,18 +198,18 @@ const Game = () => {
           selectedMarbles={selectedMarbles}
           setSelectedMarbles={setSelectedMarbles}
 
-        //for the clock controls
-        // blackClock={blackClock}
-        // whiteClock={whiteClock}
-        // pauseClock={pauseClock}
-        // resumeClock={resumeClock}
-        // resetClocks={resetClocks}
+          //for the clock controls
+          // blackClock={blackClock}
+          // whiteClock={whiteClock}
+          // pauseClock={pauseClock}
+          // resumeClock={resumeClock}
+          // resetClocks={resetClocks}
         />
       </Grid>
 
       <Grid
         item
-        xs={3}
+        xs={4}
         sx={{
           height: "95vh",
           padding: "5px",
@@ -231,7 +222,6 @@ const Game = () => {
           setConfig={setConfig}
           movesStack={movesStack}
           aiMove={aiMove}
-
           //for the clock controls
           activePlayer={activePlayer}
           toggleActivePlayer={toggleTurn}
@@ -246,9 +236,9 @@ const Game = () => {
           undoMove={onUndoLastMove}
           blackClock={blackClock}
           whiteClock={whiteClock}
-        // currentPlayer={currentPlayer}
-        // isPaused={isPaused}
-        // togglePause={togglePause}
+          // currentPlayer={currentPlayer}
+          // isPaused={isPaused}
+          // togglePause={togglePause}
         />
       </Grid>
     </Grid>

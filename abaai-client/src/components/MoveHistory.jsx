@@ -1,7 +1,7 @@
 import { Stack, Paper, Typography, Box, Grid } from "@mui/material";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
-import Space from "../models/Space";
+import Move from "../models/Move";
 
 // Displays movement history of the GUI
 const MoveHistory = ({ movesStack }) => {
@@ -11,16 +11,9 @@ const MoveHistory = ({ movesStack }) => {
   // Updates movement history when a move is made
   useEffect(() => {
     const moveStackFormatted = movesStack.map((move) => {
-      const prev_moves = move.previous_positions.map((position) => {
-        return Space.getCodeByPosition(position);
-      });
-      const next_moves = move.next_positions.map((position) => {
-        return Space.getCodeByPosition(position);
-      });
-
       return {
         player: move.player,
-        transition: `${prev_moves} -> ${next_moves}`,
+        transition: Move.toNotation(move),
       };
     });
 

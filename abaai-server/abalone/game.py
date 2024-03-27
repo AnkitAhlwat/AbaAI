@@ -1,3 +1,5 @@
+from random import choice
+
 from abalone.ai.state_space_generator import StateSpaceGenerator
 from abalone.board import BoardLayout, Board
 from abalone.movement import Move, Piece
@@ -13,7 +15,6 @@ class GameUpdate:
 
     def to_json(self):
         return {
-            "ai_move": self._ai_move.to_json() if self._ai_move is not None else None,
             "moves_stack": self._moves_stack.to_json() if self._moves_stack is not None else None,
             "game_state": self._game_state.to_json() if self._game_state is not None else None
         }
@@ -63,13 +64,7 @@ class Game:
         self._current_game_state = GameStateUpdate(self._current_game_state, move_obj).resulting_state
 
         # let the AI decide on it's next move
-        try:
-            ai_move_obj = self.make_ai_move()
-        except Exception as e:
-            print(e)
-            ai_move_obj = None
-
-        return GameUpdate(ai_move_obj, self._moves_stack, self._current_game_state)
+        return GameUpdate(None, self._moves_stack, self._current_game_state)
 
     def undo_move(self) -> GameUpdate:
         move = self._moves_stack.pop()
@@ -77,8 +72,10 @@ class Game:
 
         return GameUpdate(None, self._moves_stack, self._current_game_state)
 
-    def make_ai_move(self) -> Move:
-        pass
+    def get_ai_move(self) -> Move:
+        # return a random move for now
+        list_of_moves = StateSpaceGenerator.generate_all_possible_moves(self._current_game_state)
+        return choice(list_of_moves)
 
     def reset_game(self):
         """
