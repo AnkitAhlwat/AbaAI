@@ -66,8 +66,6 @@ class GameState:
             'turn': self._turn.value,
             'captured_black_marbles': total_starting_marbles - remaining_black_marbles,
             'captured_white_marbles': total_starting_marbles - remaining_white_marbles,
-            'remaining_player_marbles': self.remaining_player_marbles,
-            'remaining_opponent_marbles': self.remaining_opponent_marbles,
             'player_marble_positions': [position.to_json() for position in self.player_marble_positions],
             'opponent_marble_positions': [position.to_json() for position in self.opponent_marble_positions]
         }

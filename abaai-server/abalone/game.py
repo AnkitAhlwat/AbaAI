@@ -1,5 +1,3 @@
-from random import choice
-
 from random import shuffle
 
 from abalone.ai.game_playing_agent_lucas import MiniMaxAgent
@@ -95,6 +93,9 @@ class Game:
         self._game_started = False
         self._game_configured = False
 
+        max_ai_depth = 1
+        self._ai_agent = MiniMaxAgent(max_ai_depth)
+
     def set_up(self, config) -> dict:
         self._game_options = GameOptions.from_json(config)
         self._current_game_state = GameState(Board(self._game_options.board_layout.value), Piece.BLACK)
@@ -103,16 +104,6 @@ class Game:
 
         return self.__to_json()
 
-        max_ai_depth = 1
-        self._ai_agent = MiniMaxAgent(max_ai_depth)
-
-    def set_up(self, config):
-        if config['boardLayout'] == "Default":
-            self._game_options.board_layout = BoardLayout.DEFAULT
-        elif config['boardLayout'] == "Belgian Daisy":
-            self._game_options.board_layout = BoardLayout.BELGIAN_DAISY
-        else:
-            self._game_options.board_layout = BoardLayout.GERMAN_DAISY
     def start_game(self) -> dict:
         self._game_started = True
         return self.__to_json()
@@ -140,21 +131,16 @@ class Game:
         return self.__to_json()
 
     def get_ai_move(self) -> dict:
-        # return a random move for now
-        list_of_moves = StateSpaceGenerator.generate_all_possible_moves(self._current_game_state)
-        move = choice(list_of_moves)
-        return move.to_json()
-    def make_ai_move(self) -> Move:
         # if it is the first move, choose a random move to make from the generated moves
         if self._moves_stack.is_empty():
             moves = StateSpaceGenerator.generate_all_possible_moves(self._current_game_state)
             shuffle(moves)
-            return moves[0]
+            return moves[0].to_json()
 
         # if it is not the first move, choose the best move to make from the generated moves
         ai_move = self._ai_agent.get_best_move(self._current_game_state)
 
-        return ai_move
+        return ai_move.to_json()
 
     def reset_game(self) -> dict:
         """
