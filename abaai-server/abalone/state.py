@@ -47,11 +47,15 @@ class GameState:
             self._remaining_opponent_marbles += 1
 
     def to_json(self):
+        total_starting_marbles = 14
+        remaining_black_marbles = sum([1 for row in self._board.array for cell in row if cell == Piece.BLACK.value])
+        remaining_white_marbles = sum([1 for row in self._board.array for cell in row if cell == Piece.WHITE.value])
+
         return {
             'board': self._board.to_json(),
             'turn': self._turn.value,
-            'remaining_player_marbles': self._remaining_player_marbles,
-            'remaining_opponent_marbles': self._remaining_opponent_marbles
+            'captured_black_marbles': total_starting_marbles - remaining_black_marbles,
+            'captured_white_marbles': total_starting_marbles - remaining_white_marbles,
         }
 
 
