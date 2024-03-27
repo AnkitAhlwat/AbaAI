@@ -179,4 +179,4 @@ class Move:
 
     @staticmethod
     def __positions_to_notation(positions: list[Position]):
-        return "(" + ",".join([position.to_notation() for position in positions]) + ")"
+        return "(" + ",".join(sorted([position.to_notation() for position in positions])) + ")"

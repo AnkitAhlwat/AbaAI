@@ -1,5 +1,3 @@
-from copy import deepcopy
-
 from abalone.board import Board
 from abalone.movement import Move, Piece, Position
 
@@ -47,14 +45,7 @@ class GameState:
         self._turn = Piece.WHITE if self._turn == Piece.BLACK else Piece.BLACK
 
     def _get_marble_positions(self, piece: Piece):
-        positions = []
-
-        for y in range(9):
-            for x in range(9):
-                if self._board.array[y][x] == piece.value:
-                    positions.append(Position(x, y))
-
-        return positions
+        return self._board.black_positions if piece == Piece.BLACK else self._board.white_positions
 
     def to_json(self):
         total_starting_marbles = 14
@@ -73,7 +64,7 @@ class GameState:
 
 class GameStateUpdate:
     def __init__(self, previous_state: GameState, move: Move):
-        self._previous_state = deepcopy(previous_state)
+        self._previous_state = previous_state
         self._move = move
         self._resulting_state = self.__generate_resulting_state()
 
@@ -90,7 +81,8 @@ class GameStateUpdate:
         return self._resulting_state
 
     def __generate_resulting_state(self):
-        resulting_board = Board(deepcopy(self._previous_state.board.make_move(self._move)))
+        resulting_board_array = self._previous_state.board.make_move(self._move)
+        resulting_board = Board(resulting_board_array)
         resulting_turn = Piece.WHITE if self._previous_state.turn == Piece.BLACK else Piece.BLACK
 
         # Check if a sumito move pushed a marble off the board

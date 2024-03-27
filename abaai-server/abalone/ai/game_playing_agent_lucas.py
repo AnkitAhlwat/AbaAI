@@ -80,9 +80,9 @@ class HeuristicFunction:
     weights = {
         "terminal_state": 100_000,
         "piece_count": 1_000,
-        "pieces_near_edge": 100,
-        "manhattan_distance": 10,
-        "clumping": 1,
+        # "pieces_near_edge": 100,
+        "manhattan_distance": 100,
+        "clumping": 10,
         "sumito": 1,
         "triples": 1,
         "doubles": 1
@@ -119,28 +119,25 @@ class HeuristicFunction:
     @staticmethod
     def evaluate(game_state: GameState) -> float:
         # NOTE: Any function that is a good thing will add to value, bad things will subtract from value
+        # 1. Terminal state: if player won large positive, if opponent won small negative, if game not over 0
+        # 2. Piece counts: 1 point for each player piece, -1 point for each opponent piece
+        # 3. Pieces near edge: can our pieces be pushed off soon, can we push off opponent pieces soon
+        # 4. Manhattan distance from center: +(4 - distance) player pieces, -(4 - distance) for opponent pieces
+        # 5. Clumping: get our pieces close together, spread out opponent pieces
+        # 6. Sumito: how many sumito match ups are there, how many can we win
+        # 7. Triples: number of triples we have, number of triples opponent has
+        # 8. Doubles: number of doubles we have, number of doubles opponent has
         value = 0
 
-        # 1. Terminal state: if player won large positive, if opponent won small negative, if game not over 0
         value += HeuristicFunction.terminal_state(game_state) * HeuristicFunction.weights["terminal_state"]
 
-        # 2. Piece counts: 1 point for each player piece, -1 point for each opponent piece
         value += HeuristicFunction.piece_count(game_state) * HeuristicFunction.weights["piece_count"]
 
-        # 3. Pieces near edge: can our pieces be pushed off soon, can we push off opponent pieces soon
-        value += HeuristicFunction.pieces_near_edge(game_state) * HeuristicFunction.weights["pieces_near_edge"]
+        # value += HeuristicFunction.pieces_near_edge(game_state) * HeuristicFunction.weights["pieces_near_edge"]
 
-        # 4. Manhattan distance from center: +(4 - distance) player pieces, -(4 - distance) for opponent pieces
         value += HeuristicFunction.manhattan_distance(game_state) * HeuristicFunction.weights["manhattan_distance"]
 
-        # 5. Clumping: get our pieces close together, spread out opponent pieces
-        value += HeuristicFunction.clumping(game_state) * HeuristicFunction.weights["clumping"]
-
-        # 6. Sumito: how many sumito match ups are there, how many can we win
-
-        # 7. Triples: number of triples we have, number of triples opponent has
-
-        # 8. Doubles: number of doubles we have, number of doubles opponent has
+        # value += HeuristicFunction.clumping(game_state) * HeuristicFunction.weights["clumping"]
 
         return value
 
