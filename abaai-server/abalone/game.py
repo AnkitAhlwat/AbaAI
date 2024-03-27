@@ -1,3 +1,6 @@
+from random import shuffle
+
+from abalone.ai.game_playing_agent_lucas import MiniMaxAgent
 from abalone.ai.state_space_generator import StateSpaceGenerator
 from abalone.board import BoardLayout, Board
 from abalone.movement import Move, Piece
@@ -42,6 +45,9 @@ class Game:
         self._moves_stack = Stack()
         self._current_game_state = GameState(Board(game_options.board_layout.value), Piece.BLACK)
 
+        max_ai_depth = 1
+        self._ai_agent = MiniMaxAgent(max_ai_depth)
+
     def set_up(self, config):
         if config['boardLayout'] == "Default":
             self._game_options.board_layout = BoardLayout.DEFAULT
@@ -59,8 +65,7 @@ class Game:
             return GameUpdate(None, self._moves_stack)
 
         # make the move and push it to the stack
-        self._moves_stack.push(move_obj)
-        self._current_game_state = GameStateUpdate(self._current_game_state, move_obj).resulting_state
+        self.__apply_move(move_obj)
 
         # let the AI decide on it's next move
         try:
@@ -78,7 +83,16 @@ class Game:
         return GameUpdate(None, self._moves_stack, self._current_game_state)
 
     def make_ai_move(self) -> Move:
-        pass
+        # if it is the first move, choose a random move to make from the generated moves
+        if self._moves_stack.is_empty():
+            moves = StateSpaceGenerator.generate_all_possible_moves(self._current_game_state)
+            shuffle(moves)
+            return moves[0]
+
+        # if it is not the first move, choose the best move to make from the generated moves
+        ai_move = self._ai_agent.get_best_move(self._current_game_state)
+
+        return ai_move
 
     def reset_game(self):
         """
@@ -111,3 +125,7 @@ class Game:
                 moves_dict[key].append(move.to_json())
 
         return moves_dict
+
+    def __apply_move(self, move: Move):
+        self._current_game_state = GameStateUpdate(self._current_game_state, move).resulting_state
+        self._moves_stack.push(move)

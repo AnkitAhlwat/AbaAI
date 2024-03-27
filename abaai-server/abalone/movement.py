@@ -14,6 +14,17 @@ class Position:
     def to_notation(self):
         return f'{Position.get_letter_from_y(self.y)}{Position.get_number_from_x(self.x)}'
 
+    def get_adjacent_positions_within_board_array(self):
+        possible_positions = [
+            Position(self.x - 1, self.y),
+            Position(self.x + 1, self.y),
+            Position(self.x, self.y - 1),
+            Position(self.x, self.y + 1),
+            Position(self.x - 1, self.y + 1),
+            Position(self.x + 1, self.y - 1)
+        ]
+        return [position for position in possible_positions if 0 <= position.x < 9 and 0 <= position.y < 9]
+
     @staticmethod
     def to_notation_generic(x: int, y: int):
         return f'{Position.get_letter_from_y(y)}{Position.get_number_from_x(x)}'

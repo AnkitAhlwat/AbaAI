@@ -39,6 +39,9 @@ class GameState:
     def remaining_opponent_marbles(self) -> int:
         return len(self.opponent_marble_positions)
 
+    def is_game_over(self):
+        return True if self.remaining_player_marbles <= 8 or self.remaining_opponent_marbles <= 8 else False
+
     def undo_move(self, move: Move):
         self._board = Board(self._board.undo_move(move))
         self._turn = Piece.WHITE if self._turn == Piece.BLACK else Piece.BLACK

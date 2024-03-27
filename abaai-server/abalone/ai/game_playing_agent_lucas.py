@@ -1,33 +1,63 @@
+import time
+
 from abalone.ai.state_space_generator import StateSpaceGenerator
 from abalone.movement import Move, Position
 from abalone.state import GameStateUpdate, GameState
 
 
 class MiniMaxAgent:
-    def __init__(self, max_depth: int):
+    def __init__(self, max_depth: float = float('inf'), max_time_seconds: float = float('inf')):
         self.max_depth = max_depth
+        self.max_time_seconds = max_time_seconds
 
     def get_best_move(self, game_state: GameState) -> Move:
+        start_time_in_seconds = time.time()
         best_move = None
         max_eval = float('-inf')
+
         for move in StateSpaceGenerator.generate_all_possible_moves(game_state):
             successor_state = GameStateUpdate(game_state, move).resulting_state
-            evaluated_value = self.minimax(successor_state, self.max_depth, False, float('-inf'), float('inf'))
+            evaluated_value = self.minimax(
+                successor_state,
+                self.max_depth,
+                start_time_in_seconds,
+                self.max_time_seconds,
+                False,
+                float('-inf'),
+                float('inf')
+            )
+
             if evaluated_value > max_eval:
                 max_eval = evaluated_value
                 best_move = move
+
         return best_move
 
-    def minimax(self, game_state: GameState, depth: int, max_turn: bool, alpha: float, beta: float) -> float:
-        if depth == 0 or game_state.is_game_over():
-            return self.evaluate(game_state)
+    def minimax(
+            self,
+            game_state: GameState,
+            depth: float,
+            start_time_in_seconds: float,
+            time_limit_in_seconds: float,
+            max_turn: bool,
+            alpha: float,
+            beta: float
+    ) -> float:
+        is_time_up = time.time() - start_time_in_seconds >= time_limit_in_seconds
+
+        if depth <= 0 or game_state.is_game_over() or is_time_up:
+            return HeuristicFunction.evaluate(game_state)
 
         if max_turn:
             max_eval = float('-inf')
             for move in StateSpaceGenerator.generate_all_possible_moves(game_state):
                 next_state = GameStateUpdate(game_state, move).resulting_state
-                max_eval = max(max_eval, self.minimax(next_state, depth - 1, False, alpha, beta))
-                if max_eval > beta:
+                max_eval = max(
+                    max_eval,
+                    self.minimax(next_state, depth - 1, start_time_in_seconds, time_limit_in_seconds,
+                                 False, alpha, beta)
+                )
+                if max_eval > beta:  # Pruning
                     return max_eval
                 alpha = max(alpha, max_eval)
             return max_eval
@@ -35,8 +65,12 @@ class MiniMaxAgent:
             min_eval = float('inf')
             for move in StateSpaceGenerator.generate_all_possible_moves(game_state):
                 next_state = GameStateUpdate(game_state, move).resulting_state
-                min_eval = min(min_eval, self.minimax(next_state, depth - 1, True, alpha, beta))
-                if min_eval < alpha:
+                min_eval = min(
+                    min_eval,
+                    self.minimax(next_state, depth - 1, start_time_in_seconds, time_limit_in_seconds,
+                                 True, alpha, beta)
+                )
+                if min_eval < alpha:  # Pruning
                     return min_eval
                 beta = min(beta, min_eval)
             return min_eval
@@ -97,10 +131,10 @@ class HeuristicFunction:
         value += HeuristicFunction.pieces_near_edge(game_state) * HeuristicFunction.weights["pieces_near_edge"]
 
         # 4. Manhattan distance from center: +(4 - distance) player pieces, -(4 - distance) for opponent pieces
-        value += HeuristicFunction.manhattan_distance(game_state) * \
-                 HeuristicFunction.weights["manhattan_distance"]
+        value += HeuristicFunction.manhattan_distance(game_state) * HeuristicFunction.weights["manhattan_distance"]
 
         # 5. Clumping: get our pieces close together, spread out opponent pieces
+        value += HeuristicFunction.clumping(game_state) * HeuristicFunction.weights["clumping"]
 
         # 6. Sumito: how many sumito match ups are there, how many can we win
 
@@ -166,9 +200,7 @@ class HeuristicFunction:
         return float(num_opponent_pieces_close - num_player_pieces_close)
 
     @staticmethod
-    def manhattan_distance(
-            game_state: GameState
-    ) -> float:
+    def manhattan_distance(game_state: GameState) -> float:
         player_value = 0
         opponent_value = 0
         for player_position in game_state.player_marble_positions:
@@ -179,6 +211,30 @@ class HeuristicFunction:
         # the smaller value the better
         # e.g. player distance = 2, opponent distance = 4, the value should be +2 because player is closer to the center
         return float(opponent_value - player_value)
+
+    @staticmethod
+    def clumping(game_state: GameState) -> float:
+        """
+        Iterates through each player piece and each opponent piece separately. For each piece, it counts how many other
+        pieces of the same color are adjacent to it. The function returns the difference between the number of player
+        pieces clumped together and the number of opponent pieces clumped together.
+
+        :param game_state: the current game state
+        :return: the difference between the number of player pieces clumped together and the number of opponent pieces.
+        This value will be negative if the opponent has better clumping than us, positive if we have better clumping.
+        """
+        player_pieces = game_state.player_marble_positions
+        opponent_pieces = game_state.opponent_marble_positions
+
+        player_clumping = 0
+        opponent_clumping = 0
+
+        for player_position in player_pieces:
+            player_clumping += HeuristicFunction.__clumping_value_for_position(player_position, player_pieces)
+        for opponent_position in opponent_pieces:
+            opponent_clumping += HeuristicFunction.__clumping_value_for_position(opponent_position, opponent_pieces)
+
+        return float(player_clumping - opponent_clumping)
 
     # Private helper functions
     @staticmethod
@@ -201,3 +257,18 @@ class HeuristicFunction:
     def __manhattan_distance_from_center(position: Position) -> float:
         center_position_x, center_position_y = 4, 4
         return abs(position.x - center_position_x) + abs(position.y - center_position_y)
+
+    @staticmethod
+    def __clumping_value_for_position(position: Position, all_positions: list[Position]) -> int:
+        """
+        Counts how many other pieces of the same color are adjacent to the given position. Uses set intersection to
+        count the number of adjacent pieces for efficiency.
+
+        :param position: the position to check
+        :param all_positions: a list of all the positions of the same color
+        :return: the number of adjacent pieces
+        """
+        adjacent_positions = position.get_adjacent_positions_within_board_array()
+        adjacent_set = set(adjacent_positions)
+        all_set = set(all_positions)
+        return len(adjacent_set.intersection(all_set))
