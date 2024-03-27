@@ -39,7 +39,7 @@ const MoveHistory = ({ movesStack }) => {
         spacing={2}
         sx={{
           overflowY: "auto",
-          maxHeight: "560px",
+          maxHeight: "53vh",
           "&::-webkit-scrollbar": {
             width: "5px",
           },

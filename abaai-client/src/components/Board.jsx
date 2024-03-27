@@ -146,112 +146,21 @@ const Board = ({
     }
   }, []);
 
-  const arraysAreEqual = (array1, array2) => {
-    if (array1.length !== array2.length) {
-      return false;
-    }
-
-    for (let i = 0; i < array1.length; i++) {
-      if (JSON.stringify(array1[i]) !== JSON.stringify(array2[i])) {
-        return false;
-      }
-    }
-
-    return true;
-  };
-
-  const canSumitoOccur = useCallback((selectedMarbles) => {
-    const convertedMarbles = selectedMarbles
-      .map((marble) => ({
-        x: marble.position.x,
-        y: marble.position.y,
-      }))
-      .sort((a, b) => a.x - b.x || a.y - b.y);
-
-    const matchingMove = validMovesForSelectedMarbles.find((move) => {
-      if (move.previous_opponent_positions.length === 0) return false;
-      return arraysAreEqual(move.previous_player_positions, convertedMarbles);
-    });
-
-    if (matchingMove) {
-      console.log("Sumito can occur");
-      const newSelectedMarbles = [
-        ...selectedMarbles,
-        ...matchingMove.previous_opponent_positions.map(
-          (position) => board[position.y][position.x]
-        ),
-      ];
-      console.log(validMovesForSelectedMarbles);
-      setSelectedMarbles(newSelectedMarbles);
-      return true;
-    }
-
-    return false;
-  }, []);
-
-  // A function that will execute the move if it is valid
-  const executeMoveIfValid = useCallback(
-    (clickedSpace) => {
-      let moveDirection = null;
-      let exactMove = null;
-
-      if (clickedSpace.state === 1 || clickedSpace.state === 2) return false;
-      if (selectedMarbles.length > 0) {
-        const firstSelectedMarble = selectedMarbles[0];
-
-        // Find the exact move that matches both the direction and ends in the clicked space
-        validMovesForSelectedMarbles.forEach((move) => {
-          move.next_opponent_positions.forEach((position) => {
-            if (
-              position.x === clickedSpace.position.x &&
-              position.y === clickedSpace.position.y
-            ) {
-              exactMove = move;
-            }
-          });
-          move.next_player_positions.forEach((position) => {
-            if (
-              position.x === clickedSpace.position.x &&
-              position.y === clickedSpace.position.y
-            ) {
-              exactMove = move;
-            }
-          });
-        });
-      }
-      if (exactMove && selectedMarbles.length > 0) {
-        const move = {
-          previous_player_positions: exactMove.previous_player_positions.map(
-            (position) => ({ x: position.x, y: position.y })
-          ),
-          next_player_positions: exactMove.next_player_positions.map(
-            (position) => ({ x: position.x, y: position.y })
-          ),
-          previous_opponent_positions:
-            exactMove.previous_opponent_positions.map((position) => ({
-              x: position.x,
-              y: position.y,
-            })),
-          next_opponent_positions: exactMove.next_opponent_positions.map(
-            (position) => ({ x: position.x, y: position.y })
-          ),
-        };
-        console.log("Move:", move);
-        onMoveSelection(move);
-        return true;
-      }
-
-      return false;
-    },
-    [validMovesForSelectedMarbles, selectedMarbles, onMoveSelection]
-  );
-
   const onMarbleClick = useCallback(
     (space) => {
       let newSelectedMarbles = [];
-      // Early return if the space is empty or the move is valid.
-      if (space.state === SpaceStates.EMPTY || executeMoveIfValid(space)) {
-        executeMoveIfValid(space);
+      // Early return if the space has a move.
+      if (space.move !== null) {
+        onMoveSelection(space.move);
+        deselectMarbles(selectedMarbles);
+        setSelectedMarbles([]);
+        generateBoard();
+        return;
+      }
+
+      // If the space is not one of the current players marbles or a possible move, return.
+      if (![currentTurn, 3, 4].includes(space.state)) {
+        return;
       }
 
       // Deselect if the same marble is clicked again.
@@ -294,10 +203,15 @@ const Board = ({
         newSelectedMarbles = [space];
         setSelectedMarbles(newSelectedMarbles);
       }
-      // if (canSumitoOccur(newSelectedMarbles)) {
-      // }
     },
-    [executeMoveIfValid, selectedMarbles, setSelectedMarbles, deselectMarbles]
+    [
+      currentTurn,
+      selectedMarbles,
+      onMoveSelection,
+      deselectMarbles,
+      setSelectedMarbles,
+      generateBoard,
+    ]
   );
 
   // A function that will return the color of the marble based on the state
@@ -325,19 +239,19 @@ const Board = ({
 
   useEffect(() => {
     const clearHighlight = () => {
-      for (let row of board) {
-        for (let space of row) {
-          if (space.state === 3) {
-            space.state = 0;
+      for (let row = 0; row < board.length; row++) {
+        for (let column = 0; column < board[row].length; column++) {
+          if (board[row][column].state === 3) {
+            board[row][column].state = boardArray[row][column];
           }
-          if (space.state === 4) {
-            space.state = 0;
+          if (board[row][column].state === 4) {
+            board[row][column].state = boardArray[row][column];
           }
         }
       }
     };
     clearHighlight();
-  }, [validMovesForSelectedMarbles, onMarbleClick, board]);
+  }, [validMovesForSelectedMarbles, onMarbleClick, board, boardArray]);
 
   // ------------------- Render -------------------
   const renderMarble = useCallback(
@@ -403,8 +317,10 @@ const Board = ({
 
           if (spaceObj.state === opponentNum) {
             spaceObj.state = 4;
+            spaceObj.move = move;
           } else if (spaceObj.state !== currentTurn && spaceObj.state !== 4) {
             spaceObj.state = 3;
+            spaceObj.move = move;
           }
         });
       });

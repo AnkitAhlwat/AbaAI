@@ -142,9 +142,8 @@ const Game = () => {
   // Handles move selection
   const onMoveSelection = useCallback(
     async (move) => {
-      // get the previous and new positions of the selected marbles
       console.log("Move:", move);
-      const marbleState = selectedMarbles[0].state;
+
       //toggle the active player turn
       toggleTurn();
 
@@ -153,25 +152,22 @@ const Game = () => {
         setGameStarted(true);
       }
 
-      setSelectedMarbles([]);
-
-      // send post request to the server
+      // // send post request to the server
       const moveObj = new Move(
         move.previous_player_positions,
         move.next_player_positions,
-        marbleState,
+        currentTurn,
         move.previous_opponent_positions,
         move.next_opponent_positions
       );
-      const responseData = await GameService.postMove(moveObj);
-      setMovesStack(responseData.moves_stack);
-      setBoardArray(responseData.game_state.board);
+      const gameStatus = await GameService.postMove(moveObj);
+      updateGame(gameStatus);
 
-      // set the ai move card to display the move that the ai generated
+      // // set the ai move card to display the move that the ai generated
       const aiMove = await GameService.getAiMoveForCurrentState();
       setAiMove(aiMove);
     },
-    [selectedMarbles, gameStarted, setBoardArray]
+    [gameStarted, currentTurn, updateGame]
   );
 
   // Handles move undo
