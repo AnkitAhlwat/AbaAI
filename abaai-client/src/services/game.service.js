@@ -8,12 +8,21 @@ class GameService {
         try {
             const url = `${import.meta.env.VITE_API_BASE_URL}/game/configure`
             const response = await axios.post(url, config)
-            console.log(response.data)
+            return response.data;
         } catch (error) {
             console.error('Error setting config')
         }
     }
 
+    static async startGame() {
+        try {
+            const url = `${import.meta.env.VITE_API_BASE_URL}/game/start`
+            const response = await axios.post(url)
+            console.log(response.data)
+        } catch (error) {
+            console.error('Error starting game')
+        }
+    }
 
     // Posts move request to python server
     static async postMove(move) {
@@ -55,6 +64,26 @@ class GameService {
             return response.data;
         } catch (error) {
             console.error('Error getting possible moves:', error);
+        }
+    }
+
+    static async getAiMoveForCurrentState() {
+        try {
+            const url = `${import.meta.env.VITE_API_BASE_URL}/game/aiMove`;
+            const response = await axios.get(url);
+            return response.data;
+        } catch (error) {
+            console.error('Error getting ai move:', error);
+        }
+    }
+    
+    static async getGameStatus() {
+        try {
+            const url = `${import.meta.env.VITE_API_BASE_URL}/game`;
+            const response = await axios.get(url);
+            return response.data;
+        } catch (error) {
+            console.error('Error getting game status:', error);
         }
     }
 }
