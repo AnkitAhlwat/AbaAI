@@ -69,6 +69,7 @@ const RightSideBar = (props) => {
               label="Game Configuration"
               value={Tabs.CONFIG}
               sx={{ color: "white" }}
+              disabled={gameActive}
             />
           </TabList>
         </Box>
