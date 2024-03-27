@@ -1,6 +1,7 @@
 import { Grid, Paper, Avatar, Typography } from "@mui/material";
 import AIAvatar from "../assets/robot.png";
 import Proptypes from "prop-types";
+import Move from "../models/Move";
 
 // Displays each move the AI mades on the GUI interface
 const AIMoveDisplay = ({ aiMove }) => {
@@ -26,7 +27,7 @@ const AIMoveDisplay = ({ aiMove }) => {
               color: "#f5f5f5",
             }}
           >
-            {aiMove === "" ? "..." : aiMove}
+            {aiMove ? Move.toNotation(aiMove) : "..."}
           </Typography>
         </Grid>
       </Grid>

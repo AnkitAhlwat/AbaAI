@@ -10,7 +10,7 @@ import RightSideBar from "./RightSideBar";
 // Displays complete assembly of the GUI
 const Game = () => {
   // ##################### States #####################
-  const [aiMove, setAiMove] = useState(""); // Tracks AI move history
+  const [aiMove, setAiMove] = useState({}); // Tracks AI move history
   const [selectedMarbles, setSelectedMarbles] = useState([]); // Tracks which marbles are selected
   const [movesStack, setMovesStack] = useState([]); // Tracks player move history
   const [gameStarted, setGameStarted] = useState(false); // Tracks whether game has started
@@ -131,11 +131,6 @@ const Game = () => {
     }
   }, [gameStarted, updateGame]);
 
-  // Handles new AI move
-  const updateAiMove = useCallback((aiMove) => {
-    setAiMove(Move.toNotation(aiMove));
-  }, []);
-
   // Handles move selection
   const onMoveSelection = useCallback(
     async (move) => {
@@ -166,9 +161,9 @@ const Game = () => {
 
       // set the ai move card to display the move that the ai generated
       const aiMove = await GameService.getAiMoveForCurrentState();
-      updateAiMove(aiMove);
+      setAiMove(aiMove);
     },
-    [selectedMarbles, gameStarted, setBoardArray, updateAiMove]
+    [selectedMarbles, gameStarted, setBoardArray]
   );
 
   // Handles move undo
