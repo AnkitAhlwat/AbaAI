@@ -122,13 +122,14 @@ const Game = () => {
   };
 
   //logic to start the game and black game clock
-  const startGame = useCallback(() => {
+  const startGame = useCallback(async () => {
     if (!gameStarted) {
+      const gameStatus = await GameService.startGame();
+      updateGame(gameStatus);
       setGameStarted(true);
-      setIsGameActive(true);
       resumeGame("black");
     }
-  }, [gameStarted, resumeGame]);
+  }, [gameStarted, updateGame]);
 
   // Handles new AI move
   const updateAiMove = useCallback((aiMove) => {
@@ -218,6 +219,7 @@ const Game = () => {
           setSelectedMarbles={setSelectedMarbles}
           numCapturedBlackMarbles={numCapturedBlackMarbles}
           numCapturedWhiteMarbles={numCapturedWhiteMarbles}
+          isGameActive={isGameActive}
 
           //for the clock controls
           // blackClock={blackClock}

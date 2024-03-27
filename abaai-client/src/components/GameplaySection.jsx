@@ -11,6 +11,7 @@ const GameplaySection = (props) => {
     setSelectedMarbles,
     numCapturedBlackMarbles,
     numCapturedWhiteMarbles,
+    isGameActive,
   } = props;
 
   return (
@@ -37,6 +38,7 @@ const GameplaySection = (props) => {
           onMoveSelection={onMoveSelection}
           selectedMarbles={selectedMarbles}
           setSelectedMarbles={setSelectedMarbles}
+          isGameActive={isGameActive}
         />
       </Grid>
       <Grid item xs={12}>
@@ -58,6 +60,7 @@ GameplaySection.propTypes = {
   setSelectedMarbles: Proptypes.func.isRequired,
   numCapturedBlackMarbles: Proptypes.number.isRequired,
   numCapturedWhiteMarbles: Proptypes.number.isRequired,
+  isGameActive: Proptypes.bool.isRequired,
 };
 
 export default GameplaySection;
