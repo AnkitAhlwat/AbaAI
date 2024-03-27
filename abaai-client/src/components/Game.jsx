@@ -28,10 +28,20 @@ const Game = () => {
   }); // Tracks configuration options
   const [numCapturedBlackMarbles, setNumCapturedBlackMarbles] = useState(0); // Tracks number of black marbles captured
   const [numCapturedWhiteMarbles, setNumCapturedWhiteMarbles] = useState(0); // Tracks number of white marbles captured
+  //Defines aggregate clock states for each player, temporary
+  const [blackClock, setBlackClock] = useState({
+    time: 180,
+    isRunning: false,
+  });
+  const [whiteClock, setWhiteClock] = useState({
+    time: 180,
+    isRunning: false,
+  });
 
   // ##################### Custom Hooks #####################
   const { board, setBoardArray } = useBoard(config.boardLayout); // import board state and setBoard function from useBoard hook
 
+  // ##################### Functions/Callbacks #####################
   // When the page loads, we want to fetch the state of the game from the server and update accordingly
   const updateGame = useCallback(
     async (gameStatus) => {
@@ -59,16 +69,6 @@ const Game = () => {
   const toggleTurn = () => {
     setActivePlayer((prev) => (prev === "black" ? "white" : "black"));
   };
-
-  //Defines aggregate clock states for each player, temporary
-  const [blackClock, setBlackClock] = useState({
-    time: 180,
-    isRunning: false,
-  });
-  const [whiteClock, setWhiteClock] = useState({
-    time: 180,
-    isRunning: false,
-  });
 
   // Pause the game
   const pauseGame = (player) => {
@@ -188,11 +188,12 @@ const Game = () => {
     setMovesStack(responseData.moves_stack);
   }, [setBoardArray]);
 
+  // ##################### Effects #####################
   useEffect(() => {
     updateGame();
   }, [updateGame]); // should only run once when the component mounts (page loaded or refreshed)
 
-  // Returns assembly of the GUI
+  // ##################### Render #####################
   return (
     <Grid
       container
