@@ -36,6 +36,9 @@ const Game = () => {
     const gameStatus = await GameService.getGameStatus();
     console.log("game status: ", gameStatus);
 
+    // Set the state of the game
+    setIsGameActive(gameStatus.game_started);
+
     // Set the board state
     setBoardArray(gameStatus.game_state.board);
 

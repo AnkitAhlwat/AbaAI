@@ -21,7 +21,7 @@ const marbleStyles = {
   2: {
     backgroundColor: "white",
     color: "black",
-    outline: "solid 2px black",
+    outline: "solid 2px white",
     boxShadow: "none",
     "&:hover": {
       backgroundColor: "#767271", // Change hover color
@@ -72,11 +72,17 @@ const marbleStyles = {
 };
 
 // Displays the playing board of the GUI
-const Board = ({ board, selectedMarbles, setSelectedMarbles, onMoveSelection }) => {
+const Board = ({
+  board,
+  selectedMarbles,
+  setSelectedMarbles,
+  onMoveSelection,
+  isGameActive,
+}) => {
   // ------------------- State -------------------
   const [allPossibleMoves, setAllPossibleMoves] = useState({});
-  const [validMovesForSelectedMarbles, setValidMovesForSelectedMarbles] = useState([]);
-
+  const [validMovesForSelectedMarbles, setValidMovesForSelectedMarbles] =
+    useState([]);
 
   const fetchPossibleMoves = useCallback(async () => {
     try {
@@ -141,68 +147,90 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles, onMoveSelection }) 
   };
 
   const canSumitoOccur = useCallback((selectedMarbles) => {
-    const convertedMarbles = selectedMarbles.map(marble => ({
-      x: marble.position.x,
-      y: marble.position.y
-    })).sort((a, b) => (a.x - b.x) || (a.y - b.y))
+    const convertedMarbles = selectedMarbles
+      .map((marble) => ({
+        x: marble.position.x,
+        y: marble.position.y,
+      }))
+      .sort((a, b) => a.x - b.x || a.y - b.y);
 
-    const matchingMove = validMovesForSelectedMarbles.find(move => {
+    const matchingMove = validMovesForSelectedMarbles.find((move) => {
       if (move.previous_opponent_positions.length === 0) return false;
       return arraysAreEqual(move.previous_player_positions, convertedMarbles);
     });
 
     if (matchingMove) {
       console.log("Sumito can occur");
-      const newSelectedMarbles = [...selectedMarbles, ...matchingMove.previous_opponent_positions.map(position => board[position.y][position.x])];
-      console.log(validMovesForSelectedMarbles)
+      const newSelectedMarbles = [
+        ...selectedMarbles,
+        ...matchingMove.previous_opponent_positions.map(
+          (position) => board[position.y][position.x]
+        ),
+      ];
+      console.log(validMovesForSelectedMarbles);
       setSelectedMarbles(newSelectedMarbles);
       return true;
     }
 
     return false;
-
   }, []);
 
   // A function that will execute the move if it is valid
-  const executeMoveIfValid = useCallback((clickedSpace) => {
-    let moveDirection = null;
-    let exactMove = null;
+  const executeMoveIfValid = useCallback(
+    (clickedSpace) => {
+      let moveDirection = null;
+      let exactMove = null;
 
-    if (clickedSpace.state === 1 || clickedSpace.state === 2) return false;
-    if (selectedMarbles.length > 0) {
-      const firstSelectedMarble = selectedMarbles[0];
+      if (clickedSpace.state === 1 || clickedSpace.state === 2) return false;
+      if (selectedMarbles.length > 0) {
+        const firstSelectedMarble = selectedMarbles[0];
 
-
-      // Find the exact move that matches both the direction and ends in the clicked space
-      validMovesForSelectedMarbles.forEach(move => {
-        move.next_opponent_positions.forEach(position => {
-          if (position.x === clickedSpace.position.x && position.y === clickedSpace.position.y) {
-            exactMove = move;
-          }
+        // Find the exact move that matches both the direction and ends in the clicked space
+        validMovesForSelectedMarbles.forEach((move) => {
+          move.next_opponent_positions.forEach((position) => {
+            if (
+              position.x === clickedSpace.position.x &&
+              position.y === clickedSpace.position.y
+            ) {
+              exactMove = move;
+            }
+          });
+          move.next_player_positions.forEach((position) => {
+            if (
+              position.x === clickedSpace.position.x &&
+              position.y === clickedSpace.position.y
+            ) {
+              exactMove = move;
+            }
+          });
         });
-        move.next_player_positions.forEach(position => {
-          if (position.x === clickedSpace.position.x && position.y === clickedSpace.position.y) {
-            exactMove = move;
-          }
-        });
-      });
+      }
+      if (exactMove && selectedMarbles.length > 0) {
+        const move = {
+          previous_player_positions: exactMove.previous_player_positions.map(
+            (position) => ({ x: position.x, y: position.y })
+          ),
+          next_player_positions: exactMove.next_player_positions.map(
+            (position) => ({ x: position.x, y: position.y })
+          ),
+          previous_opponent_positions:
+            exactMove.previous_opponent_positions.map((position) => ({
+              x: position.x,
+              y: position.y,
+            })),
+          next_opponent_positions: exactMove.next_opponent_positions.map(
+            (position) => ({ x: position.x, y: position.y })
+          ),
+        };
+        console.log("Move:", move);
+        onMoveSelection(move);
+        return true;
+      }
 
-    }
-    if (exactMove && selectedMarbles.length > 0) {
-      const move = {
-        previous_player_positions: exactMove.previous_player_positions.map(position => ({ x: position.x, y: position.y })),
-        next_player_positions: exactMove.next_player_positions.map(position => ({ x: position.x, y: position.y })),
-        previous_opponent_positions: exactMove.previous_opponent_positions.map(position => ({ x: position.x, y: position.y })),
-        next_opponent_positions: exactMove.next_opponent_positions.map(position => ({ x: position.x, y: position.y })),
-      };
-      console.log("Move:", move);
-      onMoveSelection(move);
-      return true;
-    }
-
-    return false;
-  }, [validMovesForSelectedMarbles, selectedMarbles, onMoveSelection]);
-
+      return false;
+    },
+    [validMovesForSelectedMarbles, selectedMarbles, onMoveSelection]
+  );
 
   const onMarbleClick = useCallback(
     (space) => {
@@ -215,7 +243,9 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles, onMoveSelection }) 
       // Deselect if the same marble is clicked again.
       if (selectedMarbles.includes(space)) {
         deselectMarbles([space]);
-        setSelectedMarbles(selectedMarbles.filter(marble => marble !== space));
+        setSelectedMarbles(
+          selectedMarbles.filter((marble) => marble !== space)
+        );
         return;
       }
 
@@ -223,30 +253,38 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles, onMoveSelection }) 
       if (selectedMarbles.length < 3) {
         const lastSelectedMarble = selectedMarbles[selectedMarbles.length - 1];
         // If adjacent or in a straight line, select the current marble.
-        if (!lastSelectedMarble || lastSelectedMarble.isAdjacentTo(space) ||
-          (selectedMarbles.length === 2 && Space.areInStraightLine(selectedMarbles[0], selectedMarbles[1], space))) {
+        if (
+          !lastSelectedMarble ||
+          lastSelectedMarble.isAdjacentTo(space) ||
+          (selectedMarbles.length === 2 &&
+            Space.areInStraightLine(
+              selectedMarbles[0],
+              selectedMarbles[1],
+              space
+            ))
+        ) {
           space.selected = true;
           newSelectedMarbles = [...selectedMarbles, space];
           setSelectedMarbles(newSelectedMarbles);
-        } else { // Otherwise, deselect all and select the current marble.
+        } else {
+          // Otherwise, deselect all and select the current marble.
           deselectMarbles(selectedMarbles);
           space.selected = true;
           newSelectedMarbles = [space];
           setSelectedMarbles(newSelectedMarbles);
         }
-      } else { // If more than two marbles are already selected, reset and select the current one.
+      } else {
+        // If more than two marbles are already selected, reset and select the current one.
         deselectMarbles(selectedMarbles);
         space.selected = true;
         newSelectedMarbles = [space];
         setSelectedMarbles(newSelectedMarbles);
       }
       if (canSumitoOccur(newSelectedMarbles)) {
-
       }
     },
     [executeMoveIfValid, selectedMarbles, setSelectedMarbles, deselectMarbles]
   );
-
 
   // A function that will return the color of the marble based on the state
   const getSpaceStyle = useCallback((space) => {
@@ -262,8 +300,10 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles, onMoveSelection }) 
   }, [updateValidMoves]);
 
   useEffect(() => {
-    fetchPossibleMoves();
-  }, [fetchPossibleMoves]);
+    if (isGameActive) {
+      fetchPossibleMoves();
+    }
+  }, [fetchPossibleMoves, isGameActive]);
 
   useEffect(() => {
     const clearHighlight = () => {
@@ -279,7 +319,7 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles, onMoveSelection }) 
       }
     };
     clearHighlight();
-  }, [validMovesForSelectedMarbles, onMarbleClick]);
+  }, [validMovesForSelectedMarbles, onMarbleClick, board]);
 
   // ------------------- Render -------------------
   const renderMarble = useCallback(
@@ -294,12 +334,13 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles, onMoveSelection }) 
             height: "80px",
           }}
           onClick={() => onMarbleClick(space)}
+          disabled={!isGameActive}
         >
           {space.str}
         </Fab>
       );
     },
-    [getSpaceStyle, onMarbleClick]
+    [getSpaceStyle, onMarbleClick, isGameActive]
   );
 
   // A function that will render a row of the board
@@ -349,16 +390,20 @@ const Board = ({ board, selectedMarbles, setSelectedMarbles, onMoveSelection }) 
 
         {validMovesForSelectedMarbles.map((move) => {
           move.next_player_positions.map((space) => {
-            if (board[space.y][space.x].state !== 1 && board[space.y][space.x].state !== 2)
+            if (
+              board[space.y][space.x].state !== 1 &&
+              board[space.y][space.x].state !== 2
+            )
               board[space.y][space.x].state = 3;
-          })
+          });
           move.next_opponent_positions.map((space) => {
-            if (board[space.y][space.x].state !== 1 && board[space.y][space.x].state !== 2)
+            if (
+              board[space.y][space.x].state !== 1 &&
+              board[space.y][space.x].state !== 2
+            )
               board[space.y][space.x].state = 4;
-          })
-        }
-        )}
-
+          });
+        })}
       </Box>
     </>
   );
@@ -369,6 +414,7 @@ Board.propTypes = {
   onMoveSelection: PropTypes.func.isRequired,
   selectedMarbles: PropTypes.array.isRequired,
   setSelectedMarbles: PropTypes.func.isRequired,
+  isGameActive: PropTypes.bool,
 };
 
 export { Board };
