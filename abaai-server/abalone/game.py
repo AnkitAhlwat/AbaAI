@@ -7,77 +7,124 @@ from abalone.stack import Stack
 from abalone.state import GameState, GameStateUpdate
 
 
-class GameUpdate:
-    def __init__(self, ai_move: Move = None, moves_stack: Stack = None, game_state: GameState = None):
-        self._game_state = game_state
-        self._ai_move = ai_move
-        self._moves_stack = moves_stack
-
-    def to_json(self):
-        return {
-            "moves_stack": self._moves_stack.to_json() if self._moves_stack is not None else None,
-            "game_state": self._game_state.to_json() if self._game_state is not None else None
-        }
-
-
 class GameOptions:
-    def __init__(self, board_layout: BoardLayout = None):
+    def __init__(
+            self,
+            board_layout: BoardLayout = None,
+            black_ai: bool = False,
+            white_ai: bool = False,
+            black_time_limit_seconds: int = 0,
+            white_time_limit_seconds: int = 0,
+            move_limit: int = 0
+    ):
         if board_layout is None:
             board_layout = BoardLayout.DEFAULT
         self._board_layout = board_layout
+        self._is_black_ai = black_ai
+        self._is_white_ai = white_ai
+        self._black_time_limit_seconds = black_time_limit_seconds
+        self._white_time_limit_seconds = white_time_limit_seconds
+        self._move_limit = move_limit
 
     @property
     def board_layout(self) -> BoardLayout:
         return self._board_layout
 
-    @board_layout.setter
-    def board_layout(self, value):
-        self._board_layout = value
+    @property
+    def is_black_ai(self) -> bool:
+        return self._is_black_ai
+
+    @property
+    def is_white_ai(self) -> bool:
+        return self._is_white_ai
+
+    @property
+    def black_time_limit_seconds(self) -> int:
+        return self._black_time_limit_seconds
+
+    @property
+    def white_time_limit_seconds(self) -> int:
+        return self._white_time_limit_seconds
+
+    @property
+    def move_limit(self) -> int:
+        return self._move_limit
+
+    @classmethod
+    def from_json(cls, json_obj: dict) -> 'GameOptions':
+        board_layout = BoardLayout.DEFAULT
+        if json_obj['boardLayout'] == "Belgian Daisy":
+            board_layout = BoardLayout.BELGIAN_DAISY
+        elif json_obj['boardLayout'] == "German Daisy":
+            board_layout = BoardLayout.GERMAN_DAISY
+
+        return cls(
+            board_layout,
+            json_obj['blackPlayer'] == "Computer",
+            json_obj['whitePlayer'] == "Computer",
+            json_obj['blackTimeLimit'],
+            json_obj['whiteTimeLimit'],
+            json_obj['moveLimit']
+        )
+
+    def to_json(self) -> dict:
+        return {
+            "boardLayout": self._board_layout.value,
+            "blackPlayer": "Computer" if self._is_black_ai else "Human",
+            "whitePlayer": "Computer" if self._is_white_ai else "Human",
+            "blackTimeLimit": self._black_time_limit_seconds,
+            "whiteTimeLimit": self._white_time_limit_seconds,
+            "moveLimit": self._move_limit
+        }
 
 
 class Game:
-    def __init__(self, game_options: GameOptions = None):
-        if game_options is None:
-            game_options = GameOptions()
-        self._game_options = game_options
+    def __init__(self):
+        self._game_options = None
         self._moves_stack = Stack()
-        self._current_game_state = GameState(Board(game_options.board_layout.value), Piece.BLACK)
+        self._current_game_state = GameState(Board(BoardLayout.DEFAULT.value), Piece.BLACK)
+        self._game_started = False
 
-    def set_up(self, config):
-        if config['boardLayout'] == "Default":
-            self._game_options.board_layout = BoardLayout.DEFAULT
-        elif config['boardLayout'] == "Belgian Daisy":
-            self._game_options.board_layout = BoardLayout.BELGIAN_DAISY
-        else:
-            self._game_options.board_layout = BoardLayout.GERMAN_DAISY
+    def set_up(self, config) -> dict:
+        self._game_options = GameOptions.from_json(config)
+        self._current_game_state = GameState(Board(self._game_options.board_layout.value), Piece.BLACK)
 
-    def make_move(self, move) -> GameUpdate:
+        return self.__to_json()
+
+    def start_game(self) -> dict:
+        self._game_started = True
+        return self.__to_json()
+
+    def get_game_status(self) -> dict:
+        return self.__to_json()
+
+    def make_move(self, move) -> dict:
         # convert the move to a Move object
         try:
             move_obj = Move.from_json(move)
         except Exception as e:
             print(e)
-            return GameUpdate(None, self._moves_stack)
+            return {"error": str(e)}
 
         # make the move and push it to the stack
         self._moves_stack.push(move_obj)
         self._current_game_state = GameStateUpdate(self._current_game_state, move_obj).resulting_state
 
-        # let the AI decide on it's next move
-        return GameUpdate(None, self._moves_stack, self._current_game_state)
+        return self.__to_json()
 
-    def undo_move(self) -> GameUpdate:
+    def undo_move(self) -> dict:
         move = self._moves_stack.pop()
         self._current_game_state.undo_move(move)
 
-        return GameUpdate(None, self._moves_stack, self._current_game_state)
+        return self.__to_json()
 
-    def get_ai_move(self) -> Move:
+    def get_ai_move(self) -> dict:
         # return a random move for now
         list_of_moves = StateSpaceGenerator.generate_all_possible_moves(self._current_game_state)
-        return choice(list_of_moves)
+        move = choice(list_of_moves)
+        return move.to_json()
 
-    def reset_game(self):
+    def reset_game(self) -> dict:
         """
         Resets the game and timer to the default state.
         Clears everything.
@@ -89,14 +136,22 @@ class Game:
         board = Board(self._game_options.board_layout.value)
         self._current_game_state = GameState(board)
 
-        return GameUpdate(None, self._moves_stack, self._current_game_state)
+        return self.__to_json()
 
-    def get_possible_moves(self):
+    def get_possible_moves(self) -> dict:
         list_of_moves = StateSpaceGenerator.generate_all_possible_moves(self._current_game_state)
-        return Game.format_possible_moves(list_of_moves)
+        return Game.__format_possible_moves(list_of_moves)
+
+    def __to_json(self) -> dict:
+        return {
+            "game_options": self._game_options.__dict__ if self._game_options is not None else None,
+            "game_started": self._game_started,
+            "game_state": self._current_game_state.to_json(),
+            "moves_stack": self._moves_stack.to_json()
+        }
 
     @staticmethod
-    def format_possible_moves(moves: list[Move]) -> dict[str, list[dict]]:
+    def __format_possible_moves(moves: list[Move]) -> dict[str, list[dict]]:
         moves_dict = {}
         for move in moves:
             position_notation_list = sorted([pos.to_notation() for pos in move.previous_player_positions])

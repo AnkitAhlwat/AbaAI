@@ -1,35 +1,22 @@
-import { BoardLayouts } from "../constants/boardLayouts";
-import { Board } from "./Board";
-import ConfigMenu from "./ConfigMenu";
-import { useCallback, useState } from "react";
-import { useBoard } from "../hooks/useBoard";
-import MoveHistory from "./MoveHistory";
 import { Grid } from "@mui/material";
-import GameService from "../services/game.service";
+import { useCallback, useState, useEffect } from "react";
+import { BoardLayouts } from "../constants/boardLayouts";
+import { useBoard } from "../hooks/useBoard";
 import Move from "../models/Move";
-import GameControls from "./GameControls";
-import GameClock from "./Clock";
-import MoveButtons from "./MoveButtons";
-import AIMoveDisplay from "./AiMove";
-import Space from "../models/Space";
-import ScoreCard from "./ScoreCard";
-import SideBar from "./SideBar";
+import GameService from "../services/game.service";
 import GameplaySection from "./GameplaySection";
 import RightSideBar from "./RightSideBar";
 
 // Displays complete assembly of the GUI
 const Game = () => {
+  // ##################### States #####################
   const [aiMove, setAiMove] = useState(""); // Tracks AI move history
   const [selectedMarbles, setSelectedMarbles] = useState([]); // Tracks which marbles are selected
   const [movesStack, setMovesStack] = useState([]); // Tracks player move history
   const [gameStarted, setGameStarted] = useState(false); // Tracks whether game has started
   const [activePlayer, setActivePlayer] = useState("black"); // Tracks which player's turn it is for clock logic, potentially temporary
-  // const [currentPlayer, setCurrentPlayer] = useState('player1'); CLOCKSTUFF
   const [isGameActive, setIsGameActive] = useState(false);
   const [resetClockSignal, setResetClockSignal] = useState(0);
-  const [possibleMoves, setPossibleMoves] = useState([]);
-
-  // Tracks configuration options
   const [config, setConfig] = useState({
     boardLayout: BoardLayouts.DEFAULT,
     blackPlayer: "Human",
@@ -37,7 +24,28 @@ const Game = () => {
     blackTimeLimit: 15,
     whiteTimeLimit: 15,
     moveLimit: 20,
-  });
+  }); // Tracks configuration options
+  const [numCapturedBlackMarbles, setNumCapturedBlackMarbles] = useState(0); // Tracks number of black marbles captured
+  const [numCapturedWhiteMarbles, setNumCapturedWhiteMarbles] = useState(0); // Tracks number of white marbles captured
+
+  // ##################### Custom Hooks #####################
+  const { board, setBoardArray } = useBoard(config.boardLayout); // import board state and setBoard function from useBoard hook
+
+  // When the page loads, we want to fetch the state of the game from the server and update accordingly
+  const updateGame = useCallback(async () => {
+    const gameStatus = await GameService.getGameStatus();
+    console.log("game status: ", gameStatus);
+
+    // Set the board state
+    setBoardArray(gameStatus.game_state.board);
+
+    // Set the moves stack
+    setMovesStack(gameStatus.moves_stack);
+
+    // Set the captured marbles
+    setNumCapturedBlackMarbles(gameStatus.game_state.captured_black_marbles);
+    setNumCapturedWhiteMarbles(gameStatus.game_state.captured_white_marbles);
+  }, [setBoardArray]);
 
   const toggleTurn = () => {
     setActivePlayer((prev) => (prev === "black" ? "white" : "black"));
@@ -113,8 +121,6 @@ const Game = () => {
     }
   }, [gameStarted, resumeGame]);
 
-  const { board, setBoardArray } = useBoard(config.boardLayout); // import board state and setBoard function from useBoard hook
-
   // Handles new AI move
   const updateAiMove = useCallback((aiMove) => {
     setAiMove(Move.toNotation(aiMove));
@@ -172,6 +178,10 @@ const Game = () => {
     setMovesStack(responseData.moves_stack);
   }, [setBoardArray]);
 
+  useEffect(() => {
+    updateGame();
+  }, [updateGame]); // should only run once when the component mounts (page loaded or refreshed)
+
   // Returns assembly of the GUI
   return (
     <Grid
@@ -197,6 +207,8 @@ const Game = () => {
           onMoveSelection={onMoveSelection}
           selectedMarbles={selectedMarbles}
           setSelectedMarbles={setSelectedMarbles}
+          numCapturedBlackMarbles={numCapturedBlackMarbles}
+          numCapturedWhiteMarbles={numCapturedWhiteMarbles}
 
           //for the clock controls
           // blackClock={blackClock}
