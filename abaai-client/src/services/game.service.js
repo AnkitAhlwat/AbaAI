@@ -57,6 +57,16 @@ class GameService {
             console.error('Error getting possible moves:', error);
         }
     }
+
+    static async getAiMoveForCurrentState() {
+        try {
+            const url = `${import.meta.env.VITE_API_BASE_URL}/game/aiMove`;
+            const response = await axios.get(url);
+            return response.data;
+        } catch (error) {
+            console.error('Error getting ai move:', error);
+        }
+    }
 }
 
 

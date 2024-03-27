@@ -30,6 +30,12 @@ def make_move():
     return jsonify({"error": "Invalid JSON"}), 400
 
 
+@app.route('/api/game/aiMove', methods=['GET'])
+def ai_move():
+    selected_move = app.game.get_ai_move()
+    return jsonify(selected_move.to_json())
+
+
 @app.route('/api/game/undo', methods=['POST'])
 def undo_move():
     game_update = app.game.undo_move()
