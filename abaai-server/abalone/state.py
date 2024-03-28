@@ -61,7 +61,7 @@ class GameState:
 
 class GameStateUpdate:
     def __init__(self, previous_state: GameState, move: Move):
-        self._previous_state = deepcopy(previous_state)
+        self._previous_state = previous_state
         self._move = move
         self._resulting_state = self.__generate_resulting_state()
 

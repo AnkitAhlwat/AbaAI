@@ -43,14 +43,21 @@ class MiniMaxAgent:
 
 
 class HeuristicFunction:
-    DEFAULT_WEIGHTS = [1000000, 10000, 10, 10, 2, 2, 1]
+    DEFAULT_WEIGHTS = [1000000, 10000, 10, 10, 2, 2, 1,1]
 
     @classmethod
     def evaluate(cls, game_state: GameState) -> float:
         # Gets piece locations
         piece_locations = StateSpaceGenerator.get_player_piece_positions(game_state)
         player_piece_locations = piece_locations['player_max']
-        opponent_piece_locations = piece_locations['opponent_max']
+        opponent_piece_locations = piece_locations['player_min']
+        board = game_state.board.array
+
+        player_center_control = cls.number_near_center(board, game_state.turn.value)
+        opp_value = 1
+        if game_state.turn.value == 1:
+            opp_value = 2
+        opponent_center_control = cls.number_near_center(board, opp_value)
 
         # Assign weights to each criterion
         # 1. Win condition
@@ -65,7 +72,11 @@ class HeuristicFunction:
         score = 0
         score += current_weights[0] * cls.win_condition(game_state)
         score += current_weights[1] * cls.piece_value(player_piece_locations, opponent_piece_locations)
+        score += current_weights[4] * cls.compactness(player_piece_locations)
+        score += current_weights[4] * (player_center_control - opponent_center_control)
 
+
+        return score
     @staticmethod
     def win_condition(game_state: GameState) -> int:
         if game_state.is_game_over():
@@ -80,4 +91,56 @@ class HeuristicFunction:
         opponent_pieces = len(opponent_piece_locations)
         return player_pieces - opponent_pieces
 
+    @staticmethod
+    def compactness(piece_locations: list[Position]) -> int:
+        compactness_score = 0
+        n = len(piece_locations)
+        for i in range(n):
+            for j in range(i + 1, n):
+                piece1 = piece_locations[i]
+                piece2 = piece_locations[j]
+                distance = HeuristicFunction.hex_distance(piece1, piece2)
+                compactness_score += distance
+        return compactness_score
 
+    @staticmethod
+    def hex_distance(pos1: Position, pos2: Position) -> int:
+        x1, y1, z1 = pos1.x, pos1.y, -pos1.x-pos1.y
+        x2, y2, z2 = pos2.x, pos2.y, -pos2.x-pos2.y
+        return (abs(x1 - x2) + abs(y1 - y2) + abs(z1 - z2)) // 2
+
+    @staticmethod
+    def number_near_center(board: list[list[int]], player_num: int) -> int:
+        center_row, center_col = len(board) // 2, len(board[0]) // 2
+        count = 0
+        for row in range(len(board)):
+            for col in range(len(board[0])):
+                if board[row][col] == player_num:
+                    if abs(row - center_row) <= 2 and abs(col - center_col) <= 2:
+                        count += 1
+        return count
+
+
+def simulate_moves(game_state: GameState, max_moves: int):
+    agent = MiniMaxAgent(max_depth=2)
+    for i in range(max_moves):
+        best_move = agent.get_best_move(game_state)
+        print(f"{game_state.turn.name}->({best_move})")
+
+        GameStateUpdate(game_state,best_move)
+
+        print_board(game_state.board)
+
+        if game_state.is_game_over():
+            print("Game Over")
+            break
+
+
+def print_board(board):
+
+    for row in board.array:
+        print(' '.join(str(cell) for cell in row))
+    print()
+
+
+simulate_moves(GameState(), 5)
