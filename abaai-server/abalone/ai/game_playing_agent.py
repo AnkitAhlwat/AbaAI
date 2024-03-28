@@ -10,6 +10,7 @@ class MiniMaxAgent:
     def get_best_move(self, game_state: GameState) -> Move:
         best_move = None
         max_eval = float('-inf')
+        x = StateSpaceGenerator.generate_all_possible_moves(game_state)
         for move in StateSpaceGenerator.generate_all_possible_moves(game_state):
             successor_state = GameStateUpdate(game_state, move).resulting_state
             evaluated_value = self.minimax(successor_state, self.max_depth, False, float('-inf'), float('inf'))
@@ -110,35 +111,36 @@ class HeuristicFunction:
         return (abs(x1 - x2) + abs(y1 - y2) + abs(z1 - z2)) // 2
 
     @staticmethod
-    def number_near_center(board: list[list[int]], player_num: int) -> int:
-        center_row, center_col = len(board) // 2, len(board[0]) // 2
+    def number_near_center(board: list[int], player_num: int, board_width=9, board_height=9) -> int:
+        center_x, center_y = board_width // 2, board_height // 2
+        center_control_range = 2
+
         count = 0
-        for row in range(len(board)):
-            for col in range(len(board[0])):
-                if board[row][col] == player_num:
-                    if abs(row - center_row) <= 2 and abs(col - center_col) <= 2:
-                        count += 1
+
+        # Iterate over a range of positions around the center
+        for y in range(max(0, center_y - center_control_range),
+                       min(board_height, center_y + center_control_range + 1)):
+            for x in range(max(0, center_x - center_control_range),
+                           min(board_width, center_x + center_control_range + 1)):
+                index = y * board_width + x
+                if index < len(board) and board[index] == player_num:
+                    count += 1
+
         return count
 
 
 def simulate_moves(game_state: GameState, max_moves: int):
     agent = MiniMaxAgent(max_depth=2)
     print("Initial Board")
-    print_board(game_state.board)
+    print(game_state.board)
     for i in range(max_moves):
         best_move = agent.get_best_move(game_state)
         print(f"{game_state.turn.name}->({best_move})")
 
         game_state = GameStateUpdate(game_state,best_move)
 
-        print_board(game_state.resulting_state.board)
+        print(game_state.resulting_state.board)
 
-
-def print_board(board):
-
-    for row in board.array:
-        print(' '.join(str(cell) for cell in row))
-    print()
 
 
 simulate_moves(GameState(), 2)

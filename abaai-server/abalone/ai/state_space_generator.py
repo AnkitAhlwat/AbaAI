@@ -12,12 +12,15 @@ class StateSpaceGenerator:
         player_dict = {"player_max": player_max_value, "player_min": player_min_value}
         player_max_piece_positions = []
         player_min_piece_positions = []
-        for y in range(9):
-            for x in range(9):
-                if game_state.board.array[y][x] == player_max_value:
-                    player_max_piece_positions.append(Position(x, y))
-                elif game_state.board.array[y][x] == player_min_value:
-                    player_min_piece_positions.append(Position(x, y))
+        for index in range(game_state.board.array.__len__()):
+            if game_state.board.array[index] == player_max_value:
+                x = index % game_state.board.width
+                y = index // game_state.board.width
+                player_max_piece_positions.append(Position(x, y))
+            elif game_state.board.array[index] == player_min_value:
+                x = index % game_state.board.width
+                y = index // game_state.board.width
+                player_min_piece_positions.append(Position(x, y))
         player_dict["player_max"] = player_max_piece_positions
         player_dict["player_min"] = player_min_piece_positions
         return player_dict
