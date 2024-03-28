@@ -5,6 +5,7 @@ class Space {
         this.position = position;
         this.str = Space.getCodeByPosition(position);
         this.selected = false;
+        this.move = null;
     }
 
     // Returns adjacent spaces of the given space

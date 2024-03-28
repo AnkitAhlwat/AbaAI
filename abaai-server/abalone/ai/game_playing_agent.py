@@ -48,6 +48,7 @@ class HeuristicFunction:
 
     @classmethod
     def evaluate(cls, game_state: GameState) -> float:
+        return 1.0 # from dev
         # Gets piece locations
         piece_locations = StateSpaceGenerator.get_player_piece_positions(game_state)
         player_piece_locations = piece_locations['player_max']
