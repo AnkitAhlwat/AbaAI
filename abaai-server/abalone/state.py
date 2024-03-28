@@ -91,7 +91,6 @@ class GameStateUpdate:
         )
 
 
-    # Havent updated this one yet, only focused on ai
     @classmethod
     def convert_moves_to_game_state_updates(cls, game_state: GameState, moves: list[Move]) -> list['GameStateUpdate']:
         return [cls(game_state, move) for move in moves]

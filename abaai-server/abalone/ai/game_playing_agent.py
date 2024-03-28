@@ -73,8 +73,8 @@ class HeuristicFunction:
         score = 0
         score += current_weights[0] * cls.win_condition(game_state)
         score += current_weights[1] * cls.piece_value(player_piece_locations, opponent_piece_locations)
-        score += current_weights[4] * cls.compactness(player_piece_locations)
-        score += current_weights[4] * (player_center_control - opponent_center_control)
+        # score += current_weights[4] * cls.compactness(player_piece_locations)
+        # score += current_weights[4] * (player_center_control - opponent_center_control)
 
 
         return score
@@ -130,17 +130,20 @@ class HeuristicFunction:
 
 
 def simulate_moves(game_state: GameState, max_moves: int):
-    agent = MiniMaxAgent(max_depth=2)
+    agent = MiniMaxAgent(max_depth=3)
     print("Initial Board")
     print(game_state.board)
-    for i in range(max_moves):
+    game_state = game_state
+    i = 0
+    while i < max_moves:
         best_move = agent.get_best_move(game_state)
         print(f"{game_state.turn.name}->({best_move})")
 
-        game_state = GameStateUpdate(game_state,best_move)
+        game_state = GameStateUpdate(game_state,best_move).resulting_state
 
-        print(game_state.resulting_state.board)
+        print(game_state.board)
+        i += 1
 
 
 
-simulate_moves(GameState(), 2)
+simulate_moves(GameState(), 1)
