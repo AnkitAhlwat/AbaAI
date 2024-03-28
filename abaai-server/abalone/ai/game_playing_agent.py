@@ -1,3 +1,5 @@
+import time
+
 from abalone.ai.state_space_generator import StateSpaceGenerator
 from abalone.movement import Move, Position
 from abalone.state import GameStateUpdate, GameState
@@ -10,7 +12,6 @@ class MiniMaxAgent:
     def get_best_move(self, game_state: GameState) -> Move:
         best_move = None
         max_eval = float('-inf')
-        x = StateSpaceGenerator.generate_all_possible_moves(game_state)
         for move in StateSpaceGenerator.generate_all_possible_moves(game_state):
             successor_state = GameStateUpdate(game_state, move).resulting_state
             evaluated_value = self.minimax(successor_state, self.max_depth, False, float('-inf'), float('inf'))
@@ -72,8 +73,8 @@ class HeuristicFunction:
 
         score = 0
         score += current_weights[0] * cls.win_condition(game_state)
-        score += current_weights[1] * cls.piece_value(player_piece_locations, opponent_piece_locations)
-        score += current_weights[4] * cls.compactness(player_piece_locations)
+        score += current_weights[3] * cls.piece_value(player_piece_locations, opponent_piece_locations)
+        score += current_weights[1] * cls.compactness(player_piece_locations)
         # score += current_weights[4] * (player_center_control - opponent_center_control)
 
 
@@ -148,5 +149,8 @@ def simulate_moves(game_state: GameState, max_moves: int):
 
 # simulate_moves(GameState(), 2)
 agent = MiniMaxAgent(max_depth=2)
+current_time = time.time()
 best_move = agent.get_best_move(GameState())
+finish_time = time.time()
+print(finish_time - current_time)
 print(best_move)
