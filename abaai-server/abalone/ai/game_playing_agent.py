@@ -73,7 +73,7 @@ class HeuristicFunction:
         score = 0
         score += current_weights[0] * cls.win_condition(game_state)
         score += current_weights[1] * cls.piece_value(player_piece_locations, opponent_piece_locations)
-        # score += current_weights[4] * cls.compactness(player_piece_locations)
+        score += current_weights[4] * cls.compactness(player_piece_locations)
         # score += current_weights[4] * (player_center_control - opponent_center_control)
 
 
@@ -92,41 +92,41 @@ class HeuristicFunction:
         opponent_pieces = len(opponent_piece_locations)
         return player_pieces - opponent_pieces
 
-    # @staticmethod
-    # def compactness(piece_locations: list[Position]) -> int:
-    #     compactness_score = 0
-    #     n = len(piece_locations)
-    #     for i in range(n):
-    #         for j in range(i + 1, n):
-    #             piece1 = piece_locations[i]
-    #             piece2 = piece_locations[j]
-    #             distance = HeuristicFunction.hex_distance(piece1, piece2)
-    #             compactness_score += distance
-    #     return compactness_score
+    @staticmethod
+    def compactness(piece_locations: list[Position]) -> int:
+        compactness_score = 0
+        n = len(piece_locations)
+        for i in range(n):
+            for j in range(i + 1, n):
+                piece1 = piece_locations[i]
+                piece2 = piece_locations[j]
+                distance = HeuristicFunction.hex_distance(piece1, piece2)
+                compactness_score += distance
+        return compactness_score
 
-    # @staticmethod
-    # def hex_distance(pos1: Position, pos2: Position) -> int:
-    #     x1, y1, z1 = pos1.x, pos1.y, -pos1.x-pos1.y
-    #     x2, y2, z2 = pos2.x, pos2.y, -pos2.x-pos2.y
-    #     return (abs(x1 - x2) + abs(y1 - y2) + abs(z1 - z2)) // 2
-    #
-    # @staticmethod
-    # def number_near_center(board: list[int], player_num: int, board_width=9, board_height=9) -> int:
-    #     center_x, center_y = board_width // 2, board_height // 2
-    #     center_control_range = 2
-    #
-    #     count = 0
-    #
-    #     # Iterate over a range of positions around the center
-    #     for y in range(max(0, center_y - center_control_range),
-    #                    min(board_height, center_y + center_control_range + 1)):
-    #         for x in range(max(0, center_x - center_control_range),
-    #                        min(board_width, center_x + center_control_range + 1)):
-    #             index = y * board_width + x
-    #             if index < len(board) and board[index] == player_num:
-    #                 count += 1
-    #
-    #     return count
+    @staticmethod
+    def hex_distance(pos1: Position, pos2: Position) -> int:
+        x1, y1, z1 = pos1.x, pos1.y, -pos1.x-pos1.y
+        x2, y2, z2 = pos2.x, pos2.y, -pos2.x-pos2.y
+        return (abs(x1 - x2) + abs(y1 - y2) + abs(z1 - z2)) // 2
+
+    @staticmethod
+    def number_near_center(board: list[int], player_num: int, board_width=9, board_height=9) -> int:
+        center_x, center_y = board_width // 2, board_height // 2
+        center_control_range = 2
+
+        count = 0
+
+        # Iterate over a range of positions around the center
+        for y in range(max(0, center_y - center_control_range),
+                       min(board_height, center_y + center_control_range + 1)):
+            for x in range(max(0, center_x - center_control_range),
+                           min(board_width, center_x + center_control_range + 1)):
+                index = y * board_width + x
+                if index < len(board) and board[index] == player_num:
+                    count += 1
+
+        return count
 
 
 def simulate_moves(game_state: GameState, max_moves: int):
@@ -146,4 +146,7 @@ def simulate_moves(game_state: GameState, max_moves: int):
 
 
 
-simulate_moves(GameState(), 2)
+# simulate_moves(GameState(), 2)
+agent = MiniMaxAgent(max_depth=2)
+best_move = agent.get_best_move(GameState())
+print(best_move)
