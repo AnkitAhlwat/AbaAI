@@ -5,7 +5,7 @@ from abalone.board import BoardLayout, Board
 from abalone.movement import Move, Piece
 from abalone.stack import Stack
 from abalone.state import GameState, GameStateUpdate
-from abalone.ai.game_playing_agent import minimaxagent
+from abalone.ai.game_playing_agent import MiniMaxAgent
 
 
 class GameOptions:
@@ -132,7 +132,8 @@ class Game:
         # return a random move for now
         list_of_moves = StateSpaceGenerator.generate_all_possible_moves(self._current_game_state)
         # move = choice(list_of_moves)
-        move = get_best_move(list_of_moves)
+        agent = MiniMaxAgent(2)
+        move = agent.get_best_move(self._current_game_state)
         return move.to_json()
 
     def reset_game(self) -> dict:
