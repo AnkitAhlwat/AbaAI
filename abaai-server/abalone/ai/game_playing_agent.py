@@ -123,17 +123,15 @@ class HeuristicFunction:
 
 def simulate_moves(game_state: GameState, max_moves: int):
     agent = MiniMaxAgent(max_depth=2)
+    print("Initial Board")
+    print_board(game_state.board)
     for i in range(max_moves):
         best_move = agent.get_best_move(game_state)
         print(f"{game_state.turn.name}->({best_move})")
 
-        GameStateUpdate(game_state,best_move)
+        game_state = GameStateUpdate(game_state,best_move)
 
-        print_board(game_state.board)
-
-        if game_state.is_game_over():
-            print("Game Over")
-            break
+        print_board(game_state.resulting_state.board)
 
 
 def print_board(board):
@@ -143,4 +141,4 @@ def print_board(board):
     print()
 
 
-simulate_moves(GameState(), 5)
+simulate_moves(GameState(), 2)
