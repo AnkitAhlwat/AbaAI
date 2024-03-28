@@ -15,6 +15,8 @@ class LegalMoves:
     @staticmethod
     def get_flat_index(x, y):
         """Calculate the index in the flat array for the board position (x, y)."""
+        if x < 0 or y < 0:
+            return -1
         return y * 9 + x
     @staticmethod
     def are_marbles_inline(*positions):
@@ -32,9 +34,9 @@ class LegalMoves:
 
     @staticmethod
     def is_position_out_of_bounds(board, position):
-        """Check if a position is empty or out of bounds."""
+        """Check if a position is out of bounds."""
         index = LegalMoves.get_flat_index(position.x, position.y)
-        return index >= len(board) or board[index] == -1
+        return index < 0 or index >= len(board) or board[index] == -1
 
     @staticmethod
     def is_position_within_board(board, position):
