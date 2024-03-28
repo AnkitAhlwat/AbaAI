@@ -1,5 +1,6 @@
 from random import choice
 
+from abalone import board
 from abalone.ai.state_space_generator import StateSpaceGenerator
 from abalone.board import BoardLayout, Board
 from abalone.movement import Move, Piece
@@ -130,8 +131,30 @@ class Game:
 
     def get_ai_move(self) -> dict:
         # return a random move for now
-        list_of_moves = StateSpaceGenerator.generate_all_possible_moves(self._current_game_state)
-        # move = choice(list_of_moves)
+
+        # for profiling
+        #-------------------------------------------------------------------
+        test_board = [
+            [-1, -1, -1, -1, 0, 0, 0, 0, 0],
+            [-1, -1, -1, 0, 2, 2, 2, 0, 0],
+            [-1, -1, 0, 2, 2, 2, 1, 0, 0],
+            [-1, 0, 0, 1, 1, 1, 2, 0, 0],
+            [0, 0, 1, 2, 2, 1, 2, 0, 0],
+            [0, 1, 2, 2, 1, 1, 1, 0, -1],
+            [0, 2, 1, 1, 2, 0, 0, -1, -1],
+            [0, 0, 1, 1, 0, 0, -1, -1, -1],
+            [0, 0, 0, 0, 0, -1, -1, -1, -1],
+        ]
+
+        board_array = Board(test_board)
+
+        self._current_game_state = GameState(board=
+                                             board_array,
+                                             turn=Piece.BLACK,
+                                             remaining_player_marbles=14,
+                                             remaining_opponent_marbles=14)
+        #------------------------------------------------------------------------------
+
         agent = MiniMaxAgent(2)
         move = agent.get_best_move(self._current_game_state)
         return move.to_json()
