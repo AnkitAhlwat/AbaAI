@@ -15,15 +15,20 @@ class Position:
         return f'{Position.get_letter_from_y(self.y)}{Position.get_number_from_x(self.x)}'
 
     def get_adjacent_positions_within_board_array(self):
-        possible_positions = [
-            Position(self.x - 1, self.y),
-            Position(self.x + 1, self.y),
-            Position(self.x, self.y - 1),
-            Position(self.x, self.y + 1),
-            Position(self.x - 1, self.y + 1),
-            Position(self.x + 1, self.y - 1)
-        ]
-        return [position for position in possible_positions if 0 <= position.x < 9 and 0 <= position.y < 9]
+        possible_positions = []
+        if self.y > 0:
+            possible_positions.append(Position(self.x, self.y - 1))
+        if self.y < 8:
+            possible_positions.append(Position(self.x, self.y + 1))
+        if self.x > 0:
+            possible_positions.append(Position(self.x - 1, self.y))
+        if self.x < 8:
+            possible_positions.append(Position(self.x + 1, self.y))
+        if self.x < 8 and self.y > 0:
+            possible_positions.append(Position(self.x + 1, self.y - 1))
+        if self.x > 0 and self.y < 8:
+            possible_positions.append(Position(self.x - 1, self.y + 1))
+        return possible_positions
 
     @staticmethod
     def to_notation_generic(x: int, y: int):

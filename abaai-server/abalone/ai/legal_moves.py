@@ -57,16 +57,21 @@ class LegalMoves:
             return []
 
         valid_moves = []
-        vacating_positions = list(positions)
+        vacating_positions = set(positions)
 
         for move_x, move_y in LegalMoves.possible_moves:
             new_positions = [Position(pos.x + move_x, pos.y + move_y) for pos in positions]
 
-            if all(LegalMoves.is_position_within_board(board, new_pos) for new_pos in new_positions) and \
-                    all(LegalMoves.is_position_empty_or_vacating(board, new_pos, vacating_positions)
-                        for new_pos in new_positions):
+            # exit out of the early if any of the new positions are out of bounds
+            if any(not LegalMoves.is_position_within_board(board, new_pos) for new_pos in new_positions):
+                continue
+
+            if all(
+                    LegalMoves.is_position_empty_or_vacating(board, new_pos, vacating_positions)
+                    for new_pos in new_positions
+            ):
                 move = Move(
-                    vacating_positions,
+                    list(vacating_positions),
                     new_positions,
                     game_state.turn
                 )

@@ -9,6 +9,7 @@ class MiniMaxAgent:
     def __init__(self, max_depth: float = float('inf'), max_time_seconds: float = float('inf')):
         self.max_depth = max_depth
         self.max_time_seconds = max_time_seconds
+        self.transposition_table = {}
 
     def get_best_move(self, game_state: GameState) -> Move:
         start_time_in_seconds = time.time()
@@ -133,11 +134,9 @@ class HeuristicFunction:
 
         value += HeuristicFunction.piece_count(game_state) * HeuristicFunction.weights["piece_count"]
 
-        # value += HeuristicFunction.pieces_near_edge(game_state) * HeuristicFunction.weights["pieces_near_edge"]
-
         value += HeuristicFunction.manhattan_distance(game_state) * HeuristicFunction.weights["manhattan_distance"]
 
-        # value += HeuristicFunction.clumping(game_state) * HeuristicFunction.weights["clumping"]
+        value += HeuristicFunction.clumping(game_state) * HeuristicFunction.weights["clumping"]
 
         return value
 
@@ -223,15 +222,15 @@ class HeuristicFunction:
         player_pieces = game_state.player_marble_positions
         opponent_pieces = game_state.opponent_marble_positions
 
-        player_clumping = 0
-        opponent_clumping = 0
+        player_clump_value = 0
+        opponent_clump_value = 0
 
         for player_position in player_pieces:
-            player_clumping += HeuristicFunction.__clumping_value_for_position(player_position, player_pieces)
+            player_clump_value += HeuristicFunction.__get_clumping_value(player_position, game_state.board.array)
         for opponent_position in opponent_pieces:
-            opponent_clumping += HeuristicFunction.__clumping_value_for_position(opponent_position, opponent_pieces)
+            opponent_clump_value += HeuristicFunction.__get_clumping_value(opponent_position, game_state.board.array)
 
-        return float(player_clumping - opponent_clumping)
+        return float(player_clump_value - opponent_clump_value)
 
     # Private helper functions
     @staticmethod
@@ -256,16 +255,38 @@ class HeuristicFunction:
         return abs(position.x - center_position_x) + abs(position.y - center_position_y)
 
     @staticmethod
-    def __clumping_value_for_position(position: Position, all_positions: list[Position]) -> int:
+    def __get_clumping_value(position: Position, board_array: list[list[int]]) -> int:
         """
-        Counts how many other pieces of the same color are adjacent to the given position. Uses set intersection to
-        count the number of adjacent pieces for efficiency.
+        Returns the number of pieces of the same color that are adjacent to the given position.
 
         :param position: the position to check
-        :param all_positions: a list of all the positions of the same color
-        :return: the number of adjacent pieces
+        :param board_array: the current board state
+        :return: the number of pieces of the same color that are adjacent to the given position
         """
-        adjacent_positions = position.get_adjacent_positions_within_board_array()
-        adjacent_set = set(adjacent_positions)
-        all_set = set(all_positions)
-        return len(adjacent_set.intersection(all_set))
+        value = 0
+        x, y = position.x, position.y
+        pos_marble = board_array[y][x]
+
+        if x > 0:
+            if board_array[y][x - 1] == pos_marble:
+                value += 1
+            if y < 8:
+                if board_array[y + 1][x - 1] == pos_marble:
+                    value += 1
+
+        if x < 8:
+            if board_array[y][x + 1] == pos_marble:
+                value += 1
+            if y > 0:
+                if board_array[y - 1][x + 1] == pos_marble:
+                    value += 1
+
+        if y > 0:
+            if board_array[y - 1][x] == pos_marble:
+                value += 1
+
+        if y < 8:
+            if board_array[y + 1][x] == pos_marble:
+                value += 1
+
+        return value
