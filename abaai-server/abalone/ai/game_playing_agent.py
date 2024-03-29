@@ -22,7 +22,6 @@ class AlphaBetaPruningAgent:
                 best_move = move
             alpha = max(alpha, value[0])
 
-        print(best_value)
         return best_move
 
     def Max_Value(self, game_state: GameState, alpha: float, beta: float, depth: int):
@@ -66,9 +65,9 @@ class HeuristicFunction:
         0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 1, 2, 1, 1, 0,
         0, 0, 0, 1, 2, 2, 2, 2, 0,
-        0, 0, 1, 2, 3, 3, 3, 2, 0,
+        0, 0, 1, 2, 4, 3, 3, 2, 0,
         0, 2, 3, 4, 5, 4, 3, 2, 0,
-        0, 2, 3, 3, 3, 2, 1, 0, 0,
+        0, 2, 3, 3, 4, 2, 1, 0, 0,
         0, 2, 2, 2, 2, 1, 0, 0, 0,
         0, 1, 1, 2, 1, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -110,11 +109,12 @@ class HeuristicFunction:
 
 
 def simulate_moves(game_state: GameState, max_moves: int):
-    agent = AlphaBetaPruningAgent(max_depth=3)
+    agent = AlphaBetaPruningAgent(max_depth=2)
     print("Initial Board")
     print(game_state.board)
     game_state = game_state
     i = 0
+    start_time = time.time()
     while i < max_moves:
         best_move = agent.AlphaBetaPruningSearch(game_state)
         print(f"{game_state.turn.name}->({best_move})")
@@ -122,11 +122,15 @@ def simulate_moves(game_state: GameState, max_moves: int):
         game_state = GameStateUpdate(game_state, best_move).resulting_state
 
         i += 1
+    finish_time = time.time()
+    print(finish_time - start_time)
     print(game_state.board)
+    print(game_state.remaining_player_marbles)
+    print(game_state.remaining_opponent_marbles)
 
 
 simulate_moves(GameState(), 10)
-# agent = AlphaBetaPruningAgent(max_depth=2)
+# agent = AlphaBetaPruningAgent(max_depth=3)
 # current_time = time.time()
 # best_move = agent.AlphaBetaPruningSearch(GameState())
 # finish_time = time.time()
