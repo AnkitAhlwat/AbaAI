@@ -50,7 +50,7 @@ class LegalMoves:
     def is_position_empty(board, position):
         """Check if a position is empty."""
         index = LegalMoves.get_flat_index(position.x, position.y)
-        return index < len(board) and board[index] == 0
+        return LegalMoves.is_position_within_board(board,position) and board[index] == 0
 
     @staticmethod
     def is_position_empty_or_vacating(board, position, vacating_positions=None):
@@ -58,7 +58,7 @@ class LegalMoves:
         if vacating_positions is None:
             vacating_positions = []
         index = LegalMoves.get_flat_index(position.x, position.y)
-        return ((0 <= index < len(board)) and board[index] == 0) or position in vacating_positions
+        return (LegalMoves.is_position_within_board(board, position) and board[index] == 0) or position in vacating_positions
 
     @staticmethod
     def get_valid_moves(game_state, *positions):
