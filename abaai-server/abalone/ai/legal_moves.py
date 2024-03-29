@@ -37,14 +37,15 @@ class LegalMoves:
     def is_position_out_of_bounds(board, position):
         """Check if a position is out of bounds."""
         index = LegalMoves.get_flat_index(position.x, position.y)
-        return index < 0 or index >= len(board) or board[index] == -1
+        if not LegalMoves.is_position_within_board(board, position):
+            return True
+        if LegalMoves.is_position_within_board(board, position):
+            return board[index] == -1
 
     @staticmethod
     def is_position_within_board(board, position):
         """Check if the position is within the board boundaries."""
-        index = LegalMoves.get_flat_index(position.x, position.y)
-        return 0 <= index < len(board)
-
+        return 0 <= position.y < 9 and 0 <= position.x < 9
     @staticmethod
     def is_position_empty(board, position):
         """Check if a position is empty."""
