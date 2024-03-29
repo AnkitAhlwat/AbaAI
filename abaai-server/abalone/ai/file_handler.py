@@ -4,8 +4,6 @@ from abalone.board import BoardLayout, Board
 from abalone.board_ai import OptimizedBoard
 from abalone.state import GameState, GameStateUpdate
 from abalone.movement import Piece, Position
-import re
-import os
 
 
 class FileHandler:
@@ -51,25 +49,25 @@ class FileHandler:
             return divmod(index, 9)
 
         # Iterate through from bottom to top
-        for index in range(board.array.__len__()-1, 0, -1):
-            x, y = index_to_coordinates(index)
+        for index in range(board.array.__len__()):
+            y, x = index_to_coordinates(index)
             if board.array[index] == Piece.BLACK.value:
                 position_notation = Position.to_notation_generic(x, y) + 'b'
-                black_piece_positions.append(position_notation)
+                black_piece_positions.insert(0, position_notation)
             elif board.array[index] == Piece.WHITE.value:
                 position_notation = Position.to_notation_generic(x, y) + 'w'
-                white_piece_positions.append(position_notation)
+                white_piece_positions.insert(0, position_notation)
 
-        return ','.join(black_piece_positions + white_piece_positions)
+        return ','.join(sorted(black_piece_positions) + sorted(white_piece_positions))
 
     @staticmethod
     def test_output_files(first_file, second_file):
         new_set = set()
-        with open(f'../../state_space_test_files/{first_file}', 'r') as file:
+        with open(f'{first_file}', 'r') as file:
             for line in file:
                 new_set.add(line)
             print(len(new_set))
-        with open(f'../../state_space_test_files/{second_file}', 'r') as file:
+        with open(f'{second_file}', 'r') as file:
             for line in file:
                 new_set.add(line)
             print(len(new_set))
