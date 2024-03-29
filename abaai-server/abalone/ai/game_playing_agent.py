@@ -63,20 +63,30 @@ class HeuristicFunction:
     DEFAULT_WEIGHTS = [1000000, 10000, 10, 10, 2, 2, 1, 1]
     MANHATTAN_WEIGHT_FLAT = [
         0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 3, 3, 3, 0, 0,
-        0, 0, 0, 4, 5, 4, 0, 0, 0,
-        0, 0, 3, 3, 3, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 1, 2, 1, 1, 0,
+        0, 0, 0, 1, 2, 2, 2, 2, 0,
+        0, 0, 1, 2, 3, 3, 3, 2, 0,
+        0, 2, 3, 4, 5, 4, 3, 2, 0,
+        0, 2, 3, 3, 3, 2, 1, 0, 0,
+        0, 2, 2, 2, 2, 1, 0, 0, 0,
+        0, 1, 1, 2, 1, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0
+    ]
+    EMPTY = [
+        [-1, -1, -1, -1, 0, 0, 0, 0, 0],
+        [-1, -1, -1, 0, 0, 0, 0, 0, 0],
+        [-1, -1, 0, 0, 0, 0, 0, 0, 0],
+        [-1, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, -1],
+        [0, 0, 0, 0, 0, 0, 0, -1, -1],
+        [0, 0, 0, 0, 0, 0, -1, -1, -1],
+        [0, 0, 0, 0, 0, -1, -1, -1, -1],
     ]
 
     @classmethod
     def evaluate(cls, game_state: GameState) -> float:
         score = 0
-        print(cls.manhattan_distance(game_state))
         score += 10 * cls.manhattan_distance(game_state)
         return score
 
@@ -110,14 +120,14 @@ def simulate_moves(game_state: GameState, max_moves: int):
 
         game_state = GameStateUpdate(game_state, best_move).resulting_state
 
-        print(game_state.board)
         i += 1
+    print(game_state.board)
 
 
-# simulate_moves(GameState(), 2)
-agent = AlphaBetaPruningAgent(max_depth=2)
-current_time = time.time()
-best_move = agent.AlphaBetaPruningSearch(GameState())
-finish_time = time.time()
-print(finish_time - current_time)
-print(best_move)
+simulate_moves(GameState(), 10)
+# agent = AlphaBetaPruningAgent(max_depth=2)
+# current_time = time.time()
+# best_move = agent.AlphaBetaPruningSearch(GameState())
+# finish_time = time.time()
+# print(finish_time - current_time)
+# print(best_move)
