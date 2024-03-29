@@ -22,18 +22,19 @@ class AlphaBetaPruningAgent:
                 best_move = move
             alpha = max(alpha, value[0])
 
+        print(best_value)
         return best_move
 
     def Max_Value(self, game_state: GameState, alpha: float, beta: float, depth: int):
         if game_state.is_game_over() or depth == 0:
-            return HeuristicFunction.evaluate(game_state)
+            return HeuristicFunction.evaluate(game_state), None
         best_move = None
         value = float('-inf')
 
         possible_moves = StateSpaceGenerator.generate_all_possible_moves(game_state)
         for move in possible_moves:
             successor_state = GameStateUpdate(game_state, move).resulting_state
-            successor_value = max(value, self.Min_Value(successor_state, alpha, beta, depth - 1))
+            successor_value = max(value, self.Min_Value(successor_state, alpha, beta, depth - 1)[0])
             if successor_value >= value:
                 value, best_move = successor_value, move
                 alpha = max(alpha, value)
@@ -44,13 +45,13 @@ class AlphaBetaPruningAgent:
 
     def Min_Value(self, game_state: GameState, alpha: float, beta: float, depth: int):
         if game_state.is_game_over() or depth == 0:
-            return HeuristicFunction.evaluate(game_state)
+            return HeuristicFunction.evaluate(game_state), None
         best_move = None
         value = float('inf')
         possible_moves = StateSpaceGenerator.generate_all_possible_moves(game_state)
         for move in possible_moves:
             successor_state = GameStateUpdate(game_state, move).resulting_state
-            successor_value = min(value, self.Max_Value(successor_state, alpha, beta, depth - 1))
+            successor_value = min(value, self.Max_Value(successor_state, alpha, beta, depth - 1)[0])
             if successor_value <= value:
                 value, best_move = successor_value, move
                 beta = min(beta, value)
@@ -109,7 +110,7 @@ class HeuristicFunction:
 
 
 def simulate_moves(game_state: GameState, max_moves: int):
-    agent = AlphaBetaPruningAgent(max_depth=2)
+    agent = AlphaBetaPruningAgent(max_depth=3)
     print("Initial Board")
     print(game_state.board)
     game_state = game_state
