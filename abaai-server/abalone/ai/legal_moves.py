@@ -15,6 +15,11 @@ class LegalMoves:
     @staticmethod
     def are_marbles_inline(*positions):
         """Check if the given marbles (positions) are in-line. Works for 2 or 3 marbles."""
+        """
+        If there are fewer than 2 positions as params return.
+        initial_direction = 
+        
+        """
         if len(positions) < 2:
             return False
         initial_direction = (positions[1].x - positions[0].x, positions[1].y - positions[0].y)

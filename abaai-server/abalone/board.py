@@ -1,5 +1,4 @@
 from enum import Enum
-from copy import deepcopy
 
 from abalone.movement import Piece
 
@@ -64,9 +63,9 @@ class SpaceState(Enum):
 class Board:
     def __init__(self, board_array: list[list[int]] = None):
         if board_array is None:
-            self._array = deepcopy(BoardLayout.DEFAULT.value)
+            self._array = [row[:]for row in BoardLayout.DEFAULT.value]
         else:
-            self._array = deepcopy(board_array)
+            self._array = [row[:] for row in board_array]
 
     def __repr__(self):
         return str(self._array)

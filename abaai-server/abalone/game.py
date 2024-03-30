@@ -133,7 +133,7 @@ class Game:
         # return a random move for now
 
         # for profiling
-        #-------------------------------------------------------------------
+        # -------------------------------------------------------------------
         test_board = [
             [-1, -1, -1, -1, 0, 0, 0, 0, 0],
             [-1, -1, -1, 0, 2, 2, 2, 0, 0],
@@ -153,7 +153,7 @@ class Game:
                                              turn=Piece.BLACK,
                                              remaining_player_marbles=14,
                                              remaining_opponent_marbles=14)
-        #------------------------------------------------------------------------------
+        # ------------------------------------------------------------------------------
 
         agent = MiniMaxAgent(2)
         move = agent.get_best_move(self._current_game_state)

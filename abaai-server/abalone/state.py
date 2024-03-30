@@ -61,7 +61,8 @@ class GameState:
 
 class GameStateUpdate:
     def __init__(self, previous_state: GameState, move: Move):
-        self._previous_state = deepcopy(previous_state)
+        self._previous_state = previous_state
+
         self._move = move
         self._resulting_state = self.__generate_resulting_state()
 
@@ -78,7 +79,7 @@ class GameStateUpdate:
         return self._resulting_state
 
     def __generate_resulting_state(self):
-        resulting_board = Board(deepcopy(self._previous_state.board.make_move(self._move)))
+        resulting_board = Board(self._previous_state.board.make_move(self._move))
         resulting_turn = Piece.WHITE if self._previous_state.turn == Piece.BLACK else Piece.BLACK
 
         # Check if a sumito move pushed a marble off the board
