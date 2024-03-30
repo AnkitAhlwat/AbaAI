@@ -1,18 +1,18 @@
 import time
 
-
 from abalone.ai.state_space_generator import StateSpaceGenerator
+from abalone.board_ai import BoardLayout, OptimizedBoard, Piece
 from abalone.state import GameStateUpdate, GameState
 
 
 class AlphaBetaPruningAgent:
     def __init__(self, max_depth: int):
         self.max_depth = max_depth
-        self.max_player = None
+        # self.max_player = None
         self.min_prunes = 0
         self.max_prunes = 0
 
-    def sort_moves(self,game_state, possible_moves):
+    def sort_moves(self, game_state, possible_moves):
         scored_moves = []
         for move in possible_moves:
             successor_state = GameStateUpdate(game_state, move).resulting_state
@@ -28,7 +28,6 @@ class AlphaBetaPruningAgent:
         beta = float('inf')
         possible_moves = StateSpaceGenerator.generate_all_possible_moves(game_state)
         sorted_possible_moves = self.sort_moves(game_state, possible_moves)
-        print(len(sorted_possible_moves))
         for move in sorted_possible_moves:
             successor_state = GameStateUpdate(game_state, move).resulting_state
             value = self.Min_Value(successor_state, alpha, beta, self.max_depth - 1)
@@ -167,12 +166,10 @@ MANHATTAN_WEIGHT_CONVERTED = [
     (0, 4), (1, 4), (2, 4), (3, 4), (4, 4), None, None, None, None]
 
 
-
-
 def evaluate(game_state: GameState) -> float:
     score = 0
     score += 10 * manhattan_distance(game_state, MANHATTAN_WEIGHT_CONVERTED)
-    score += 10000 * marbles_knocked_off(game_state)
+    score += 1000 * piece_advantage(game_state)
     score += 10000000 * terminal_test(game_state)
     return score
 
@@ -211,7 +208,7 @@ def manhattan_distance(game_state, hex_lookup_table):
     center_cube_coords = (0, 0, 0)
 
     for index, value in enumerate(game_state.board.array):
-        if value in (game_state.turn.value, 2 if game_state.turn.value == 1 else 1):
+        if value in (1, 2):
             hex_coords = hex_lookup_table[index]
             if hex_coords:
                 cube_coords = (hex_coords[0], -hex_coords[0] - hex_coords[1], hex_coords[1])
@@ -223,15 +220,19 @@ def manhattan_distance(game_state, hex_lookup_table):
 
     return player_score - opponent_score
 
-def marbles_knocked_off(game_state):
-    return game_state.remaining_player_marbles - game_state.remaining_opponent_marbles
-def terminal_test(game_state: GameState):
 
+def piece_advantage(game_state):
+    return game_state.remaining_player_marbles - game_state.remaining_opponent_marbles
+
+
+def terminal_test(game_state: GameState):
     if game_state.remaining_player_marbles < 9:
         return -10000
     if game_state.remaining_opponent_marbles < 9:
         return 10000
     return 0
+
+
 def simulate_moves(game_state: GameState, max_moves: int):
     agent = AlphaBetaPruningAgent(max_depth=3)
     print("Initial Board")
@@ -279,11 +280,12 @@ def simulate_moves(game_state: GameState, max_moves: int):
 #     return lookup_table
 
 
+gemeran_daisy = GameState(board=OptimizedBoard(BoardLayout.GERMAN_DAISY.value),turn=Piece.WHITE)
 # print(generate_hex_lookup_table())
-# simulate_moves(GameState(), 50)
-agent = AlphaBetaPruningAgent(max_depth=3)
-current_time = time.time()
-best_move = agent.AlphaBetaPruningSearch(GameState())
-finish_time = time.time()
-print(finish_time - current_time)
-print(best_move)
+simulate_moves(gemeran_daisy, 55)
+# agent = AlphaBetaPruningAgent(max_depth=3)
+# current_time = time.time()
+# best_move = agent.AlphaBetaPruningSearch(gemeran_daisy)
+# finish_time = time.time()
+# print(finish_time - current_time)
+# print(best_move)
