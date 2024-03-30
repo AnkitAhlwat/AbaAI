@@ -16,7 +16,7 @@ class AlphaBetaPruningAgent:
 
         for move in StateSpaceGenerator.generate_all_possible_moves(game_state):
             successor_state = GameStateUpdate(game_state, move).resulting_state
-            value = self.Min_Value(successor_state, alpha, beta, self.max_depth-1)
+            value = self.Min_Value(successor_state, alpha, beta, self.max_depth - 1)
             if value > best_value:
                 best_value = value
                 best_move = move
@@ -55,17 +55,6 @@ class AlphaBetaPruningAgent:
 
 class HeuristicFunction:
     DEFAULT_WEIGHTS = [1000000, 10000, 10, 10, 2, 2, 1, 1]
-    MANHATTAN_WEIGHT_FLAT = [
-        0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 1, 2, 1, 1, 0,
-        0, 0, 0, 1, 2, 2, 2, 2, 0,
-        0, 0, 1, 2, 4, 3, 3, 2, 0,
-        0, 2, 3, 4, 5, 4, 3, 2, 0,
-        0, 2, 3, 3, 4, 2, 1, 0, 0,
-        0, 2, 2, 2, 2, 1, 0, 0, 0,
-        0, 1, 1, 2, 1, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0
-    ]
     EMPTY = [
         [-1, -1, -1, -1, 0, 0, 0, 0, 0],
         [-1, -1, -1, 0, 0, 0, 0, 0, 0],
@@ -81,25 +70,7 @@ class HeuristicFunction:
     @classmethod
     def evaluate(cls, game_state: GameState) -> float:
         score = 0
-        score += 10 * cls.manhattan_distance(game_state)
         return score
-
-    @classmethod
-    def manhattan_distance(cls, game_state):
-        player_score = 0
-        opponent_score = 0
-        player_value = game_state.turn.value
-        opponent_value = 2 if player_value == 1 else 1
-        board = game_state.board.array
-
-        for index in range(len(board)):
-            if board[index] == player_value:
-                player_score += cls.MANHATTAN_WEIGHT_FLAT[index]
-            elif board[index] == opponent_value:
-                opponent_score += cls.MANHATTAN_WEIGHT_FLAT[index]
-
-        differential_score = player_score - opponent_score
-        return differential_score
 
 
 def simulate_moves(game_state: GameState, max_moves: int):
@@ -122,8 +93,7 @@ def simulate_moves(game_state: GameState, max_moves: int):
     print(game_state.remaining_player_marbles)
     print(game_state.remaining_opponent_marbles)
 
-
-simulate_moves(GameState(), 10)
+# simulate_moves(GameState(), 10)
 # agent = AlphaBetaPruningAgent(max_depth=3)
 # current_time = time.time()
 # best_move = agent.AlphaBetaPruningSearch(GameState())
