@@ -3,8 +3,6 @@ from copy import deepcopy
 from abalone.board import BoardLayout, Board
 from abalone.state import GameState, GameStateUpdate
 from abalone.movement import Piece, Position
-import re
-import os
 
 
 class FileHandler:
