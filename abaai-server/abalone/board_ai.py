@@ -130,4 +130,4 @@ class OptimizedBoard:
         return '\n'.join([' '.join(str(cell) for cell in row) for row in rows])
 
     def to_json(self):
-        return self.array
+        return [self.array[i:i + self.width] for i in range(0, len(self.array), self.width)]

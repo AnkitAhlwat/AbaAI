@@ -280,9 +280,9 @@ def simulate_moves(game_state: GameState, max_moves: int):
 #     return lookup_table
 
 
-gemeran_daisy = GameState(board=OptimizedBoard(BoardLayout.GERMAN_DAISY.value),turn=Piece.WHITE)
+# gemeran_daisy = GameState(board=OptimizedBoard(BoardLayout.GERMAN_DAISY.value),turn=Piece.WHITE)
 # print(generate_hex_lookup_table())
-simulate_moves(gemeran_daisy, 55)
+# simulate_moves(gemeran_daisy, 55)
 # agent = AlphaBetaPruningAgent(max_depth=3)
 # current_time = time.time()
 # best_move = agent.AlphaBetaPruningSearch(gemeran_daisy)

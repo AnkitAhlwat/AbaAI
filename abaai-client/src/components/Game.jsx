@@ -228,12 +228,12 @@ const Game = () => {
           isGameActive={isGameActive}
           currentTurn={currentTurn}
 
-          //for the clock controls
-          // blackClock={blackClock}
-          // whiteClock={whiteClock}
-          // pauseClock={pauseClock}
-          // resumeClock={resumeClock}
-          // resetClocks={resetClocks}
+        //for the clock controls
+        // blackClock={blackClock}
+        // whiteClock={whiteClock}
+        // pauseClock={pauseClock}
+        // resumeClock={resumeClock}
+        // resetClocks={resetClocks}
         />
       </Grid>
 
@@ -271,9 +271,9 @@ const Game = () => {
           whiteClock={whiteClock}
           updateGame={updateGame}
           onApplyMove={onMoveSelection}
-          // currentPlayer={currentPlayer}
-          // isPaused={isPaused}
-          // togglePause={togglePause}
+        // currentPlayer={currentPlayer}
+        // isPaused={isPaused}
+        // togglePause={togglePause}
         />
       </Grid>
     </Grid>
