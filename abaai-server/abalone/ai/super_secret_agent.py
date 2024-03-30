@@ -155,9 +155,13 @@ MANHATTAN_WEIGHT_CONVERTED = [
     (0, 4), (1, 4), (2, 4), (3, 4), (4, 4), None, None, None, None]
 
 
+
+
 def evaluate(game_state: GameState) -> float:
     score = 0
     score += 10 * manhattan_distance(game_state, MANHATTAN_WEIGHT_CONVERTED)
+    score += 1000 * marbles_knocked_off(game_state)
+    score += 10000000 * terminal_test(game_state)
     return score
 
 
@@ -203,11 +207,26 @@ def manhattan_distance(game_state, hex_lookup_table):
                 if value == game_state.turn.value:
                     player_score += distance
                 else:
-                    opponent_score += distance **2
+                    opponent_score += distance **3
 
     return player_score - opponent_score
 
-
+def marbles_knocked_off(game_state):
+    player_marbles = game_state.remaining_player_marbles
+    opponent_marbles = game_state.remaining_opponent_marbles
+    if game_state.turn.value == 2:
+        player_marbles, opponent_marbles = opponent_marbles, player_marbles
+    return player_marbles - opponent_marbles
+def terminal_test(game_state: GameState):
+    player_marbles = game_state.remaining_player_marbles
+    opponent_marbles = game_state.remaining_opponent_marbles
+    if game_state.turn.value == 2:
+        player_marbles, opponent_marbles = opponent_marbles, player_marbles
+    if player_marbles < 9:
+        return -10000
+    if opponent_marbles < 9:
+        return 10000
+    return 0
 def simulate_moves(game_state: GameState, max_moves: int):
     agent = AlphaBetaPruningAgent(max_depth=3)
     print("Initial Board")
