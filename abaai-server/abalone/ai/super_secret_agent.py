@@ -9,6 +9,8 @@ class AlphaBetaPruningAgent:
     def __init__(self, max_depth: int):
         self.max_depth = max_depth
         self.max_player = None
+        self.min_prunes = 0
+        self.max_prunes = 0
 
     def sort_moves(self,game_state, possible_moves):
         scored_moves = []
@@ -26,6 +28,7 @@ class AlphaBetaPruningAgent:
         beta = float('inf')
         possible_moves = StateSpaceGenerator.generate_all_possible_moves(game_state)
         sorted_possible_moves = self.sort_moves(game_state, possible_moves)
+        print(len(sorted_possible_moves))
         for move in sorted_possible_moves:
             successor_state = GameStateUpdate(game_state, move).resulting_state
             value = self.Min_Value(successor_state, alpha, beta, self.max_depth - 1)
@@ -33,7 +36,9 @@ class AlphaBetaPruningAgent:
                 best_value = value
                 best_move = move
             alpha = max(alpha, value)
-
+        print(f'{game_state.turn.name}->{best_value} First')
+        print(f'Max Prunes: {self.max_prunes}')
+        print(f'Min Prunes: {self.min_prunes}')
         return best_move
 
     # def AlphaBetaPruningSearch(self, game_state: GameState):
@@ -91,30 +96,37 @@ class AlphaBetaPruningAgent:
         if game_state.is_game_over() or depth == 0:
             return evaluate(game_state) * -1
         value = float('-inf')
-
+        best_value = float('-inf')
         possible_moves = StateSpaceGenerator.generate_all_possible_moves(game_state)
         sorted_possible_moves = self.sort_moves(game_state, possible_moves)
         for move in sorted_possible_moves:
             successor_state = GameStateUpdate(game_state, move).resulting_state
             value = max(value, self.Min_Value(successor_state, alpha, beta, depth - 1))
             alpha = max(alpha, value)
+            if value > best_value:
+                best_value = value
             if value >= beta:
+                self.max_prunes += 1
                 break
+
         return value
 
     def Min_Value(self, game_state: GameState, alpha: float, beta: float, depth: int):
         if game_state.is_game_over() or depth == 0:
             return evaluate(game_state)
         value = float('inf')
+        best_value = float('inf')
         possible_moves = StateSpaceGenerator.generate_all_possible_moves(game_state)
         sorted_possible_moves = self.sort_moves(game_state, possible_moves)
         for move in sorted_possible_moves:
             successor_state = GameStateUpdate(game_state, move).resulting_state
             value = min(value, self.Max_Value(successor_state, alpha, beta, depth - 1))
             beta = min(beta, value)
+            if value < best_value:
+                best_value = value
             if value <= alpha:
+                self.min_prunes += 1
                 break
-
         return value
 
 
@@ -269,7 +281,7 @@ def simulate_moves(game_state: GameState, max_moves: int):
 
 # print(generate_hex_lookup_table())
 # simulate_moves(GameState(), 50)
-agent = AlphaBetaPruningAgent(max_depth=4)
+agent = AlphaBetaPruningAgent(max_depth=3)
 current_time = time.time()
 best_move = agent.AlphaBetaPruningSearch(GameState())
 finish_time = time.time()
