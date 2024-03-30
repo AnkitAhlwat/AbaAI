@@ -19,103 +19,103 @@ class AlphaBetaPruningAgent:
         scored_moves.sort(reverse=True)
         return [move for score, move in scored_moves]
 
-    # def AlphaBetaPruningSearch(self, game_state: GameState):
-    #     best_move = None
-    #     best_value = float('-inf')
-    #     alpha = float('-inf')
-    #     beta = float('inf')
-    #     possible_moves = StateSpaceGenerator.generate_all_possible_moves(game_state)
-    #     sorted_possible_moves = self.sort_moves(game_state, possible_moves)
-    #     for move in sorted_possible_moves:
-    #         successor_state = GameStateUpdate(game_state, move).resulting_state
-    #         value = self.Min_Value(successor_state, alpha, beta, self.max_depth - 1)
-    #         if value > best_value:
-    #             best_value = value
-    #             best_move = move
-    #         alpha = max(alpha, value)
-    #
-    #     return best_move
-
     def AlphaBetaPruningSearch(self, game_state: GameState):
         best_move = None
-        self.max_player = game_state.turn.value
-        best_value = float('-inf') if game_state.turn.value == self.max_player else float('inf')
+        best_value = float('-inf')
         alpha = float('-inf')
         beta = float('inf')
+        possible_moves = StateSpaceGenerator.generate_all_possible_moves(game_state)
+        sorted_possible_moves = self.sort_moves(game_state, possible_moves)
+        for move in sorted_possible_moves:
+            successor_state = GameStateUpdate(game_state, move).resulting_state
+            value = self.Min_Value(successor_state, alpha, beta, self.max_depth - 1)
+            if value > best_value:
+                best_value = value
+                best_move = move
+            alpha = max(alpha, value)
+
+        return best_move
+
+    # def AlphaBetaPruningSearch(self, game_state: GameState):
+    #     best_move = None
+    #     self.max_player = game_state.turn.value
+    #     best_value = float('-inf') if game_state.turn.value == self.max_player else float('inf')
+    #     alpha = float('-inf')
+    #     beta = float('inf')
+    #
+    #     possible_moves = StateSpaceGenerator.generate_all_possible_moves(game_state)
+    #     sorted_possible_moves = self.sort_moves(game_state, possible_moves)
+    #
+    #     for move in sorted_possible_moves:
+    #         successor_state = GameStateUpdate(game_state, move).resulting_state
+    #         value = self.Value(successor_state, alpha, beta, self.max_depth - 1)
+    #
+    #         if game_state.turn.value == self.max_player:
+    #             if value > best_value:
+    #                 best_value = value
+    #                 best_move = move
+    #             alpha = max(alpha, value)
+    #         else:
+    #             if value < best_value:
+    #                 best_value = value
+    #                 best_move = move
+    #             beta = min(beta, value)
+    #
+    #     return best_move
+    # def Value(self, game_state: GameState, alpha: float, beta: float, depth: int):
+    #     if game_state.is_game_over() or depth == 0:
+    #         return evaluate(game_state)
+    #     value = float('-inf') if game_state.turn.value == self.max_player else float('inf')
+    #
+    #     possible_moves = StateSpaceGenerator.generate_all_possible_moves(game_state)
+    #     sorted_moves = self.sort_moves(game_state, possible_moves)
+    #     for move in sorted_moves:
+    #         successor_state = GameStateUpdate(game_state, move).resulting_state
+    #         # Since turns are updated, we keep maximizing relative to the current player
+    #         successor_value = self.Value(successor_state, alpha, beta, depth - 1)
+    #
+    #         if game_state.turn.value == self.max_player:
+    #             value = max(value, successor_value)
+    #             alpha = max(alpha, value)
+    #             if value >= beta:
+    #                 break  # Beta cutoff
+    #         else:
+    #             value = min(value, successor_value)
+    #             beta = min(beta, value)
+    #             if value <= alpha:
+    #                 break  # Alpha cutoff
+    #
+    #     return value
+
+    def Max_Value(self, game_state: GameState, alpha: float, beta: float, depth: int):
+        if game_state.is_game_over() or depth == 0:
+            return evaluate(game_state) * -1
+        value = float('-inf')
 
         possible_moves = StateSpaceGenerator.generate_all_possible_moves(game_state)
         sorted_possible_moves = self.sort_moves(game_state, possible_moves)
-
         for move in sorted_possible_moves:
             successor_state = GameStateUpdate(game_state, move).resulting_state
-            value = self.Value(successor_state, alpha, beta, self.max_depth - 1)
-
-            if game_state.turn.value == self.max_player:
-                if value > best_value:
-                    best_value = value
-                    best_move = move
-                alpha = max(alpha, value)
-            else:
-                if value < best_value:
-                    best_value = value
-                    best_move = move
-                beta = min(beta, value)
-
-        return best_move
-    def Value(self, game_state: GameState, alpha: float, beta: float, depth: int):
-        if game_state.is_game_over() or depth == 0:
-            return evaluate(game_state)
-        value = float('-inf') if game_state.turn.value == self.max_player else float('inf')
-
-        possible_moves = StateSpaceGenerator.generate_all_possible_moves(game_state)
-        sorted_moves = self.sort_moves(game_state, possible_moves)
-        for move in sorted_moves:
-            successor_state = GameStateUpdate(game_state, move).resulting_state
-            # Since turns are updated, we keep maximizing relative to the current player
-            successor_value = self.Value(successor_state, alpha, beta, depth - 1)
-
-            if game_state.turn.value == self.max_player:
-                value = max(value, successor_value)
-                alpha = max(alpha, value)
-                if value >= beta:
-                    break  # Beta cutoff
-            else:
-                value = min(value, successor_value)
-                beta = min(beta, value)
-                if value <= alpha:
-                    break  # Alpha cutoff
-
+            value = max(value, self.Min_Value(successor_state, alpha, beta, depth - 1))
+            alpha = max(alpha, value)
+            if value >= beta:
+                break
         return value
 
-    # def Max_Value(self, game_state: GameState, alpha: float, beta: float, depth: int):
-    #     if game_state.is_game_over() or depth == 0:
-    #         return evaluate(game_state)
-    #     value = float('-inf')
-    #
-    #     possible_moves = StateSpaceGenerator.generate_all_possible_moves(game_state)
-    #     sorted_possible_moves = self.sort_moves(game_state, possible_moves)
-    #     for move in sorted_possible_moves:
-    #         successor_state = GameStateUpdate(game_state, move).resulting_state
-    #         value = max(value, self.Min_Value(successor_state, alpha, beta, depth - 1))
-    #         alpha = max(alpha, value)
-    #         if value >= beta:
-    #             break
-    #
-    #     return value
-    #
-    # def Min_Value(self, game_state: GameState, alpha: float, beta: float, depth: int):
-    #     if game_state.is_game_over() or depth == 0:
-    #         return evaluate(game_state)
-    #     value = float('inf')
-    #     possible_moves = StateSpaceGenerator.generate_all_possible_moves(game_state)
-    #     sorted_possible_moves = self.sort_moves(game_state, possible_moves)
-    #     for move in sorted_possible_moves:
-    #         successor_state = GameStateUpdate(game_state, move).resulting_state
-    #         value = min(value, self.Max_Value(successor_state, alpha, beta, depth - 1))
-    #         beta = min(beta, value)
-    #         if value <= alpha:
-    #             break
-    #     return value
+    def Min_Value(self, game_state: GameState, alpha: float, beta: float, depth: int):
+        if game_state.is_game_over() or depth == 0:
+            return evaluate(game_state)
+        value = float('inf')
+        possible_moves = StateSpaceGenerator.generate_all_possible_moves(game_state)
+        sorted_possible_moves = self.sort_moves(game_state, possible_moves)
+        for move in sorted_possible_moves:
+            successor_state = GameStateUpdate(game_state, move).resulting_state
+            value = min(value, self.Max_Value(successor_state, alpha, beta, depth - 1))
+            beta = min(beta, value)
+            if value <= alpha:
+                break
+
+        return value
 
 
 DEFAULT_WEIGHTS = [1000000, 10000, 10, 10, 2, 2, 1, 1]
@@ -160,7 +160,7 @@ MANHATTAN_WEIGHT_CONVERTED = [
 def evaluate(game_state: GameState) -> float:
     score = 0
     score += 10 * manhattan_distance(game_state, MANHATTAN_WEIGHT_CONVERTED)
-    score += 1000 * marbles_knocked_off(game_state)
+    score += 10000 * marbles_knocked_off(game_state)
     score += 10000000 * terminal_test(game_state)
     return score
 
@@ -221,7 +221,7 @@ def terminal_test(game_state: GameState):
         return 10000
     return 0
 def simulate_moves(game_state: GameState, max_moves: int):
-    agent = AlphaBetaPruningAgent(max_depth=1)
+    agent = AlphaBetaPruningAgent(max_depth=3)
     print("Initial Board")
     print(game_state.board)
     game_state = game_state
@@ -269,7 +269,7 @@ def simulate_moves(game_state: GameState, max_moves: int):
 
 # print(generate_hex_lookup_table())
 # simulate_moves(GameState(), 50)
-agent = AlphaBetaPruningAgent(max_depth=3)
+agent = AlphaBetaPruningAgent(max_depth=4)
 current_time = time.time()
 best_move = agent.AlphaBetaPruningSearch(GameState())
 finish_time = time.time()
