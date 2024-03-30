@@ -155,10 +155,10 @@ EMPTY = [
 ]
 
 MANHATTAN_WEIGHT_CONVERTED = [
-    None, None, None, None, (4, -4), (5, -4), (6, -4), (7, -4), (8, -4),
-    None, None, None, (2, -3), (3, -3), (4, -3), (5, -3), (6, -3), (7, -3),
-    None, None, (0, -2), (1, -2), (2, -2), (3, -2), (4, -2), (5, -2), (6, -2),
-    None, (-2, -1), (-1, -1), (0, -1), (1, -1), (2, -1), (3, -1), (4, -1), (5, -1),
+    None, None, None, None, (4, -4), (3, -4), (2, -4), (1, -4), (0, -4),
+    None, None, None, (4, -3), (3, -3), (2, -3), (1, -3), (0, -3), (-1, -3),
+    None, None, (4, -2), (3, -2), (2, -2), (1, -2), (0, -2), (-1, -2), (-2, -2),
+    None, (4, -1), (3, -1), (2, -1), (1, -1), (0, -1), (-1, -1), (-2, -1), (-3, -1),
     (-4, 0), (-3, 0), (-2, 0), (-1, 0), (0, 0), (1, 0), (2, 0), (3, 0), (4, 0),
     (-3, 1), (-2, 1), (-1, 1), (0, 1), (1, 1), (2, 1), (3, 1), (4, 1), None,
     (-2, 2), (-1, 2), (0, 2), (1, 2), (2, 2), (3, 2), (4, 2), None, None,
@@ -168,21 +168,21 @@ MANHATTAN_WEIGHT_CONVERTED = [
 
 def evaluate(game_state: GameState) -> float:
     score = 0
-    score += 10 * manhattan_distance(game_state, MANHATTAN_WEIGHT_CONVERTED)
+    score += 10 * manhattan_distance_to_center(game_state, MANHATTAN_WEIGHT_CONVERTED)
     score += 1000 * piece_advantage(game_state)
     score += 10000000 * terminal_test(game_state)
     return score
 
 
-def flat_index_to_hex(index):
-    row = index // 9
-    column = index % 9
-
-    row_offset = max(0, 4 - abs(4 - row))
-    q = column - row_offset
-    r = row - 4
-
-    return q, r
+# def flat_index_to_hex(index):
+#     row = index // 9
+#     column = index % 9
+#
+#     row_offset = max(0, 4 - abs(4 - row))
+#     q = column - row_offset
+#     r = row - 4
+#
+#     return q, r
 
 
 # def hex_distance(hex_a, hex_b):
@@ -198,21 +198,19 @@ def flat_index_to_hex(index):
 #     y = -x - z
 #     return x, y, z
 
-def cube_distance(a, b):
-    return max(abs(a[0] - b[0]), abs(a[1] - b[1]), abs(a[2] - b[2]))
+# def cube_distance(a, b):
+#     return max(abs(a[0] - b[0]), abs(a[1] - b[1]))
+#
 
-
-def manhattan_distance(game_state, hex_lookup_table):
+def manhattan_distance_to_center(game_state, hex_lookup_table):
     player_score = 0
     opponent_score = 0
-    center_cube_coords = (0, 0, 0)
 
     for index, value in enumerate(game_state.board.array):
         if value in (1, 2):
             hex_coords = hex_lookup_table[index]
             if hex_coords:
-                cube_coords = (hex_coords[0], -hex_coords[0] - hex_coords[1], hex_coords[1])
-                distance = cube_distance(cube_coords, center_cube_coords)
+                distance = max(abs(hex_coords[0]), abs(hex_coords[1]))
                 if value == game_state.turn.value:
                     player_score += distance
                 else:
@@ -280,9 +278,9 @@ def simulate_moves(game_state: GameState, max_moves: int):
 #     return lookup_table
 
 
-# gemeran_daisy = GameState(board=OptimizedBoard(BoardLayout.GERMAN_DAISY.value),turn=Piece.WHITE)
+gemeran_daisy = GameState(board=OptimizedBoard(BoardLayout.GERMAN_DAISY.value),turn=Piece.WHITE)
 # print(generate_hex_lookup_table())
-# simulate_moves(gemeran_daisy, 55)
+simulate_moves(gemeran_daisy, 55)
 # agent = AlphaBetaPruningAgent(max_depth=3)
 # current_time = time.time()
 # best_move = agent.AlphaBetaPruningSearch(gemeran_daisy)
