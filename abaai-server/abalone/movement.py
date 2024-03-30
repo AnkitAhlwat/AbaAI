@@ -99,6 +99,9 @@ class Move:
     def __str__(self):
         return self.__to_move_notation()
 
+    def __lt__(self, other):
+        return len(self.previous_player_positions) > len(other.previous_player_positions)
+
     @property
     def previous_player_positions(self):
         return self._previous_player_positions
