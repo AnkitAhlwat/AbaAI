@@ -262,6 +262,7 @@ const Game = () => {
           blackClock={blackClock}
           whiteClock={whiteClock}
           updateGame={updateGame}
+          onApplyMove={onMoveSelection}
           // currentPlayer={currentPlayer}
           // isPaused={isPaused}
           // togglePause={togglePause}

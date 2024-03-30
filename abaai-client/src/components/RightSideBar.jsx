@@ -31,6 +31,7 @@ const RightSideBar = (props) => {
     whiteClock,
     resetClockSignal,
     updateGame,
+    onApplyMove,
   } = props;
 
   const [value, setValue] = useState(Tabs.CONFIG);
@@ -91,6 +92,7 @@ const RightSideBar = (props) => {
             undoMove={undoMove}
             blackClock={blackClock}
             whiteClock={whiteClock}
+            onApplyMove={onApplyMove}
             // currentPlayer={currentPlayer}
             // isPaused={isPaused}
             // togglePause={togglePause}

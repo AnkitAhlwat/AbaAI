@@ -3,7 +3,7 @@ import AIMoveDisplay from "./AiMove";
 import GameClock from "./Clock";
 import Proptypes from "prop-types";
 import GameControls from "./GameControls";
-import { Divider, Typography, Button } from "@mui/material";
+import { Divider, Typography, Button, Grid } from "@mui/material";
 import { Undo } from "@mui/icons-material";
 
 const CurrentGameBar = (props) => {
@@ -23,6 +23,7 @@ const CurrentGameBar = (props) => {
     undoMove,
     blackClock,
     whiteClock,
+    onApplyMove,
   } = props;
 
   const centerDivider = (text) => {
@@ -102,7 +103,14 @@ const CurrentGameBar = (props) => {
       </Button> */}
       {/* <GameClock currentPlayer={currentPlayer} isPaused={isPaused} togglePause={togglePause} /> */}
       {centerDivider("AI Suggested Move")}
-      <AIMoveDisplay aiMove={aiMove} />
+      <Grid container spacing={1}>
+        <Grid item xs={6}>
+          <AIMoveDisplay aiMove={aiMove} onApplyMove={onApplyMove} />
+        </Grid>
+        <Grid item xs={6}>
+          <AIMoveDisplay aiMove={aiMove} onApplyMove={onApplyMove} />
+        </Grid>
+      </Grid>
       {centerDivider("Move History")}
       <MoveHistory movesStack={movesStack} />
     </>
