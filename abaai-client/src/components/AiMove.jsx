@@ -4,13 +4,13 @@ import Proptypes from "prop-types";
 import Move from "../models/Move";
 
 // Displays each move the AI mades on the GUI interface
-const AIMoveDisplay = ({ aiMove, onApplyMove }) => {
+const AIMoveDisplay = ({ aiMove, onApplyMove, isWhite, disabled }) => {
   return (
     <Paper
       elevation={3}
       sx={{
         padding: "20px",
-        backgroundColor: "#3c3b39",
+        backgroundColor: isWhite ? "#989795" : "#302e2b",
         marginTop: "5px",
         marginBottom: "10px",
       }}
@@ -37,6 +37,7 @@ const AIMoveDisplay = ({ aiMove, onApplyMove }) => {
             variant="contained"
             color="success"
             onClick={() => onApplyMove(aiMove)}
+            disabled={disabled}
           >
             Apply
           </Button>

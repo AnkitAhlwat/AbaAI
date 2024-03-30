@@ -10,7 +10,8 @@ import RightSideBar from "./RightSideBar";
 // Displays complete assembly of the GUI
 const Game = () => {
   // ##################### States #####################
-  const [aiMove, setAiMove] = useState(null); // Tracks AI move history
+  const [blackAiMove, setBlackAiMove] = useState(null); // Tracks AI move history
+  const [whiteAiMove, setWhiteAiMove] = useState(null); // Tracks AI move history
   const [selectedMarbles, setSelectedMarbles] = useState([]); // Tracks which marbles are selected
   const [movesStack, setMovesStack] = useState([]); // Tracks player move history
   const [gameStarted, setGameStarted] = useState(false); // Tracks whether game has started
@@ -103,7 +104,8 @@ const Game = () => {
     setGameStarted(false);
     setIsGameActive(false);
     setResetClockSignal((prev) => prev + 1);
-    setAiMove(null);
+    setBlackAiMove(null);
+    setWhiteAiMove(null);
   };
 
   //stop the game and reset the clocks, this should also completely reset the game state
@@ -163,9 +165,13 @@ const Game = () => {
       const gameStatus = await GameService.postMove(moveObj);
       updateGame(gameStatus);
 
-      // // set the ai move card to display the move that the ai generated
+      // set the ai move card to display the move that the ai generated
       const aiMove = await GameService.getAiMoveForCurrentState();
-      setAiMove(aiMove);
+      if (gameStatus.game_state.turn === 1) {
+        setBlackAiMove(aiMove);
+      } else {
+        setWhiteAiMove(aiMove);
+      }
     },
     [gameStarted, currentTurn, updateGame]
   );
@@ -245,7 +251,9 @@ const Game = () => {
           config={config}
           setConfig={setConfig}
           movesStack={movesStack}
-          aiMove={aiMove}
+          blackAiMove={blackAiMove}
+          whiteAiMove={whiteAiMove}
+          currentTurn={currentTurn}
           //for the clock controls
           activePlayer={activePlayer}
           toggleActivePlayer={toggleTurn}

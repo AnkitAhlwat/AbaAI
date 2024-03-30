@@ -15,7 +15,9 @@ const RightSideBar = (props) => {
     config,
     setConfig,
     movesStack,
-    aiMove,
+    blackAiMove,
+    whiteAiMove,
+    currentTurn,
     activePlayer,
     toggleActivePlayer,
     gameStarted,
@@ -76,8 +78,11 @@ const RightSideBar = (props) => {
         </Box>
         <TabPanel value={Tabs.GAME}>
           <CurrentGameBar
+            config={config}
             movesStack={movesStack}
-            aiMove={aiMove}
+            blackAiMove={blackAiMove}
+            whiteAiMove={whiteAiMove}
+            currentTurn={currentTurn}
             //clock controls
             activePlayer={activePlayer}
             toggleActivePlayer={toggleActivePlayer}
