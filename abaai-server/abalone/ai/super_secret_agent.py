@@ -207,28 +207,21 @@ def manhattan_distance(game_state, hex_lookup_table):
                 if value == game_state.turn.value:
                     player_score += distance
                 else:
-                    opponent_score += distance **3
+                    opponent_score += distance
 
     return player_score - opponent_score
 
 def marbles_knocked_off(game_state):
-    player_marbles = game_state.remaining_player_marbles
-    opponent_marbles = game_state.remaining_opponent_marbles
-    if game_state.turn.value == 2:
-        player_marbles, opponent_marbles = opponent_marbles, player_marbles
-    return player_marbles - opponent_marbles
+    return game_state.remaining_player_marbles - game_state.remaining_opponent_marbles
 def terminal_test(game_state: GameState):
-    player_marbles = game_state.remaining_player_marbles
-    opponent_marbles = game_state.remaining_opponent_marbles
-    if game_state.turn.value == 2:
-        player_marbles, opponent_marbles = opponent_marbles, player_marbles
-    if player_marbles < 9:
+
+    if game_state.remaining_player_marbles < 9:
         return -10000
-    if opponent_marbles < 9:
+    if game_state.remaining_opponent_marbles < 9:
         return 10000
     return 0
 def simulate_moves(game_state: GameState, max_moves: int):
-    agent = AlphaBetaPruningAgent(max_depth=3)
+    agent = AlphaBetaPruningAgent(max_depth=1)
     print("Initial Board")
     print(game_state.board)
     game_state = game_state
@@ -237,15 +230,21 @@ def simulate_moves(game_state: GameState, max_moves: int):
     while i < max_moves:
         best_move = agent.AlphaBetaPruningSearch(game_state)
         print(f"{game_state.turn.name}->({best_move})")
-
+        original_marbles = game_state.remaining_opponent_marbles
+        original_opponent_marbles = game_state.remaining_player_marbles
         game_state = GameStateUpdate(game_state, best_move).resulting_state
+        if game_state.remaining_player_marbles < original_marbles:
+            print(f'marbles knocked off')
+        if game_state.remaining_opponent_marbles < original_opponent_marbles:
+            print(f'marbles knocked off')
 
         i += 1
     finish_time = time.time()
     print(finish_time - start_time)
     print(game_state.board)
-    print(game_state.remaining_player_marbles)
+    print(game_state.turn)
     print(game_state.remaining_opponent_marbles)
+    print(game_state.remaining_player_marbles)
 
 
 #
@@ -269,10 +268,10 @@ def simulate_moves(game_state: GameState, max_moves: int):
 
 
 # print(generate_hex_lookup_table())
-simulate_moves(GameState(), 50)
-# agent = AlphaBetaPruningAgent(max_depth=3)
-# current_time = time.time()
-# best_move = agent.AlphaBetaPruningSearch(GameState())
-# finish_time = time.time()
-# print(finish_time - current_time)
-# print(best_move)
+# simulate_moves(GameState(), 50)
+agent = AlphaBetaPruningAgent(max_depth=3)
+current_time = time.time()
+best_move = agent.AlphaBetaPruningSearch(GameState())
+finish_time = time.time()
+print(finish_time - current_time)
+print(best_move)
