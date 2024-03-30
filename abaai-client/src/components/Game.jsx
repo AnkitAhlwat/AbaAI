@@ -144,6 +144,8 @@ const Game = () => {
   // Handles move selection
   const onMoveSelection = useCallback(
     async (move) => {
+      setBlackAiMove(null);
+      setWhiteAiMove(null);
       console.log("Move:", move);
 
       //toggle the active player turn
