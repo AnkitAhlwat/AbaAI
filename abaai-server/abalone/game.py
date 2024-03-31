@@ -129,7 +129,7 @@ class Game:
         return self.__to_json()
 
     def get_ai_move(self) -> dict:
-        agent = AlphaBetaPruningAgent(max_depth=4)
+        agent = AlphaBetaPruningAgent(max_depth=3)
         move = agent.AlphaBetaPruningSearch(self._current_game_state)
         return move.to_json()
 
