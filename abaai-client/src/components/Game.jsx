@@ -135,6 +135,16 @@ const Game = () => {
   const startGame = useCallback(async () => {
     if (!gameStarted) {
       const gameStatus = await GameService.startGame();
+      console.log("Game Status:", gameStatus);
+
+      if (
+        gameStatus?.is_first_move &&
+        gameStatus?.game_options.blackPlayer === "Computer"
+      ) {
+        const aiMove = await GameService.getAiMoveForCurrentState();
+        setBlackAiMove(aiMove);
+      }
+
       updateGame(gameStatus);
       setGameStarted(true);
       resumeGame("black");
@@ -230,12 +240,12 @@ const Game = () => {
           isGameActive={isGameActive}
           currentTurn={currentTurn}
 
-        //for the clock controls
-        // blackClock={blackClock}
-        // whiteClock={whiteClock}
-        // pauseClock={pauseClock}
-        // resumeClock={resumeClock}
-        // resetClocks={resetClocks}
+          //for the clock controls
+          // blackClock={blackClock}
+          // whiteClock={whiteClock}
+          // pauseClock={pauseClock}
+          // resumeClock={resumeClock}
+          // resetClocks={resetClocks}
         />
       </Grid>
 
@@ -273,9 +283,9 @@ const Game = () => {
           whiteClock={whiteClock}
           updateGame={updateGame}
           onApplyMove={onMoveSelection}
-        // currentPlayer={currentPlayer}
-        // isPaused={isPaused}
-        // togglePause={togglePause}
+          // currentPlayer={currentPlayer}
+          // isPaused={isPaused}
+          // togglePause={togglePause}
         />
       </Grid>
     </Grid>
