@@ -76,7 +76,7 @@ class GameStateUpdate:
         return self._resulting_state
 
     def __generate_resulting_state(self):
-        resulting_turn = Piece.WHITE if self._previous_state.turn == Piece.BLACK else Piece.BLACK
+        resulting_turn = Piece.WHITE if self._previous_state.turn.value == 1 else Piece.BLACK
         new_board = self._previous_state.board.array[:]
         resulting_board = OptimizedBoard(new_board)
         resulting_board.make_move(self._move)
