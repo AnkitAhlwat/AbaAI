@@ -1,11 +1,11 @@
-from enum import Enum
 import itertools
+from enum import Enum
 
-from abalone.movement import Move, Position
 
 class Piece(Enum):
     BLACK = 1
     WHITE = 2
+
 
 class BoardLayout(Enum):
     EMPTY = [
@@ -72,7 +72,7 @@ class OptimizedBoard:
         self.height = 9
         if layout is None:
             self.array = self._flatten_layout(BoardLayout.DEFAULT.value)
-        elif isinstance(layout[0], int ):
+        elif isinstance(layout[0], int):
             self.array = layout
         elif isinstance(layout[0], list):
             self.array = self._flatten_layout(layout)
@@ -95,7 +95,6 @@ class OptimizedBoard:
         """Set the state of the space at position (x, y)."""
         index = self._get_index(x, y)
         self.array[index] = state.value
-
 
     def make_move(self, move_obj):
         for position in move_obj.previous_player_positions:
@@ -123,11 +122,13 @@ class OptimizedBoard:
         for position in move_obj.previous_opponent_positions:
             self.set_space_state(position.x, position.y, SpaceState(3 - move_obj.player.value))
 
-
     def __repr__(self):
         """Generate a 2D board-like representation for printing."""
         rows = [self.array[i:i + self.width] for i in range(0, self.height * self.width, self.width)]
         return '\n'.join([' '.join(str(cell) for cell in row) for row in rows])
 
-    def to_json(self):
+    def to_matrix(self):
         return [self.array[i:i + self.width] for i in range(0, len(self.array), self.width)]
+
+    def to_json(self):
+        return self.to_matrix()

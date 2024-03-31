@@ -1,7 +1,6 @@
 import time
 
 from abalone.ai.state_space_generator import StateSpaceGenerator
-from abalone.board_ai import BoardLayout, OptimizedBoard, Piece
 from abalone.state import GameStateUpdate, GameState
 
 
@@ -64,7 +63,6 @@ class AlphaBetaPruningAgent:
         self.min_prunes = 0
         self.max_prunes = 0
 
-
     def AlphaBetaPruningSearch(self, game_state: GameState):
         best_move = None
         alpha = float('-inf')
@@ -81,6 +79,7 @@ class AlphaBetaPruningAgent:
         print(f'Max Prunes: {self.max_prunes}')
         print(f'Min Prunes: {self.min_prunes}')
         return best_move
+
     def Max_Value(self, game_state: GameState, alpha: float, beta: float, depth: int):
         if game_state.is_game_over() or depth == 0:
             return evaluate(game_state) * -1
@@ -154,7 +153,7 @@ def evaluate(game_state: GameState) -> float:
     score = 0
     score += 10 * manhattan_distance_to_center(game_state, MANHATTAN_WEIGHT_CONVERTED)
     score += 1000 * piece_advantage(game_state)
-    score += 10000000 * terminal_test(game_state)
+    score += 100000000 * terminal_test(game_state)
     return score
 
 
@@ -240,7 +239,6 @@ def simulate_moves(game_state: GameState, max_moves: int):
     print(game_state.turn)
     print(game_state.remaining_opponent_marbles)
     print(game_state.remaining_player_marbles)
-
 
 #
 #
