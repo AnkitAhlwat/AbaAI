@@ -261,13 +261,13 @@ def simulate_moves(game_state: GameState, max_moves: int):
 #                 lookup_table.append(None)  # Mark out-of-bounds positions as None
 #     return lookup_table
 
-
-gemeran_daisy = GameState(board=OptimizedBoard(BoardLayout.GERMAN_DAISY.value),turn=Piece.WHITE)
-# print(generate_hex_lookup_table())
-# simulate_moves(gemeran_daisy, 55)
-agent = AlphaBetaPruningAgent(max_depth=3)
-current_time = time.time()
-best_move = agent.AlphaBetaPruningSearch(gemeran_daisy)
-finish_time = time.time()
-print(finish_time - current_time)
-print(best_move)
+#
+# gemeran_daisy = GameState(board=OptimizedBoard(BoardLayout.GERMAN_DAISY.value),turn=Piece.BLACK)
+# # print(generate_hex_lookup_table())
+# # simulate_moves(gemeran_daisy, 55)
+# agent = AlphaBetaPruningAgent(max_depth=4)
+# current_time = time.time()
+# best_move = agent.AlphaBetaPruningSearch(gemeran_daisy)
+# finish_time = time.time()
+# print(finish_time - current_time)
+# print(best_move)
