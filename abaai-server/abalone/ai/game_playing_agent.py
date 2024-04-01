@@ -97,19 +97,26 @@ MANHATTAN_WEIGHT_CONVERTED = [
 
 def evaluate(game_state: GameState) -> float:
     score = 0
-    score += 10 * manhattan_distance_to_center(game_state, MANHATTAN_WEIGHT_CONVERTED)
+    score += 10 * board_control(game_state, MANHATTAN_WEIGHT_CONVERTED)
     score += 1000 * piece_advantage(game_state)
     score += 10000000 * terminal_test(game_state)
     return score
 
 
-def manhattan_distance_to_center(game_state, hex_lookup_table):
+def board_control(game_state, lookup_table):
+    """
+    A zero-sum heuristic for evaluating the board state based on the distance of the player's/opponents marbles from
+    the center.
+    :param game_state: The current game state
+    :param lookup_table: A lookup table.
+    :return: The score of the board state based on the distance of the player's/opponents marbles from the center.
+    """
     player_score = 0
     opponent_score = 0
 
     for index, value in enumerate(game_state.board.array):
         if value in (1, 2):
-            hex_coords = hex_lookup_table[index]
+            hex_coords = lookup_table[index]
             if hex_coords:
                 distance = max(abs(hex_coords[0]), abs(hex_coords[1]))
                 if value == game_state.turn.value:
@@ -121,10 +128,21 @@ def manhattan_distance_to_center(game_state, hex_lookup_table):
 
 
 def piece_advantage(game_state):
+    """
+    A heuristic for evaluating the board state based on the number of marbles the player has compared to the
+    opponent.
+    :param game_state: The current game state
+    :return: The score of the board state based on the number of marbles the player has compared to the opponent.
+    """
     return game_state.remaining_player_marbles - game_state.remaining_opponent_marbles
 
 
 def terminal_test(game_state: GameState):
+    """
+    A heuristic for evaluating the board state based on whether the game is in a terminal state.
+    :param game_state: The current game state
+    :return: The score of the board state based on whether the game is in a terminal state.
+    """
     if game_state.remaining_player_marbles < 9:
         return -10000
     if game_state.remaining_opponent_marbles < 9:
@@ -160,4 +178,4 @@ def simulate_moves(game_state: GameState, max_moves: int):
 
 
 if __name__ == '__main__':
-    simulate_moves(GameState(), 1)
+    simulate_moves(GameState(), 10)
