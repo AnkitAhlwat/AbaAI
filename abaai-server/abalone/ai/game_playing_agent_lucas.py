@@ -62,7 +62,7 @@ class AlphaBetaPruningAgentLucas:
 class HeuristicFunction:
     weights = {
         "terminal_state": 100_000_000,
-        "piece_count": 1_000,
+        "piece_count": 10_000,
         "manhattan_distance": 100,
         "clumping": 10,
     }
@@ -81,7 +81,7 @@ class HeuristicFunction:
 
         score += cls.manhattan_distance(player_marbles, opponent_marbles) * cls.weights["manhattan_distance"]
 
-        # score += cls.clumping(game_state.board.to_matrix(), player_marbles, opponent_marbles) * cls.weights["clumping"]
+        score += cls.clumping(game_state.board.to_matrix(), player_marbles, opponent_marbles) * cls.weights["clumping"]
 
         return score
 
