@@ -130,16 +130,9 @@ class Game:
         return self.__to_json()
 
     def get_ai_move(self) -> dict:
-        if self._is_first_move:
-            # choose random move for the first move
-            self._is_first_move = False
-            all_moves = StateSpaceGenerator.generate_all_possible_moves(self._current_game_state)
-            return choice(all_moves).to_json()
-        else:
-            # Add agents here
-            agent = AlphaBetaPruningAgent(max_depth=3)
-            move = agent.AlphaBetaPruningSearch(self._current_game_state)
-            return move.to_json()
+        agent = AlphaBetaPruningAgent(max_depth=3)
+        move = agent.AlphaBetaPruningSearch(self._current_game_state)
+        return move.to_json()
 
     def reset_game(self) -> dict:
         """

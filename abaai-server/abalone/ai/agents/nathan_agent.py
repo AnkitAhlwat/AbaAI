@@ -162,7 +162,3 @@ def simulate_moves(game_state: GameState, max_moves: int):
     print(game_state.board)
     print(game_state.remaining_player_marbles)
     print(game_state.remaining_opponent_marbles)
-
-
-if __name__ == "__main__":
-    simulate_moves(GameState(), 10)
