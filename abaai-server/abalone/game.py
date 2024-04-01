@@ -137,7 +137,11 @@ class Game:
             all_moves = StateSpaceGenerator.generate_all_possible_moves(self._current_game_state)
             return choice(all_moves).to_json()
         else:
-            agent = AlphaBetaPruningAgent(max_depth=3)
+            # Add agents here
+            if self._current_game_state.turn == Piece.WHITE:
+                agent = AlphaBetaPruningAgent(max_depth=3)
+            else:
+                agent = AlphaBetaPruningAgent(max_depth=3)
             move = agent.AlphaBetaPruningSearch(self._current_game_state)
             return move.to_json()
 
