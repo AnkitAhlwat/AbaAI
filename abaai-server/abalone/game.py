@@ -1,7 +1,8 @@
-from random import choice
+# from random import choice
 
 from abalone.ai.state_space_generator import StateSpaceGenerator
-from abalone.board import BoardLayout, Board
+from abalone.ai.game_playing_agent import AlphaBetaPruningAgent
+from abalone.board import OptimizedBoard, BoardLayout
 from abalone.movement import Move, Piece
 from abalone.stack import Stack
 from abalone.state import GameState, GameStateUpdate
@@ -88,13 +89,14 @@ class Game:
     def __init__(self):
         self._game_options = GameOptions()
         self._moves_stack = Stack()
-        self._current_game_state = GameState(Board(self._game_options.board_layout.value))
+        self._current_game_state = GameState(OptimizedBoard(self._game_options.board_layout.value))
         self._game_started = False
         self._game_configured = False
+        self._is_first_move = True
 
     def set_up(self, config) -> dict:
         self._game_options = GameOptions.from_json(config)
-        self._current_game_state = GameState(Board(self._game_options.board_layout.value), Piece.BLACK)
+        self._current_game_state = GameState(OptimizedBoard(self._game_options.board_layout.value), Piece.BLACK)
 
         self._game_configured = True
 
@@ -128,9 +130,8 @@ class Game:
         return self.__to_json()
 
     def get_ai_move(self) -> dict:
-        # return a random move for now
-        list_of_moves = StateSpaceGenerator.generate_all_possible_moves(self._current_game_state)
-        move = choice(list_of_moves)
+        agent = AlphaBetaPruningAgent(max_depth=3)
+        move = agent.AlphaBetaPruningSearch(self._current_game_state)
         return move.to_json()
 
     def reset_game(self) -> dict:
@@ -145,7 +146,7 @@ class Game:
         self._game_started = False
 
         # reset the board to be the selected board
-        board = Board(self._game_options.board_layout.value)
+        board = OptimizedBoard(self._game_options.board_layout.value)
         self._current_game_state = GameState(board)
 
         return self.__to_json()
@@ -160,7 +161,8 @@ class Game:
             "game_started": self._game_started,
             "game_configured": self._game_configured,
             "game_state": self._current_game_state.to_json(),
-            "moves_stack": self._moves_stack.to_json()
+            "moves_stack": self._moves_stack.to_json(),
+            "is_first_move": self._is_first_move
         }
 
     @staticmethod

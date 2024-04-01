@@ -51,7 +51,7 @@ class Position:
         return f'({self.x}, {self.y})'
 
     def __eq__(self, other):
-        return isinstance(other, Position) and self.x == other.x and self.y == other.y
+        return self.x == other.x and self.y == other.y
 
     def __hash__(self):
         return hash((self.x, self.y))
@@ -98,6 +98,11 @@ class Move:
 
     def __str__(self):
         return self.__to_move_notation()
+
+    def __lt__(self, other):
+        if len(self.next_opponent_positions) != len(other.next_opponent_positions):
+            return len(self.next_opponent_positions) > len(other.next_opponent_positions)
+        return len(self.previous_player_positions) > len(other.previous_player_positions)
 
     @property
     def previous_player_positions(self):

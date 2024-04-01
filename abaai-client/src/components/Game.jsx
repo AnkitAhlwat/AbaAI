@@ -135,6 +135,16 @@ const Game = () => {
   const startGame = useCallback(async () => {
     if (!gameStarted) {
       const gameStatus = await GameService.startGame();
+      console.log("Game Status:", gameStatus);
+
+      if (
+        gameStatus?.is_first_move &&
+        gameStatus?.game_options.blackPlayer === "Computer"
+      ) {
+        const aiMove = await GameService.getAiMoveForCurrentState();
+        setBlackAiMove(aiMove);
+      }
+
       updateGame(gameStatus);
       setGameStarted(true);
       resumeGame("black");
@@ -144,6 +154,8 @@ const Game = () => {
   // Handles move selection
   const onMoveSelection = useCallback(
     async (move) => {
+      setBlackAiMove(null);
+      setWhiteAiMove(null);
       console.log("Move:", move);
 
       //toggle the active player turn

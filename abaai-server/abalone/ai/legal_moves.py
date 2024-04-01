@@ -13,6 +13,13 @@ class LegalMoves:
 
     # Conditions / Helpers
     @staticmethod
+    def get_flat_index(x, y):
+        """Calculate the index in the flat array for the board position (x, y)."""
+        if x < 0 or y < 0:
+            return -1
+        return y * 9 + x
+
+    @staticmethod
     def are_marbles_inline(*positions):
         """Check if the given marbles (positions) are in-line. Works for 2 or 3 marbles."""
         if len(positions) < 2:
@@ -28,26 +35,30 @@ class LegalMoves:
 
     @staticmethod
     def is_position_out_of_bounds(board, position):
-        """Check if a position is empty or out of bounds."""
-        return not LegalMoves.is_position_within_board(board, position) or board[position.y][position.x] == -1
+        """Check if a position is out of bounds."""
+        index = LegalMoves.get_flat_index(position.x, position.y)
+        if not LegalMoves.is_position_within_board(board, position):
+            return True
+        if LegalMoves.is_position_within_board(board, position):
+            return board[index] == -1
 
     @staticmethod
     def is_position_within_board(board, position):
         """Check if the position is within the board boundaries."""
-        return 0 <= position.y < len(board) and 0 <= position.x < len(board[position.y])
-
+        return 0 <= position.y < 9 and 0 <= position.x < 9
     @staticmethod
     def is_position_empty(board, position):
         """Check if a position is empty."""
-        return LegalMoves.is_position_within_board(board, position) and board[position.y][position.x] == 0
+        index = LegalMoves.get_flat_index(position.x, position.y)
+        return LegalMoves.is_position_within_board(board,position) and board[index] == 0
 
     @staticmethod
     def is_position_empty_or_vacating(board, position, vacating_positions=None):
         """Check if a position is empty or being vacated by the moving marbles."""
         if vacating_positions is None:
             vacating_positions = []
-        if LegalMoves.is_position_within_board(board, position):
-            return board[position.y][position.x] == 0 or position in vacating_positions
+        index = LegalMoves.get_flat_index(position.x, position.y)
+        return (LegalMoves.is_position_within_board(board, position) and board[index] == 0) or position in vacating_positions
 
     @staticmethod
     def get_valid_moves(game_state, *positions):
@@ -62,9 +73,8 @@ class LegalMoves:
         for move_x, move_y in LegalMoves.possible_moves:
             new_positions = [Position(pos.x + move_x, pos.y + move_y) for pos in positions]
 
-            if all(LegalMoves.is_position_within_board(board, new_pos) for new_pos in new_positions) and \
-                    all(LegalMoves.is_position_empty_or_vacating(board, new_pos, vacating_positions)
-                        for new_pos in new_positions):
+            if all(LegalMoves.is_position_empty_or_vacating(board, new_pos, vacating_positions)
+                   for new_pos in new_positions):
                 move = Move(
                     vacating_positions,
                     new_positions,
@@ -89,8 +99,8 @@ class LegalMoves:
         push_target_pos = Position(last_opponent_pos.x + direction[0], last_opponent_pos.y + direction[1])
 
         return not LegalMoves.is_position_within_board(board, push_target_pos) \
-            or LegalMoves.is_position_empty(board, push_target_pos) \
-            or LegalMoves.is_position_out_of_bounds(board, push_target_pos)
+               or LegalMoves.is_position_empty(board, push_target_pos) \
+               or LegalMoves.is_position_out_of_bounds(board, push_target_pos)
 
     @staticmethod
     def find_marble_sequence(board, start_pos, direction, player_positions, opponent_positions):
@@ -141,8 +151,8 @@ class LegalMoves:
                                             sequence['player']]
                     new_positions_opponent = [Position(pos.x + direction[0], pos.y + direction[1]) for pos in
                                               sequence['opponent']
-                                              if LegalMoves.is_position_within_board
-                                              (board, Position(pos.x + direction[0], pos.y + direction[1]))]
+                                              if not LegalMoves.is_position_out_of_bounds
+                        (board, Position(pos.x + direction[0], pos.y + direction[1]))]
 
                     sumito_move_list.append(Move(
                         sequence['player'],
