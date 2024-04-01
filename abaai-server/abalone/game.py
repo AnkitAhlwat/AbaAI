@@ -1,4 +1,4 @@
-from random import choice
+# from random import choice
 
 from abalone.ai.state_space_generator import StateSpaceGenerator
 from abalone.ai.game_playing_agent import AlphaBetaPruningAgent
