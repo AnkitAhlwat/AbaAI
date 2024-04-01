@@ -2,7 +2,9 @@ from random import choice
 
 from abalone import board
 from abalone.ai.state_space_generator import StateSpaceGenerator
-from abalone.board import BoardLayout, Board
+from abalone.ai.super_secret_agent import AlphaBetaPruningAgent
+from abalone.board import BoardLayout
+from abalone.board_ai import OptimizedBoard
 from abalone.movement import Move, Piece
 from abalone.stack import Stack
 from abalone.state import GameState, GameStateUpdate
@@ -90,13 +92,14 @@ class Game:
     def __init__(self):
         self._game_options = GameOptions()
         self._moves_stack = Stack()
-        self._current_game_state = GameState(Board(self._game_options.board_layout.value))
+        self._current_game_state = GameState(OptimizedBoard(self._game_options.board_layout.value))
         self._game_started = False
         self._game_configured = False
+        self._is_first_move = True
 
     def set_up(self, config) -> dict:
         self._game_options = GameOptions.from_json(config)
-        self._current_game_state = GameState(Board(self._game_options.board_layout.value), Piece.BLACK)
+        self._current_game_state = GameState(OptimizedBoard(self._game_options.board_layout.value), Piece.BLACK)
 
         self._game_configured = True
 
@@ -134,30 +137,43 @@ class Game:
 
         # for profiling
         # -------------------------------------------------------------------
-        test_board = [
-            [-1, -1, -1, -1, 0, 0, 0, 0, 0],
-            [-1, -1, -1, 0, 2, 2, 2, 0, 0],
-            [-1, -1, 0, 2, 2, 2, 1, 0, 0],
-            [-1, 0, 0, 1, 1, 1, 2, 0, 0],
-            [0, 0, 1, 2, 2, 1, 2, 0, 0],
-            [0, 1, 2, 2, 1, 1, 1, 0, -1],
-            [0, 2, 1, 1, 2, 0, 0, -1, -1],
-            [0, 0, 1, 1, 0, 0, -1, -1, -1],
-            [0, 0, 0, 0, 0, -1, -1, -1, -1],
-        ]
-
-        board_array = Board(test_board)
-
-        self._current_game_state = GameState(board=
-                                             board_array,
-                                             turn=Piece.BLACK,
-                                             remaining_player_marbles=14,
-                                             remaining_opponent_marbles=14)
-        # ------------------------------------------------------------------------------
-
-        agent = MiniMaxAgent(2)
-        move = agent.get_best_move(self._current_game_state)
-        return move.to_json()
+        # test_board = [
+        #     [-1, -1, -1, -1, 0, 0, 0, 0, 0],
+        #     [-1, -1, -1, 0, 2, 2, 2, 0, 0],
+        #     [-1, -1, 0, 2, 2, 2, 1, 0, 0],
+        #     [-1, 0, 0, 1, 1, 1, 2, 0, 0],
+        #     [0, 0, 1, 2, 2, 1, 2, 0, 0],
+        #     [0, 1, 2, 2, 1, 1, 1, 0, -1],
+        #     [0, 2, 1, 1, 2, 0, 0, -1, -1],
+        #     [0, 0, 1, 1, 0, 0, -1, -1, -1],
+        #     [0, 0, 0, 0, 0, -1, -1, -1, -1],
+        # ]
+        #
+        # board_array = Board(test_board)
+        #
+        # self._current_game_state = GameState(board=
+        #                                      board_array,
+        #                                      turn=Piece.BLACK,
+        #                                      remaining_player_marbles=14,
+        #                                      remaining_opponent_marbles=14)
+        # # ------------------------------------------------------------------------------
+        #
+        # agent = MiniMaxAgent(2)
+        # move = agent.get_best_move(self._current_game_state)
+        # return move.to_json()
+        if self._is_first_move:
+            # choose random move for the first move
+            self._is_first_move = False
+            all_moves = StateSpaceGenerator.generate_all_possible_moves(self._current_game_state)
+            return choice(all_moves).to_json()
+        else:
+            # Add agents here
+            if self._current_game_state.turn == Piece.WHITE:
+                agent = AlphaBetaPruningAgent(max_depth=3)
+            else:
+                agent = AlphaBetaPruningAgent(max_depth=3)
+            move = agent.AlphaBetaPruningSearch(self._current_game_state)
+            return move.to_json()
 
     def reset_game(self) -> dict:
         """
@@ -171,7 +187,7 @@ class Game:
         self._game_started = False
 
         # reset the board to be the selected board
-        board = Board(self._game_options.board_layout.value)
+        board = OptimizedBoard(self._game_options.board_layout.value)
         self._current_game_state = GameState(board)
 
         return self.__to_json()
@@ -186,7 +202,8 @@ class Game:
             "game_started": self._game_started,
             "game_configured": self._game_configured,
             "game_state": self._current_game_state.to_json(),
-            "moves_stack": self._moves_stack.to_json()
+            "moves_stack": self._moves_stack.to_json(),
+            "is_first_move": self._is_first_move
         }
 
     @staticmethod

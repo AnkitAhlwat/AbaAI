@@ -9,23 +9,21 @@ class StateSpaceGenerator:
     def get_player_piece_positions(game_state) -> dict[str, list[Position]]:
         player_max_value = game_state.turn.value
         player_min_value = 2 if player_max_value == 1 else 1
-
-        player_max_piece_positions = [
-            Position(x, y)
-            for y in range(9)
-            for x in range(9)
-            if game_state.board.array[y][x] == player_max_value
-        ]
-
-        player_min_piece_positions = [
-            Position(x, y)
-            for y in range(9)
-            for x in range(9)
-            if game_state.board.array[y][x] == player_min_value
-        ]
-
-        return {"player_max": player_max_piece_positions,
-                "player_min": player_min_piece_positions}
+        player_dict = {"player_max": player_max_value, "player_min": player_min_value}
+        player_max_piece_positions = []
+        player_min_piece_positions = []
+        for index in range(game_state.board.array.__len__()):
+            if game_state.board.array[index] == player_max_value:
+                x = index % game_state.board.width
+                y = index // game_state.board.width
+                player_max_piece_positions.append(Position(x, y))
+            elif game_state.board.array[index] == player_min_value:
+                x = index % game_state.board.width
+                y = index // game_state.board.width
+                player_min_piece_positions.append(Position(x, y))
+        player_dict["player_max"] = player_max_piece_positions
+        player_dict["player_min"] = player_min_piece_positions
+        return player_dict
 
     @staticmethod
     def generate_all_moves(game_state, player_piece) -> list[Move]:
