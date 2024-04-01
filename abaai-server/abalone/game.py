@@ -2,13 +2,12 @@ from random import choice
 
 from abalone import board
 from abalone.ai.state_space_generator import StateSpaceGenerator
-from abalone.ai.super_secret_agent import AlphaBetaPruningAgent
+from abalone.ai.agent_test import AlphaBetaPruningAgent
 from abalone.board import BoardLayout
 from abalone.board_ai import OptimizedBoard
 from abalone.movement import Move, Piece
 from abalone.stack import Stack
 from abalone.state import GameState, GameStateUpdate
-from abalone.ai.game_playing_agent import MiniMaxAgent
 
 
 class GameOptions:
@@ -161,19 +160,21 @@ class Game:
         # agent = MiniMaxAgent(2)
         # move = agent.get_best_move(self._current_game_state)
         # return move.to_json()
-        if self._is_first_move:
-            # choose random move for the first move
-            self._is_first_move = False
-            all_moves = StateSpaceGenerator.generate_all_possible_moves(self._current_game_state)
-            return choice(all_moves).to_json()
+
+        # if self._is_first_move:
+        #     # choose random move for the first move
+        #     self._is_first_move = False
+        #     all_moves = StateSpaceGenerator.generate_all_possible_moves(self._current_game_state)
+        #     return choice(all_moves).to_json()
+        # else:
+
+        # Add agents here
+        if self._current_game_state.turn == Piece.WHITE:
+            agent = AlphaBetaPruningAgent(max_depth=3)
         else:
-            # Add agents here
-            if self._current_game_state.turn == Piece.WHITE:
-                agent = AlphaBetaPruningAgent(max_depth=3)
-            else:
-                agent = AlphaBetaPruningAgent(max_depth=3)
-            move = agent.AlphaBetaPruningSearch(self._current_game_state)
-            return move.to_json()
+            agent = AlphaBetaPruningAgent(max_depth=3)
+        move = agent.alphabeta_pruning_search(self._current_game_state)
+        return move.to_json()
 
     def reset_game(self) -> dict:
         """

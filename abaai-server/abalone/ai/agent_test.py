@@ -1,8 +1,5 @@
-import time
-
 from abalone.ai.state_space_generator import StateSpaceGenerator
-from abalone.board_opt import BoardLayout, OptimizedBoard, Piece
-from abalone.test import GameStateUpdate, GameState
+from abalone.state import GameStateUpdate, GameState
 
 
 class AlphaBetaPruningAgent:
