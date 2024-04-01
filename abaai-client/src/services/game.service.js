@@ -18,7 +18,7 @@ class GameService {
         try {
             const url = `${import.meta.env.VITE_API_BASE_URL}/game/start`
             const response = await axios.post(url)
-            console.log(response.data)
+            return response.data;
         } catch (error) {
             console.error('Error starting game')
         }

@@ -1,7 +1,7 @@
-# from random import choice
+from random import choice
 
-from abalone.ai.state_space_generator import StateSpaceGenerator
 from abalone.ai.game_playing_agent import AlphaBetaPruningAgent
+from abalone.ai.state_space_generator import StateSpaceGenerator
 from abalone.board import OptimizedBoard, BoardLayout
 from abalone.movement import Move, Piece
 from abalone.stack import Stack
@@ -110,6 +110,9 @@ class Game:
         return self.__to_json()
 
     def make_move(self, move) -> dict:
+        if self._is_first_move:
+            self._is_first_move = False
+
         # convert the move to a Move object
         try:
             move_obj = Move.from_json(move)
@@ -130,9 +133,15 @@ class Game:
         return self.__to_json()
 
     def get_ai_move(self) -> dict:
-        agent = AlphaBetaPruningAgent(max_depth=3)
-        move = agent.AlphaBetaPruningSearch(self._current_game_state)
-        return move.to_json()
+        if self._game_options.is_black_ai and self._is_first_move:
+            self._is_first_move = False
+            # random move for first move
+            all_moves = StateSpaceGenerator.generate_all_possible_moves(self._current_game_state)
+            return choice(all_moves).to_json()
+        else:
+            agent = AlphaBetaPruningAgent(max_depth=3)
+            move = agent.AlphaBetaPruningSearch(self._current_game_state)
+            return move.to_json()
 
     def reset_game(self) -> dict:
         """
@@ -144,6 +153,9 @@ class Game:
 
         # set started to false
         self._game_started = False
+
+        # set first move to true
+        self._is_first_move = True
 
         # reset the board to be the selected board
         board = OptimizedBoard(self._game_options.board_layout.value)
