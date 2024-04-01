@@ -1,4 +1,4 @@
-from abalone.board_ai import OptimizedBoard
+from abalone.board import OptimizedBoard
 from abalone.movement import Move, Piece
 
 
@@ -89,7 +89,6 @@ class GameStateUpdate:
             player_marbles,
             opponent_marbles
         )
-
 
     @classmethod
     def convert_moves_to_game_state_updates(cls, game_state: GameState, moves: list[Move]) -> list['GameStateUpdate']:

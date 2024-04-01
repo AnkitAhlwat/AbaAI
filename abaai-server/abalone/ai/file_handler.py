@@ -1,7 +1,6 @@
 from copy import deepcopy
 
-from abalone.board import BoardLayout, Board
-from abalone.board_ai import OptimizedBoard
+from abalone.board import OptimizedBoard, BoardLayout
 from abalone.state import GameState, GameStateUpdate
 from abalone.movement import Piece, Position
 
@@ -41,7 +40,7 @@ class FileHandler:
 
     # Private helpers
     @staticmethod
-    def __convert_board_object_to_board_notation(board: Board) -> str:
+    def __convert_board_object_to_board_notation(board: OptimizedBoard) -> str:
         black_piece_positions = []
         white_piece_positions = []
 

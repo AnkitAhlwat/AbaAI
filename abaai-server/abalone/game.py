@@ -1,9 +1,8 @@
 from random import choice
 
 from abalone.ai.state_space_generator import StateSpaceGenerator
-from abalone.ai.super_secret_agent import AlphaBetaPruningAgent
-from abalone.board import BoardLayout
-from abalone.board_ai import OptimizedBoard
+from abalone.ai.game_playing_agent import AlphaBetaPruningAgent
+from abalone.board import OptimizedBoard, BoardLayout
 from abalone.movement import Move, Piece
 from abalone.stack import Stack
 from abalone.state import GameState, GameStateUpdate
@@ -138,10 +137,7 @@ class Game:
             return choice(all_moves).to_json()
         else:
             # Add agents here
-            if self._current_game_state.turn == Piece.WHITE:
-                agent = AlphaBetaPruningAgent(max_depth=3)
-            else:
-                agent = AlphaBetaPruningAgent(max_depth=3)
+            agent = AlphaBetaPruningAgent(max_depth=3)
             move = agent.AlphaBetaPruningSearch(self._current_game_state)
             return move.to_json()
 
