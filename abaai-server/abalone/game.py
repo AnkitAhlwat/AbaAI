@@ -1,3 +1,4 @@
+from random import choice
 
 from abalone.ai.state_space_generator import StateSpaceGenerator
 from abalone.ai.super_secret_agent import AlphaBetaPruningAgent
@@ -92,6 +93,7 @@ class Game:
         self._current_game_state = GameState(OptimizedBoard(self._game_options.board_layout.value))
         self._game_started = False
         self._game_configured = False
+        self._is_first_move = True
 
     def set_up(self, config) -> dict:
         self._game_options = GameOptions.from_json(config)
@@ -129,9 +131,15 @@ class Game:
         return self.__to_json()
 
     def get_ai_move(self) -> dict:
-        agent = AlphaBetaPruningAgent(max_depth=3)
-        move = agent.AlphaBetaPruningSearch(self._current_game_state)
-        return move.to_json()
+        if self._is_first_move:
+            # choose random move for the first move
+            self._is_first_move = False
+            all_moves = StateSpaceGenerator.generate_all_possible_moves(self._current_game_state)
+            return choice(all_moves).to_json()
+        else:
+            agent = AlphaBetaPruningAgent(max_depth=3)
+            move = agent.AlphaBetaPruningSearch(self._current_game_state)
+            return move.to_json()
 
     def reset_game(self) -> dict:
         """
@@ -160,7 +168,8 @@ class Game:
             "game_started": self._game_started,
             "game_configured": self._game_configured,
             "game_state": self._current_game_state.to_json(),
-            "moves_stack": self._moves_stack.to_json()
+            "moves_stack": self._moves_stack.to_json(),
+            "is_first_move": self._is_first_move
         }
 
     @staticmethod
