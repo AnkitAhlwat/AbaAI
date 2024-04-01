@@ -190,11 +190,29 @@ const Game = () => {
 
   // Handles move undo
   const onUndoLastMove = useCallback(async () => {
-    const responseData = await GameService.postUndoLastMove();
-    console.log(responseData);
-    setBoardArray(responseData.board);
-    setMovesStack(responseData.moves_stack);
-  }, [setBoardArray]);
+    const gameStatus = await GameService.postUndoLastMove();
+    updateGame(gameStatus);
+
+    // if the move that was undone was the ai's move, then fetch the ai move again
+    if (
+      gameStatus.game_state.turn === 1 &&
+      gameStatus.game_options.blackPlayer === "Computer"
+    ) {
+      const aiMove = await GameService.getAiMoveForCurrentState();
+      setBlackAiMove(aiMove);
+      setWhiteAiMove(null);
+    } else if (
+      gameStatus.game_state.turn === 2 &&
+      gameStatus.game_options.whitePlayer === "Computer"
+    ) {
+      const aiMove = await GameService.getAiMoveForCurrentState();
+      setWhiteAiMove(aiMove);
+      setBlackAiMove(null);
+    } else {
+      setBlackAiMove(null);
+      setWhiteAiMove(null);
+    }
+  }, [updateGame]);
 
   // Handles game reset
   const onResetGame = useCallback(async () => {

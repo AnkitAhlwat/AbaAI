@@ -64,7 +64,12 @@ const GameControls = ({
         <Button variant="contained" onClick={onReset} color="info">
           Reset
         </Button>
-        <Button variant="contained" onClick={onUndo} color="info">
+        <Button
+          variant="contained"
+          onClick={onUndo}
+          color="info"
+          disabled={movesStack.length === 0}
+        >
           Undo
         </Button>
       </Stack>

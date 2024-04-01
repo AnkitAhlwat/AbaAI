@@ -1,5 +1,5 @@
-from enum import Enum
 import itertools
+from enum import Enum
 
 
 class Piece(Enum):
@@ -121,6 +121,8 @@ class OptimizedBoard:
 
         for position in move_obj.previous_opponent_positions:
             self.set_space_state(position.x, position.y, SpaceState(3 - move_obj.player.value))
+
+        return self.to_matrix()
 
     def __repr__(self):
         """Generate a 2D board-like representation for printing."""
