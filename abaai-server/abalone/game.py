@@ -147,13 +147,16 @@ class Game:
             start_time = time.time()
             print("start time:", start_time)
 
-            # set the time limit for the AI
+            # manually set the depth limit
+            depth_limit = 3
+
+            # set the time limit for the AI based on config
             if self._current_game_state.turn == Piece.BLACK:
                 time_limit = self._game_options.black_time_limit_seconds
             else:
                 time_limit = self._game_options.white_time_limit_seconds
 
-            agent = AlphaBetaPruningAgent(max_depth=4, max_time_sec=time_limit)
+            agent = AlphaBetaPruningAgent(max_depth=depth_limit, max_time_sec=time_limit)
             move = agent.AlphaBetaPruningSearch(self._current_game_state)
 
             end_time = time.time()
