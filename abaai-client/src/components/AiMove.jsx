@@ -5,6 +5,8 @@ import Move from "../models/Move";
 
 // Displays each move the AI mades on the GUI interface
 const AIMoveDisplay = ({ aiMove, onApplyMove, isWhite, disabled }) => {
+  const { move, time_taken } = aiMove || {};
+
   return (
     <Paper
       elevation={3}
@@ -29,19 +31,30 @@ const AIMoveDisplay = ({ aiMove, onApplyMove, isWhite, disabled }) => {
             }}
             textAlign={"center"}
           >
-            {aiMove ? Move.toNotation(aiMove) : "..."}
+            {move ? Move.toNotation(move) : "..."}
           </Typography>
         </Grid>
-        <Grid item>
+        <Grid item xs={6}>
           <Button
             variant="contained"
             color="success"
-            onClick={() => onApplyMove(aiMove)}
+            onClick={() => onApplyMove(move)}
             disabled={disabled}
           >
             Apply
           </Button>
         </Grid>
+        {time_taken !== undefined && (
+          <Grid item xs={6}>
+            <Typography
+              variant="subtitle2"
+              color={isWhite ? "#262522" : "#f5f5f5"}
+              textAlign={"center"}
+            >
+              {time_taken} s
+            </Typography>
+          </Grid>
+        )}
       </Grid>
     </Paper>
   );

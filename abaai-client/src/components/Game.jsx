@@ -84,6 +84,27 @@ const Game = () => {
     setWhiteMovesRemaining(gameStatus.game_options.moveLimit);
   }, [config, updateGame]);
 
+  const getAiMove = useCallback(async (gameStatus) => {
+    // set the ai move card to display the move that the ai generated
+    // only get the ai move if the turn is for the computer player
+    if (
+      (gameStatus.game_state.turn === 1 &&
+        gameStatus.game_options.blackPlayer === "Computer") ||
+      (gameStatus.game_state.turn === 2 &&
+        gameStatus.game_options.whitePlayer === "Computer")
+    ) {
+      const aiMove = await GameService.getAiMoveForCurrentState();
+
+      if (gameStatus.game_state.turn === 1) {
+        setBlackAiMove(aiMove);
+        setWhiteAiMove(null);
+      } else {
+        setWhiteAiMove(aiMove);
+        setBlackAiMove(null);
+      }
+    }
+  }, []);
+
   const toggleTurn = () => {
     setActivePlayer((prev) => (prev === "black" ? "white" : "black"));
   };
@@ -156,15 +177,14 @@ const Game = () => {
         gameStatus?.is_first_move &&
         gameStatus?.game_options.blackPlayer === "Computer"
       ) {
-        const aiMove = await GameService.getAiMoveForCurrentState();
-        setBlackAiMove(aiMove);
+        getAiMove(gameStatus);
       }
 
       updateGame(gameStatus);
       setGameStarted(true);
       resumeGame("black");
     }
-  }, [gameStarted, updateGame]);
+  }, [gameStarted, getAiMove, updateGame]);
 
   // Handles move selection
   const onMoveSelection = useCallback(
@@ -192,24 +212,10 @@ const Game = () => {
       const gameStatus = await GameService.postMove(moveObj);
       updateGame(gameStatus);
 
-      // set the ai move card to display the move that the ai generated
-      // only get the ai move if the turn is for the computer player
-      if (
-        (gameStatus.game_state.turn === 1 &&
-          gameStatus.game_options.blackPlayer === "Computer") ||
-        (gameStatus.game_state.turn === 2 &&
-          gameStatus.game_options.whitePlayer === "Computer")
-      ) {
-        const aiMove = await GameService.getAiMoveForCurrentState();
-
-        if (gameStatus.game_state.turn === 1) {
-          setBlackAiMove(aiMove);
-        } else {
-          setWhiteAiMove(aiMove);
-        }
-      }
+      // fetch the ai move if need be
+      getAiMove(gameStatus);
     },
-    [gameStarted, currentTurn, updateGame]
+    [gameStarted, currentTurn, updateGame, getAiMove]
   );
 
   // Handles move undo
@@ -222,21 +228,17 @@ const Game = () => {
       gameStatus.game_state.turn === 1 &&
       gameStatus.game_options.blackPlayer === "Computer"
     ) {
-      const aiMove = await GameService.getAiMoveForCurrentState();
-      setBlackAiMove(aiMove);
-      setWhiteAiMove(null);
+      getAiMove(gameStatus);
     } else if (
       gameStatus.game_state.turn === 2 &&
       gameStatus.game_options.whitePlayer === "Computer"
     ) {
-      const aiMove = await GameService.getAiMoveForCurrentState();
-      setWhiteAiMove(aiMove);
-      setBlackAiMove(null);
+      getAiMove(gameStatus);
     } else {
       setBlackAiMove(null);
       setWhiteAiMove(null);
     }
-  }, [updateGame]);
+  }, [getAiMove, updateGame]);
 
   // Handles game reset
   const onResetGame = useCallback(async () => {

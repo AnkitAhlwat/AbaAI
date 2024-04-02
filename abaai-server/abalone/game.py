@@ -138,7 +138,11 @@ class Game:
             self._is_first_move = False
             # random move for first move
             all_moves = StateSpaceGenerator.generate_all_possible_moves(self._current_game_state)
-            return choice(all_moves).to_json()
+
+            return {
+                "move": choice(all_moves).to_json(),
+                "time_taken": 0.00
+            }
         else:
             start_time = time.time()
             print("start time:", start_time)
@@ -154,9 +158,14 @@ class Game:
 
             end_time = time.time()
             print("end time:", end_time)
-            print("time taken:", end_time - start_time, "seconds")
 
-            return move.to_json()
+            time_taken = end_time - start_time
+            print("time taken:", time_taken, "seconds")
+
+            return {
+                "move": move.to_json(),
+                "time_taken": float(f"{time_taken:.2f}")  # round to 2 decimal places
+            }
 
     def reset_game(self) -> dict:
         """
