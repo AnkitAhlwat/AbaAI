@@ -32,7 +32,7 @@ const RightSideBar = (props) => {
     blackClock,
     whiteClock,
     resetClockSignal,
-    updateGame,
+    onSubmitConfig,
     onApplyMove,
   } = props;
 
@@ -107,7 +107,7 @@ const RightSideBar = (props) => {
           <ConfigMenu
             config={config}
             setConfig={setConfig}
-            updateGame={updateGame}
+            onSubmitConfig={onSubmitConfig}
             switchToGameTab={switchToGameTab}
           />
         </TabPanel>

@@ -23,6 +23,10 @@ const Game = () => {
   const [numCapturedBlackMarbles, setNumCapturedBlackMarbles] = useState(0); // Tracks number of black marbles captured
   const [numCapturedWhiteMarbles, setNumCapturedWhiteMarbles] = useState(0); // Tracks number of white marbles captured
   const [currentTurn, setCurrentTurn] = useState(0); // Tracks current turn
+  const [blackMoveTimeRemaining, setBlackMoveTimeRemaining] = useState(10); // Tracks black player move time remaining
+  const [whiteMoveTimeRemaining, setWhiteMoveTimeRemaining] = useState(0); // Tracks white player move time remaining
+  const [blackMovesRemaining, setBlackMovesRemaining] = useState(0); // Tracks black player moves remaining
+  const [whiteMovesRemaining, setWhiteMovesRemaining] = useState(0); // Tracks white player moves remaining
   //Defines aggregate clock states for each player, temporary
   const [blackClock, setBlackClock] = useState({
     time: 180,
@@ -65,9 +69,20 @@ const Game = () => {
       // Set the captured marbles
       setNumCapturedBlackMarbles(gameStatus.game_state.captured_black_marbles);
       setNumCapturedWhiteMarbles(gameStatus.game_state.captured_white_marbles);
+
+      // Set the move time remaining back to full time
+      setBlackMoveTimeRemaining(gameStatus.game_options.blackTimeLimit);
+      setWhiteMoveTimeRemaining(gameStatus.game_options.whiteTimeLimit);
     },
     [setBoardArray]
   );
+
+  const onSubmitConfig = useCallback(async () => {
+    const gameStatus = await GameService.postConfig(config);
+    updateGame(gameStatus);
+    setBlackMovesRemaining(gameStatus.game_options.moveLimit);
+    setWhiteMovesRemaining(gameStatus.game_options.moveLimit);
+  }, [config, updateGame]);
 
   const toggleTurn = () => {
     setActivePlayer((prev) => (prev === "black" ? "white" : "black"));
@@ -178,11 +193,20 @@ const Game = () => {
       updateGame(gameStatus);
 
       // set the ai move card to display the move that the ai generated
-      const aiMove = await GameService.getAiMoveForCurrentState();
-      if (gameStatus.game_state.turn === 1) {
-        setBlackAiMove(aiMove);
-      } else {
-        setWhiteAiMove(aiMove);
+      // only get the ai move if the turn is for the computer player
+      if (
+        (gameStatus.game_state.turn === 1 &&
+          gameStatus.game_options.blackPlayer === "Computer") ||
+        (gameStatus.game_state.turn === 2 &&
+          gameStatus.game_options.whitePlayer === "Computer")
+      ) {
+        const aiMove = await GameService.getAiMoveForCurrentState();
+
+        if (gameStatus.game_state.turn === 1) {
+          setBlackAiMove(aiMove);
+        } else {
+          setWhiteAiMove(aiMove);
+        }
       }
     },
     [gameStarted, currentTurn, updateGame]
@@ -257,6 +281,10 @@ const Game = () => {
           numCapturedWhiteMarbles={numCapturedWhiteMarbles}
           isGameActive={isGameActive}
           currentTurn={currentTurn}
+          blackMovetimeRemaining={blackMoveTimeRemaining}
+          whiteMovetimeRemaining={whiteMoveTimeRemaining}
+          blackMovesRemaining={blackMovesRemaining}
+          whiteMovesRemaining={whiteMovesRemaining}
 
           //for the clock controls
           // blackClock={blackClock}
@@ -301,6 +329,7 @@ const Game = () => {
           whiteClock={whiteClock}
           updateGame={updateGame}
           onApplyMove={onMoveSelection}
+          onSubmitConfig={onSubmitConfig}
           // currentPlayer={currentPlayer}
           // isPaused={isPaused}
           // togglePause={togglePause}

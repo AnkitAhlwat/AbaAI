@@ -13,6 +13,10 @@ const GameplaySection = (props) => {
     numCapturedWhiteMarbles,
     isGameActive,
     currentTurn,
+    blackMovetimeRemaining,
+    whiteMovetimeRemaining,
+    blackMovesRemaining,
+    whiteMovesRemaining,
   } = props;
 
   return (
@@ -22,8 +26,8 @@ const GameplaySection = (props) => {
           isBot
           color="white"
           numCapturedMarbles={numCapturedBlackMarbles}
-          // movesRemaining={19}
-          moveTimeRemaining={20}
+          movesRemaining={whiteMovesRemaining}
+          moveTimeRemaining={whiteMovetimeRemaining}
         />
       </Grid>
       <Grid
@@ -47,8 +51,8 @@ const GameplaySection = (props) => {
         <PlayerInfo
           color="black"
           numCapturedMarbles={numCapturedWhiteMarbles}
-          movesRemaining={18}
-          moveTimeRemaining={20}
+          movesRemaining={blackMovesRemaining}
+          moveTimeRemaining={blackMovetimeRemaining}
         />
       </Grid>
     </Grid>
@@ -64,6 +68,10 @@ GameplaySection.propTypes = {
   numCapturedWhiteMarbles: Proptypes.number.isRequired,
   isGameActive: Proptypes.bool.isRequired,
   currentTurn: Proptypes.number.isRequired,
+  blackMovetimeRemaining: Proptypes.number.isRequired,
+  whiteMovetimeRemaining: Proptypes.number.isRequired,
+  blackMovesRemaining: Proptypes.number.isRequired,
+  whiteMovesRemaining: Proptypes.number.isRequired,
 };
 
 export default GameplaySection;

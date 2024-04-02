@@ -5,8 +5,9 @@ from abalone.state import GameStateUpdate, GameState
 
 
 class AlphaBetaPruningAgent:
-    def __init__(self, max_depth: int):
+    def __init__(self, max_depth: int, max_time_sec: int = 10):
         self.max_depth = max_depth
+        self.max_time_sec = max_time_sec
         self.min_prunes = 0
         self.max_prunes = 0
 
@@ -14,27 +15,40 @@ class AlphaBetaPruningAgent:
         best_move = None
         alpha = float('-inf')
         beta = float('inf')
+
+        start_time = time.time()
+
         possible_moves = StateSpaceGenerator.generate_all_possible_moves(game_state)
         sorted_possible_moves = sorted(possible_moves)
+
         for move in sorted_possible_moves:
             successor_state = GameStateUpdate(game_state, move).resulting_state
-            value = self.Min_Value(successor_state, alpha, beta, self.max_depth - 1)
+            value = self.Min_Value(successor_state, alpha, beta, self.max_depth - 1, start_time)
             if value > alpha:
                 best_move = move
                 alpha = max(alpha, value)
+
         print(f'Max Prunes: {self.max_prunes}')
         print(f'Min Prunes: {self.min_prunes}')
+
         return best_move
 
-    def Max_Value(self, game_state: GameState, alpha: float, beta: float, depth: int):
+    def Max_Value(self, game_state: GameState, alpha: float, beta: float, depth: int, start_time: float):
+        # check if the time to find move is up
+        current_time = time.time()
+        if current_time - start_time >= self.max_time_sec:
+            return evaluate(game_state) * -1
+
         if game_state.is_game_over() or depth == 0:
             return evaluate(game_state) * -1
+
         value = float('-inf')
         possible_moves = StateSpaceGenerator.generate_all_possible_moves(game_state)
         sorted_possible_moves = sorted(possible_moves)
+
         for move in sorted_possible_moves:
             successor_state = GameStateUpdate(game_state, move).resulting_state
-            value = max(value, self.Min_Value(successor_state, alpha, beta, depth - 1))
+            value = max(value, self.Min_Value(successor_state, alpha, beta, depth - 1, start_time))
             alpha = max(alpha, value)
             if value >= beta:
                 self.max_prunes += 1
@@ -42,15 +56,22 @@ class AlphaBetaPruningAgent:
 
         return value
 
-    def Min_Value(self, game_state: GameState, alpha: float, beta: float, depth: int):
+    def Min_Value(self, game_state: GameState, alpha: float, beta: float, depth: int, start_time: float):
+        # check if the time to find move is up
+        current_time = time.time()
+        if current_time - start_time >= self.max_time_sec:
+            return evaluate(game_state)
+
         if game_state.is_game_over() or depth == 0:
             return evaluate(game_state)
+
         value = float('inf')
         possible_moves = StateSpaceGenerator.generate_all_possible_moves(game_state)
         sorted_possible_moves = sorted(possible_moves)
+
         for move in sorted_possible_moves:
             successor_state = GameStateUpdate(game_state, move).resulting_state
-            value = min(value, self.Max_Value(successor_state, alpha, beta, depth - 1))
+            value = min(value, self.Max_Value(successor_state, alpha, beta, depth - 1, start_time))
             beta = min(beta, value)
             if value <= alpha:
                 self.min_prunes += 1

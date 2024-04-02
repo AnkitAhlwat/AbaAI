@@ -1,3 +1,4 @@
+import time
 from random import choice
 
 from abalone.ai.game_playing_agent import AlphaBetaPruningAgent
@@ -139,8 +140,22 @@ class Game:
             all_moves = StateSpaceGenerator.generate_all_possible_moves(self._current_game_state)
             return choice(all_moves).to_json()
         else:
-            agent = AlphaBetaPruningAgent(max_depth=3)
+            start_time = time.time()
+            print("start time:", start_time)
+
+            # set the time limit for the AI
+            if self._current_game_state.turn == Piece.BLACK:
+                time_limit = self._game_options.black_time_limit_seconds
+            else:
+                time_limit = self._game_options.white_time_limit_seconds
+
+            agent = AlphaBetaPruningAgent(max_depth=4, max_time_sec=time_limit)
             move = agent.AlphaBetaPruningSearch(self._current_game_state)
+
+            end_time = time.time()
+            print("end time:", end_time)
+            print("time taken:", end_time - start_time, "seconds")
+
             return move.to_json()
 
     def reset_game(self) -> dict:

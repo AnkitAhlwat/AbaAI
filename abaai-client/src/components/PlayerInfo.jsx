@@ -42,25 +42,26 @@ const PlayerInfo = (props) => {
     </Grid>
   );
 
-  const movesRemainingDisplay = movesRemaining ? (
-    <Typography
-      variant="h5"
-      sx={{
-        color: "white",
-      }}
-    >
-      Moves Remaining: {movesRemaining}
-    </Typography>
-  ) : (
-    <Typography
-      variant="h5"
-      sx={{
-        color: "white",
-      }}
-    >
-      Moves Remaining: &infin;
-    </Typography>
-  );
+  const movesRemainingDisplay =
+    movesRemaining !== null ? (
+      <Typography
+        variant="h5"
+        sx={{
+          color: "white",
+        }}
+      >
+        Moves Remaining: {movesRemaining}
+      </Typography>
+    ) : (
+      <Typography
+        variant="h5"
+        sx={{
+          color: "white",
+        }}
+      >
+        Moves Remaining: &infin;
+      </Typography>
+    );
 
   const moveTimer = (
     <Box
@@ -77,7 +78,7 @@ const PlayerInfo = (props) => {
           color: color == "black" ? "#7c7a78" : "#636260",
         }}
       >
-        {moveTimeRemaining ? moveTimeRemaining.toFixed(2) : "0.00"}s
+        {moveTimeRemaining ? `${moveTimeRemaining.toFixed(2)}` : "0.00"}s
       </Typography>
     </Box>
   );

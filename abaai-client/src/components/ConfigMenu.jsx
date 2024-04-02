@@ -47,14 +47,13 @@ const NumberInput = ({ id, label, value, onChange }) => (
   </FormControl>
 );
 
-const ConfigMenu = ({ config, setConfig, updateGame, switchToGameTab }) => {
+const ConfigMenu = ({ config, setConfig, onSubmitConfig, switchToGameTab }) => {
   const handleLayoutChange = (event) =>
     setConfig({ ...config, boardLayout: event.target.value });
   const handlePlayerChange = (event, player) =>
     setConfig({ ...config, [player]: event.target.value });
   const handleSubmit = async () => {
-    const gameStatus = await GameService.postConfig(config);
-    updateGame(gameStatus);
+    onSubmitConfig();
     switchToGameTab();
   };
 
@@ -140,7 +139,7 @@ const ConfigMenu = ({ config, setConfig, updateGame, switchToGameTab }) => {
 ConfigMenu.propTypes = {
   config: PropTypes.object,
   setConfig: PropTypes.func.isRequired,
-  updateGame: PropTypes.func.isRequired,
+  onSubmitConfig: PropTypes.func.isRequired,
   switchToGameTab: PropTypes.func.isRequired,
 };
 
