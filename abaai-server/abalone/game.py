@@ -157,13 +157,13 @@ class Game:
             else:
                 time_limit = self._game_options.white_time_limit_seconds
 
-            if self._current_game_state.turn == Piece.WHITE:
-                agent = AlphaBetaPruningAgent(max_depth=depth_limit, max_time_sec=time_limit)
-                move = agent.AlphaBetaPruningSearch(self._current_game_state)
-            else:
-                agent = alphaBetaPruningAgent(max_depth=depth_limit,
-                                              max_time_sec=time_limit, game_state=self._current_game_state)
-                move = agent.AlphaBetaPruningSearch()
+            # if self._current_game_state.turn == Piece.BLACK:
+            #     agent = AlphaBetaPruningAgent(max_depth=depth_limit, max_time_sec=time_limit)
+            #     move = agent.AlphaBetaPruningSearch(self._current_game_state)
+            # else:
+            agent = alphaBetaPruningAgent(max_depth=depth_limit,
+                                          max_time_sec=time_limit, game_state=self._current_game_state)
+            move = agent.AlphaBetaPruningSearch()
 
             end_time = time.time()
             print("end time:", end_time)
