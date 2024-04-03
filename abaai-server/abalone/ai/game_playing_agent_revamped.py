@@ -1,5 +1,6 @@
 import time
 
+from abalone.ai.game_playing_agent import AlphaBetaPruningAgent
 from abalone.ai.state_space_generator import StateSpaceGenerator
 from abalone.state import GameStateUpdate, GameState
 
@@ -84,8 +85,8 @@ class alphaBetaPruningAgent:
     def evaluate(self,game_state: GameState) -> float:
         score = 0
         score += 10 * self.board_control(game_state, MANHATTAN_WEIGHT_CONVERTED)
-        # score += 1000 * piece_advantage(game_state)
-        # score += 10000000 * terminal_test(game_state)
+        score += 1000 * self.piece_advantage(game_state)
+        score += 10000000 * self.terminal_test(game_state)
         return score
 
     def board_control(self,game_state, lookup_table):
@@ -103,7 +104,7 @@ class alphaBetaPruningAgent:
             if value in (1, 2):
                 hex_coords = lookup_table[index]
                 if hex_coords:
-                    distance = max(abs(hex_coords[0]), abs(hex_coords[1]))
+                    distance = abs(hex_coords[0]) + abs(hex_coords[1])
                     if value == self.MAX_PLAYER:
                         player_score += distance
                     else:
@@ -184,9 +185,22 @@ MANHATTAN_WEIGHT_CONVERTED = [
 
 
 
+def simulate_agents(game_state: GameState, max_moves: int):
+    for i in range(max_moves):
+        if game_state.turn.value == 1:
+            agent = alphaBetaPruningAgent(max_depth=3, game_state=game_state)
+            best_move = agent.AlphaBetaPruningSearch()
+            game_state = GameStateUpdate(game_state, best_move).resulting_state
+            print(f'black move {best_move}')
+        else:
+            agent = AlphaBetaPruningAgent(max_depth=3)
+            move = agent.AlphaBetaPruningSearch(game_state)
+            game_state = GameStateUpdate(game_state, move).resulting_state
+            print(f'white move {move}')
 
-
-
+    print(game_state.turn)
+    print(game_state.remaining_player_marbles)
+    print(game_state.remaining_opponent_marbles)
 def simulate_moves(game_state: GameState, max_moves: int):
     print("Initial Board")
     print(game_state.board)
@@ -214,4 +228,5 @@ def simulate_moves(game_state: GameState, max_moves: int):
 
 
 if __name__ == '__main__':
-    simulate_moves(GameState(), 10)
+    # simulate_moves(GameState(), 10)
+    simulate_agents(GameState(), 50)
