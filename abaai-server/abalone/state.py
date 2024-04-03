@@ -80,8 +80,8 @@ class GameStateUpdate:
         new_board = self._previous_state.board.array[:]
         resulting_board = OptimizedBoard(new_board)
         resulting_board.make_move(self._move)
-        player_marbles = resulting_board.array.count(self._move.player.value)
-        opponent_marbles = resulting_board.array.count(3 - self._move.player.value)
+        player_marbles = resulting_board.array.count(resulting_turn.value)
+        opponent_marbles = resulting_board.array.count(3 - resulting_turn.value)
 
         return GameState(
             resulting_board,
