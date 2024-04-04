@@ -76,7 +76,7 @@ const CurrentGameBar = (props) => {
   return (
     <>
       <GameClock
-        initialTime={whiteClock.time}
+        initialTime={config?.whiteTimeLimit}
         isTurn={activePlayer === "white"}
         playerId="white"
         activePlayer={activePlayer}
@@ -85,7 +85,7 @@ const CurrentGameBar = (props) => {
         resetClockSignal={resetClockSignal}
       />
       <GameClock
-        initialTime={blackClock.time}
+        initialTime={config?.blackTimeLimit}
         isTurn={activePlayer === "black"}
         playerId="black"
         activePlayer={activePlayer}
