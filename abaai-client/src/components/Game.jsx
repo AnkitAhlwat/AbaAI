@@ -1,93 +1,250 @@
-import { BoardLayouts } from "../constants/boardLayouts";
-import { Board } from "./Board";
-import ConfigMenu from "./ConfigMenu";
-import { useCallback, useState } from "react";
-import { useBoard } from "../hooks/useBoard";
-import MoveHistory from "./MoveHistory";
 import { Grid } from "@mui/material";
-import GameService from "../services/game.service";
+import { useCallback, useState, useEffect } from "react";
+import { BoardLayouts } from "../constants/boardLayouts";
+import { useBoard } from "../hooks/useBoard";
 import Move from "../models/Move";
-import GameControls from "./GameControls";
-import GameClock from "./Clock";
-import MoveButtons from "./MoveButtons";
-import AIMoveDisplay from "./AiMove";
-import Space from "../models/Space";
-import { PlayerColors } from "../constants/playerColors";
-import ScoreCard from "./ScoreCard";
+import GameService from "../services/game.service";
+import GameplaySection from "./GameplaySection";
+import RightSideBar from "./RightSideBar";
 
 // Displays complete assembly of the GUI
 const Game = () => {
-  const [aiMove, setAiMove] = useState(""); // Tracks AI move history
+  // ##################### States #####################
+  const [blackAiMove, setBlackAiMove] = useState(null); // Tracks AI move history
+  const [whiteAiMove, setWhiteAiMove] = useState(null); // Tracks AI move history
   const [selectedMarbles, setSelectedMarbles] = useState([]); // Tracks which marbles are selected
   const [movesStack, setMovesStack] = useState([]); // Tracks player move history
   const [gameStarted, setGameStarted] = useState(false); // Tracks whether game has started
-  const { board, setBoardArray } = useBoard(config.boardLayout); // import board state and setBoard function from useBoard hook
-
-  // Tracks configuration options
-  const [config, setConfig] = useState({
-    boardLayout: BoardLayouts.DEFAULT,
-    playerColor: PlayerColors.BLACK,
-    gameMode: "Computer",
-    moveLimit: 100,
-    timeLimit: 15
+  const [activePlayer, setActivePlayer] = useState("black"); // Tracks which player's turn it is for clock logic, potentially temporary
+  const [isGameActive, setIsGameActive] = useState(false);
+  const [isGameConfigured, setIsGameConfigured] = useState(false); // Tracks whether game has been configured
+  const [resetClockSignal, setResetClockSignal] = useState(0);
+  const [resetTurnClockSignal, setResetTurnClockSignal] = useState(0);
+  const [config, setConfig] = useState(null); // Tracks configuration options
+  const [numCapturedBlackMarbles, setNumCapturedBlackMarbles] = useState(0); // Tracks number of black marbles captured
+  const [numCapturedWhiteMarbles, setNumCapturedWhiteMarbles] = useState(0); // Tracks number of white marbles captured
+  const [currentTurn, setCurrentTurn] = useState(0); // Tracks current turn
+  const [blackMoveTimeRemaining, setBlackMoveTimeRemaining] = useState(10); // Tracks black player move time remaining
+  const [whiteMoveTimeRemaining, setWhiteMoveTimeRemaining] = useState(0); // Tracks white player move time remaining
+  const [blackMovesRemaining, setBlackMovesRemaining] = useState(0); // Tracks black player moves remaining
+  const [whiteMovesRemaining, setWhiteMovesRemaining] = useState(0); // Tracks white player moves remaining
+  //Defines aggregate clock states for each player, temporary
+  const [blackClock, setBlackClock] = useState({
+    time: 180,
+    isRunning: false,
+  });
+  const [whiteClock, setWhiteClock] = useState({
+    time: 180,
+    isRunning: false,
   });
 
-  // Handles new AI move
-  const updateAiMove = useCallback((aiMove) => {
-    const aiMoveNext = aiMove.next_positions;
-    const aiMovePrev = aiMove.previous_positions;
-    const prev_moves = aiMovePrev.map((position) => {
-      return Space.getCodeByPosition(position);
-    });
-    const next_moves = aiMoveNext.map((position) => {
-      return Space.getCodeByPosition(position);
-    });
+  // ##################### Custom Hooks #####################
+  const { boardArray, setBoardArray } = useBoard(config?.boardLayout); // import board state and setBoard function from useBoard hook
 
-    const moveCode = `${prev_moves} -> ${next_moves}`;
-    setAiMove(moveCode);
+  // ##################### Functions/Callbacks #####################
+  // When the page loads, we want to fetch the state of the game from the server and update accordingly
+  const updateGame = useCallback(
+    async (gameStatus) => {
+      if (!gameStatus) {
+        gameStatus = await GameService.getGameStatus();
+      }
+
+      console.log("Game Status:", gameStatus);
+
+      // Set the configuration options
+      setConfig(gameStatus.game_options);
+
+      // Set the state of the game
+      setIsGameActive(gameStatus.game_started);
+      setIsGameConfigured(gameStatus.game_configured);
+
+      // Set the board state
+      setBoardArray(gameStatus.game_state.board);
+
+      // Set the player turn
+      setCurrentTurn(gameStatus.game_state.turn);
+
+      // Set the moves stack
+      setMovesStack(gameStatus.moves_stack);
+
+      // Set the captured marbles
+      setNumCapturedBlackMarbles(gameStatus.game_state.captured_black_marbles);
+      setNumCapturedWhiteMarbles(gameStatus.game_state.captured_white_marbles);
+
+      // Set the move time remaining back to full time
+      setBlackMoveTimeRemaining(gameStatus.game_options.blackTimeLimit);
+      setWhiteMoveTimeRemaining(gameStatus.game_options.whiteTimeLimit);
+    },
+    [setBoardArray]
+  );
+
+  const onSubmitConfig = useCallback(async () => {
+    const gameStatus = await GameService.postConfig(config);
+    updateGame(gameStatus);
+    setBlackMovesRemaining(gameStatus.game_options.moveLimit);
+    setWhiteMovesRemaining(gameStatus.game_options.moveLimit);
+  }, [config, updateGame]);
+
+  const getAiMove = useCallback(async (gameStatus) => {
+    // set the ai move card to display the move that the ai generated
+    // only get the ai move if the turn is for the computer player
+    if (
+      (gameStatus.game_state.turn === 1 &&
+        gameStatus.game_options.blackPlayer === "Computer") ||
+      (gameStatus.game_state.turn === 2 &&
+        gameStatus.game_options.whitePlayer === "Computer")
+    ) {
+      const aiMove = await GameService.getAiMoveForCurrentState();
+
+      if (gameStatus.game_state.turn === 1) {
+        setBlackAiMove(aiMove);
+        setWhiteAiMove(null);
+      } else {
+        setWhiteAiMove(aiMove);
+        setBlackAiMove(null);
+      }
+    }
   }, []);
+
+  const toggleTurn = () => {
+    setActivePlayer((prev) => (prev === "black" ? "white" : "black"));
+    setResetTurnClockSignal((prev) => prev + 1);
+  };
+
+  // Pause the game
+  const pauseGame = (player) => {
+    setIsGameActive(false);
+    if (player === "black") {
+      setBlackClock((clock) => ({ ...clock, isRunning: false }));
+    } else {
+      setWhiteClock((clock) => ({ ...clock, isRunning: false }));
+    }
+  };
+
+  // Resume Game
+  const resumeGame = (player) => {
+    setIsGameActive(true);
+    if (player === "black") {
+      setBlackClock((clock) => ({ ...clock, isRunning: true }));
+    } else {
+      setWhiteClock((clock) => ({ ...clock, isRunning: true }));
+    }
+  };
+
+  //reset the game and clocks
+  const resetGame = async () => {
+    const gameStatus = await GameService.postResetGame();
+
+    updateGame(gameStatus);
+
+    //reset the board logic here
+    setBlackClock({ time: blackClock.time, isRunning: false });
+    setWhiteClock({ time: whiteClock.time, isRunning: false });
+    setGameStarted(false);
+    setIsGameActive(false);
+    setResetClockSignal((prev) => prev + 1);
+    setResetTurnClockSignal((prev) => prev + 1);
+    setBlackAiMove(null);
+    setWhiteAiMove(null);
+    setActivePlayer("black");
+  };
+
+  //stop the game and reset the clocks, this should also completely reset the game state
+  const stopGame = () => {
+    setBlackClock({ time: blackClock.time, isRunning: false });
+    setWhiteClock({ time: whiteClock.time, isRunning: false });
+    setGameStarted(false);
+    setIsGameActive(false);
+    setResetClockSignal((prev) => prev + 1);
+    setResetTurnClockSignal((prev) => prev + 1);
+  };
+
+  //undo the last move
+  const undoMove = (player) => {
+    //undo the last move logic here
+    //reset the turn clocks
+    //reset the board to the last state
+    //add back the time that the last turn took to the previous player's clock
+    //need to be able to do this multiple times
+    if (player === "black") {
+      setBlackClock((clock) => ({ ...clock, isRunning: false }));
+    } else {
+      setWhiteClock((clock) => ({ ...clock, isRunning: false }));
+    }
+  };
+
+  //logic to start the game and black game clock
+  const startGame = useCallback(async () => {
+    if (!gameStarted) {
+      const gameStatus = await GameService.startGame();
+      console.log("Game Status:", gameStatus);
+
+      if (
+        gameStatus?.is_first_move &&
+        gameStatus?.game_options.blackPlayer === "Computer"
+      ) {
+        getAiMove(gameStatus);
+      }
+
+      updateGame(gameStatus);
+      setGameStarted(true);
+      resumeGame("black");
+    }
+  }, [gameStarted, getAiMove, updateGame]);
 
   // Handles move selection
   const onMoveSelection = useCallback(
     async (move) => {
-      // get the previous and new positions of the selected marbles
-      const previousPositions = selectedMarbles.map(
-        (marble) => marble.position
-      );
-      const newPositions = previousPositions.map((position) => ({
-        x: position.x + move.x,
-        y: position.y + move.y,
-      }));
-      const marbleState = selectedMarbles[0].state;
+      setBlackAiMove(null);
+      setWhiteAiMove(null);
+      console.log("Move:", move);
+
+      //toggle the active player turn
+      toggleTurn();
 
       //set gamestarted to true
       if (!gameStarted) {
         setGameStarted(true);
       }
 
-      setSelectedMarbles([]);
+      // // send post request to the server
+      const moveObj = new Move(
+        move.previous_player_positions,
+        move.next_player_positions,
+        currentTurn,
+        move.previous_opponent_positions,
+        move.next_opponent_positions
+      );
+      const gameStatus = await GameService.postMove(moveObj);
+      updateGame(gameStatus);
 
-      // send post request to the server
-      const moveObj = new Move(previousPositions, newPositions, marbleState);
-      const responseData = await GameService.postMove(moveObj);
-
-      // set the ai move card to show what the ai did
-      updateAiMove(responseData.ai_move);
-
-      // update the board and moves stack
-      setMovesStack(responseData.moves_stack);
-      setBoardArray(responseData.board);
+      // fetch the ai move if need be
+      getAiMove(gameStatus);
     },
-    [selectedMarbles, setBoardArray, updateAiMove, gameStarted]
+    [gameStarted, currentTurn, updateGame, getAiMove]
   );
 
   // Handles move undo
   const onUndoLastMove = useCallback(async () => {
-    const responseData = await GameService.postUndoLastMove();
-    console.log(responseData);
-    setBoardArray(responseData.board);
-    setMovesStack(responseData.moves_stack);
-  }, [setBoardArray]);
+    const gameStatus = await GameService.postUndoLastMove();
+    updateGame(gameStatus);
+
+    // if the move that was undone was the ai's move, then fetch the ai move again
+    if (
+      gameStatus.game_state.turn === 1 &&
+      gameStatus.game_options.blackPlayer === "Computer"
+    ) {
+      getAiMove(gameStatus);
+    } else if (
+      gameStatus.game_state.turn === 2 &&
+      gameStatus.game_options.whitePlayer === "Computer"
+    ) {
+      getAiMove(gameStatus);
+    } else {
+      setBlackAiMove(null);
+      setWhiteAiMove(null);
+    }
+  }, [getAiMove, updateGame]);
 
   // Handles game reset
   const onResetGame = useCallback(async () => {
@@ -96,55 +253,104 @@ const Game = () => {
     console.log(responseData);
     setBoardArray(responseData.board);
     setMovesStack(responseData.moves_stack);
-  }, []);
+  }, [setBoardArray]);
 
-  // Returns assembly of the GUI
+  // ##################### Effects #####################
+  useEffect(() => {
+    updateGame();
+  }, [updateGame]); // should only run once when the component mounts (page loaded or refreshed)
+
+  // ##################### Render #####################
   return (
-    <Grid container spacing={2}>
-      {/* Configuration Menu on the left */}
-      <Grid item xs={3}>
-        <GameClock
-          initialTime={600}
-          turnTimeLimit={config.timeLimit}
-          gameStarted={gameStarted}
-          setBoardArray={setBoardArray}
-        />
-        <ConfigMenu config={config} setConfig={setConfig} />
-      </Grid>
-
-      {/* Board in the middle */}
+    <Grid
+      container
+      sx={{
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
       <Grid
         container
         item
-        xs={6}
+        xs={8}
         sx={{
           justifyContent: "center",
           alignItems: "center",
+          height: "98vh",
+          padding: "5px",
         }}
       >
-        <ScoreCard />
-
-        <Board
-          board={board}
+        <GameplaySection
+          boardArray={boardArray}
           onMoveSelection={onMoveSelection}
           selectedMarbles={selectedMarbles}
           setSelectedMarbles={setSelectedMarbles}
-        />
-        <MoveButtons
-          onMoveSelection={onMoveSelection}
-          selectedMarbles={selectedMarbles}
-        />
-        <GameControls
-          onUndo={onUndoLastMove}
-          onReset={onResetGame}
-          movesStack={movesStack}
+          numCapturedBlackMarbles={numCapturedBlackMarbles}
+          numCapturedWhiteMarbles={numCapturedWhiteMarbles}
+          isGameActive={isGameActive}
+          currentTurn={currentTurn}
+          blackMovetimeRemaining={blackMoveTimeRemaining}
+          whiteMovetimeRemaining={whiteMoveTimeRemaining}
+          blackMovesRemaining={blackMovesRemaining}
+          whiteMovesRemaining={whiteMovesRemaining}
+
+          //for the clock controls
+          activePlayer={activePlayer}
+          toggleActivePlayer={toggleTurn}
+          gameStarted={gameStarted}
+          // gameActive={isGameActive}
+          gameConfigured={isGameConfigured}
+          startGame={startGame}
+          stopGame={stopGame}
+          resetClockSignal={resetTurnClockSignal}
+          pauseGame={pauseGame}
+          resumeGame={resumeGame}
+          resetGame={resetGame}
+          undoMove={onUndoLastMove}
+          blackClock={blackClock}
+          whiteClock={whiteClock}
+          updateGame={updateGame}
+          config = {config}
+          // onApplyMove={onMoveSelection}
+          // onSubmitConfig={onSubmitConfig}
         />
       </Grid>
 
-      {/* Move History on the right */}
-      <Grid item xs={3}>
-        <AIMoveDisplay aiMove={aiMove} />
-        <MoveHistory movesStack={movesStack} />
+      <Grid
+        item
+        xs={4}
+        sx={{
+          height: "95vh",
+          padding: "5px",
+        }}
+      >
+        {/* <AIMoveDisplay aiMove={aiMove} />
+        <MoveHistory movesStack={movesStack} /> */}
+        <RightSideBar
+          config={config}
+          setConfig={setConfig}
+          movesStack={movesStack}
+          blackAiMove={blackAiMove}
+          whiteAiMove={whiteAiMove}
+          currentTurn={currentTurn}
+          activePlayer={activePlayer}
+          toggleActivePlayer={toggleTurn}
+          gameStarted={gameStarted}
+          gameActive={isGameActive}
+          gameConfigured={isGameConfigured}
+          startGame={startGame}
+          stopGame={stopGame}
+          resetClockSignal={resetClockSignal}
+          pauseGame={pauseGame}
+          resumeGame={resumeGame}
+          resetGame={resetGame}
+          undoMove={onUndoLastMove}
+          blackClock={blackClock}
+          whiteClock={whiteClock}
+          updateGame={updateGame}
+          onApplyMove={onMoveSelection}
+          onSubmitConfig={onSubmitConfig}
+        />
       </Grid>
     </Grid>
   );

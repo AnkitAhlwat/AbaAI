@@ -1,56 +1,95 @@
-import { Stack, Paper, Typography, Box } from "@mui/material";
+import { Stack, Paper, Typography, Box, Grid } from "@mui/material";
 import PropTypes from "prop-types";
-import { useEffect, useState } from "react";
-import Space from "../models/Space";
+import { useEffect, useRef, useState } from "react";
+import Move from "../models/Move";
 
 // Displays movement history of the GUI
 const MoveHistory = ({ movesStack }) => {
-  const [moveStackFormatted, setMoveStackFormatted] = useState([]); // The history of past moves
+  const [blackMovesStack, setBlackMovesStack] = useState([]); // The history of past moves for black player
+  const [whiteMovesStack, setWhiteMovesStack] = useState([]); // The history of past moves for white player
+  const stackRef = useRef(null);
 
   // Updates movement history when a move is made
   useEffect(() => {
-    const moveStackFormatted = movesStack.map((move) => {
-      const prev_moves = move.previous_positions.map((position) => {
-        return Space.getCodeByPosition(position);
-      });
-      const next_moves = move.next_positions.map((position) => {
-        return Space.getCodeByPosition(position);
-      });
+    if (!movesStack) return;
 
+    const moveStackFormatted = movesStack.map((move) => {
       return {
         player: move.player,
-        transition: `${prev_moves} -> ${next_moves}`,
+        transition: Move.toNotation(move),
       };
     });
 
-    setMoveStackFormatted(moveStackFormatted);
+    setBlackMovesStack(moveStackFormatted.filter((move) => move.player === 1));
+    setWhiteMovesStack(moveStackFormatted.filter((move) => move.player === 2));
   }, [movesStack]);
+
+  useEffect(() => {
+    // Scroll to the bottom of the container when the component mounts or when its content changes
+    if (stackRef.current) {
+      stackRef.current.scrollTop = stackRef.current.scrollHeight;
+    }
+  }, [stackRef.current?.scrollHeight, movesStack]);
 
   // Returns UI component containing move history
   return (
-    <Box>
-      <Typography variant="h4" gutterBottom>
-        Move History
-      </Typography>
-      <Stack spacing={2}>
-        {moveStackFormatted.map((move, index) => (
-          <Paper
-            key={index}
-            elevation={3}
-            sx={{
-              padding: "10px",
-              border: "1px solid #ccc",
-              borderRadius: "5px",
-            }}
-          >
-            <Typography variant="subtitle1" gutterBottom>
-              Player: {move.player}
-            </Typography>
-            <Typography variant="subtitle1" gutterBottom>
-              {move.transition}
-            </Typography>
-          </Paper>
-        ))}
+    <Box sx={{ marginTop: "10px" }}>
+      <Stack
+        ref={stackRef}
+        spacing={2}
+        sx={{
+          overflowY: "auto",
+          maxHeight: "48vh",
+          "&::-webkit-scrollbar": {
+            width: "5px",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            backgroundColor: "#666",
+            borderRadius: "6px",
+          },
+          "&::-webkit-scrollbar-thumb:hover": {
+            backgroundColor: "#4",
+          },
+        }}
+      >
+        <Grid container>
+          <Grid item xs={6}>
+            {blackMovesStack.map((move, index) => (
+              <Paper
+                key={index}
+                elevation={3}
+                sx={{
+                  padding: "3px",
+                  margin: "2px",
+                  borderRadius: "5px",
+                  textAlign: "center",
+                  backgroundColor: "#302e2b",
+                  color: "#989795",
+                }}
+              >
+                <Typography variant="subtitle2">{move.transition}</Typography>
+              </Paper>
+            ))}
+          </Grid>
+          <Grid item xs={6}>
+            {whiteMovesStack.map((move, index) => (
+              <Paper
+                key={index}
+                elevation={3}
+                sx={{
+                  padding: "3px",
+                  margin: "2px",
+                  borderRadius: "5px",
+                  textAlign: "center",
+                  backgroundColor: "#989795",
+                  color: "#484744",
+                }}
+              >
+                <Typography variant="subtitle2">{move.transition}</Typography>
+              </Paper>
+            ))}
+          </Grid>
+        </Grid>
       </Stack>
     </Box>
   );
