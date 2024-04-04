@@ -5,6 +5,7 @@ class Space {
         this.position = position;
         this.str = Space.getCodeByPosition(position);
         this.selected = false;
+        this.move = null;
     }
 
     // Returns adjacent spaces of the given space
@@ -54,11 +55,18 @@ class Space {
         return false;
     }
 
-    // Gets the game board position code
+    // Gets the game board position notation
     static getCodeByPosition(position) {
         const letter = String.fromCharCode(65 + 8 - position.y);
         const number = position.x + 1;
         return `${letter}${number}`;
+    }
+
+    // Gets the game board position coordinates from the notation
+    static getPositionByCode(code) {
+        const y = (65 + 8) - code.charCodeAt(0);
+        const x = parseInt(code[1]) - 1;
+        return { x: x, y: y };
     }
 }
 

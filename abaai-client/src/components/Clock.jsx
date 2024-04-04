@@ -1,92 +1,84 @@
-import React, { useState, useEffect, useRef , useCallback} from 'react';
+import React, { useEffect } from 'react';
+import { useCountdown } from '../hooks/useCountdown';
 import { Box, Typography, Button } from '@mui/material';
-import GameService from '../services/game.service';
 
-// Displays the clock of the GUI
-const GameClock = ({ initialGameTime = 0, turnTimeLimit = 15, gameStarted, setBoardArray}) => {
-  const [gameTime, setGameTime] = useState(initialGameTime); // Total game time
-  const [turnTime, setTurnTime] = useState(turnTimeLimit); // Time left per turn
-  const [gameActive, setGameActive] = useState(false); // Whether game is being played
-  const [turnActive, setTurnActive] = useState(false); // Whether turn is being played
-  const waitTimeRef = useRef(1000);
-  const startTimeRef = useRef(0);
+const GameClock = (props) => {
+  const { initialTime, isTurn, playerId, activePlayer, gameStarted, isActive, resetClockSignal} = props;
+  const { start: startClock, stop: stopClock, pause: pauseClock,  resume: resumeClock, currentTime, isRunning 
+  } = useCountdown(initialTime);
+  const [initialStart , setInitialStart] = React.useState(true);
+  // const [turnClockTime, setTurnClockTime] = useState(initialTime);
+  // const [scoreClockTime, setScoreClockTime] = useState(initialTime);
 
-  // Game time counter
+  //start the game clock
   useEffect(() => {
-    let gameTimer;
-    if (gameActive) {
-      gameTimer = setInterval(() => {
-        setGameTime((prevTime) => prevTime + 1);
-      }, 1000);
+    // Handle initial start separately
+    if (gameStarted && isTurn && !isRunning && initialStart) {
+      console.log(`Starting clock for player ${playerId}`);
+      startClock();
+      setInitialStart(false); // Prevent further starts
     }
-    return () => clearInterval(gameTimer);
-  }, [gameActive]);
+  }, [gameStarted, isActive, isRunning, initialStart, activePlayer]);
 
-  // Turn time countdown
+    //pause or resume the game clock
+    useEffect(() => {
+      if (!isActive && isTurn) {
+        pauseClock();
+      } else if (isActive && isTurn) {
+        resumeClock();
+      } if (!isTurn) {
+        pauseClock();
+      }
+    }, [isActive, isTurn, activePlayer]);
+
+    //stop the game clock, currently same as reset
+    useEffect(() => {
+        stopClock();
+        setInitialStart(true);
+        if (gameStarted && isActive) {
+          startClock(); // Immediately start the clock for the new turn.
+          setInitialStart(false);
+        }
+    }, [resetClockSignal]);
+
+    //reset the game clock
+    // useEffect(() => {
+    //     stopClock();
+    //     setInitialStart(true);
+    // }, [resetClockSignal]);
+
+    //reset the turn clocks each turn
+    // const resetTurnClock = () => {
+    //   setTurnClockTime(initialTime);
+    // };
+
+    // useEffect(() => {
+    //   stopClock();
+    //   setInitialStart(true);
+    // }, [resetSignal]);
+
+
+  //triggered when the active status of the game is changed for taking turns 
   useEffect(() => {
-    let turnTimer;
-    if (turnActive && turnTime > 0) {
-      turnTimer = setInterval(() => {
-        setTurnTime((prevTime) => prevTime - 1);
-      }, 1000);
-    } else if (turnTime === 0) {
-      setTurnActive(false);
-    }else if (turnTime < 0){
-        setTurnTime(0);
+    if (gameStarted) {
+      if (isActive) {
+        console.log(`Toggling clock for player ${playerId}`);
+        if (isRunning) {
+          pauseClock();
+        }
+      } else if (!isRunning) {
+        resumeClock();
+      }
     }
-    return () => clearInterval(turnTimer);
-  }, [turnActive, turnTime]);
+  // }, [isActive]);
+}, []);
 
-  // Detects whether a move is made
-  useEffect(() => {
-    if (gameStarted){
-      handleStart();
-    }
-  }, [gameStarted]);
 
-  // Starts the timer if a move is made
-  const handleStart = () => {
-    startTimeRef.current = Date.now();
-    setTimeout(() => {
-        setGameActive(true);
-        setTurnActive(true);
-        setGameTime((prevTime) => prevTime + 1);
-        setTurnTime((prevTime) => prevTime - 1);
-    }, waitTimeRef.current);
-  };
-
-  // Stops the timer if button is pressed
-  const handleStop = () => {
-  };
-
-  // Pauses the timer if button is pressed
-  const handlePause = () => {
-    waitTimeRef.current = 1000 - (Date.now() - startTimeRef.current)%1000;
-    setGameActive(false);
-    setTurnActive(false);
-  };
-
-  // Resets the timer if button is pressed
-  const handleReset = useCallback(async () => {
-    const responseData = await GameService.postResetGame();
-    console.log(responseData);
-    setGameTime(initialGameTime);
-    setTurnTime(turnTimeLimit);
-    setGameActive(false);
-    setTurnActive(false);
-    setBoardArray(responseData.board);
-    // gameStarted(false);
-  });
-
-  // Returns UI component with clock information
   return (
     <Box>
-      <Typography variant="h5">Game Time: {Math.floor(gameTime / 60)}:{String(gameTime % 60).padStart(2, '0')}</Typography>
-      <Typography variant="h6">Turn Time Left: {turnTime}</Typography>
-      <Button onClick={handleStart} disabled={gameActive}>Start</Button>
-      <Button onClick={handleStop}>Stop</Button>
-      <Button onClick={handlePause} disabled={!gameActive}>Pause</Button>
-      <Button onClick={handleReset}>Reset Time</Button>
+      <Typography variant="h5" style={{ color: 'white' }}>
+      {playerId === "black" ? "Black Player" : "White Player"}Time: {currentTime}
+      </Typography>
     </Box>
   );
 };
