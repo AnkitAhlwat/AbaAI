@@ -289,11 +289,24 @@ const Game = () => {
           whiteMovesRemaining={whiteMovesRemaining}
 
           //for the clock controls
-          // blackClock={blackClock}
-          // whiteClock={whiteClock}
-          // pauseClock={pauseClock}
-          // resumeClock={resumeClock}
-          // resetClocks={resetClocks}
+          activePlayer={activePlayer}
+          toggleActivePlayer={toggleTurn}
+          gameStarted={gameStarted}
+          // gameActive={isGameActive}
+          gameConfigured={isGameConfigured}
+          startGame={startGame}
+          stopGame={stopGame}
+          resetClockSignal={resetClockSignal}
+          pauseGame={pauseGame}
+          resumeGame={resumeGame}
+          resetGame={resetGame}
+          undoMove={onUndoLastMove}
+          blackClock={blackClock}
+          whiteClock={whiteClock}
+          updateGame={updateGame}
+          config = {config}
+          // onApplyMove={onMoveSelection}
+          // onSubmitConfig={onSubmitConfig}
         />
       </Grid>
 
@@ -314,7 +327,6 @@ const Game = () => {
           blackAiMove={blackAiMove}
           whiteAiMove={whiteAiMove}
           currentTurn={currentTurn}
-          //for the clock controls
           activePlayer={activePlayer}
           toggleActivePlayer={toggleTurn}
           gameStarted={gameStarted}
@@ -332,9 +344,6 @@ const Game = () => {
           updateGame={updateGame}
           onApplyMove={onMoveSelection}
           onSubmitConfig={onSubmitConfig}
-          // currentPlayer={currentPlayer}
-          // isPaused={isPaused}
-          // togglePause={togglePause}
         />
       </Grid>
     </Grid>

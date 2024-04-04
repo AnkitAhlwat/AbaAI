@@ -4,9 +4,8 @@ import { Box, Typography, Button } from '@mui/material';
 
 const GameClock = (props) => {
   const { initialTime, isTurn, playerId, activePlayer, gameStarted, isActive, resetClockSignal} = props;
-  // const { initialTime, isActive, playerId, onMoveMade, gameStarted, onTurnEnd} = props;
-  const { start: startClock, stop: stopClock, pause: pauseClock,  resume: resumeClock, currentTime, isRunning } = useCountdown(initialTime);
-  // { start, stop, pause, resume, currentTime, isRunning };
+  const { start: startClock, stop: stopClock, pause: pauseClock,  resume: resumeClock, currentTime, isRunning 
+  } = useCountdown(initialTime);
   const [initialStart , setInitialStart] = React.useState(true);
 
   //start the game clock
