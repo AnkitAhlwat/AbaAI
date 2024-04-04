@@ -21,8 +21,10 @@ class GameOptions:
             board_layout: BoardLayout = None,
             black_ai: bool = False,
             white_ai: bool = True,
-            black_time_limit_seconds: int = 20,
-            white_time_limit_seconds: int = 20,
+            black_time_limit_seconds: int = 180,
+            black_turn_time: int = 15,
+            white_time_limit_seconds: int = 180,
+            white_turn_time: int = 15,
             move_limit: int = 20
     ):
         if board_layout is None:
@@ -31,7 +33,9 @@ class GameOptions:
         self._is_black_ai = black_ai
         self._is_white_ai = white_ai
         self._black_time_limit_seconds = black_time_limit_seconds
+        self._black_turn_time = black_turn_time
         self._white_time_limit_seconds = white_time_limit_seconds
+        self._white_turn_time = white_turn_time
         self._move_limit = move_limit
 
     @property
@@ -51,8 +55,16 @@ class GameOptions:
         return self._black_time_limit_seconds
 
     @property
+    def black_turn_time(self) -> int:
+        return self._black_turn_time
+
+    @property
     def white_time_limit_seconds(self) -> int:
         return self._white_time_limit_seconds
+
+    @property
+    def white_turn_time(self) -> int:
+        return self._white_turn_time
 
     @property
     def move_limit(self) -> int:
@@ -65,7 +77,9 @@ class GameOptions:
             json_obj['blackPlayer'] == "Computer",
             json_obj['whitePlayer'] == "Computer",
             json_obj['blackTimeLimit'],
+            json_obj['blackTurnTime'],
             json_obj['whiteTimeLimit'],
+            json_obj['whiteTurnTime'],
             json_obj['moveLimit']
         )
 
@@ -81,7 +95,9 @@ class GameOptions:
             "blackPlayer": "Computer" if self._is_black_ai else "Human",
             "whitePlayer": "Computer" if self._is_white_ai else "Human",
             "blackTimeLimit": self._black_time_limit_seconds,
+            "blackTurnTime": self._black_turn_time,
             "whiteTimeLimit": self._white_time_limit_seconds,
+            "whiteTurnTime": self._white_turn_time,
             "moveLimit": self._move_limit
         }
 
