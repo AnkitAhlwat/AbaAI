@@ -1,8 +1,7 @@
 import time
-from random import choice
 
-from abalone.ai.game_playing_agent import AlphaBetaPruningAgent
 from abalone.ai.game_playing_agent_revamped import alphaBetaPruningAgent
+from abalone.ai.game_playing_agent_revamped_clumping import alphaBetaPruningAgentClumping
 from abalone.ai.state_space_generator import StateSpaceGenerator
 from abalone.board import OptimizedBoard, BoardLayout
 from abalone.movement import Move, Piece
@@ -135,46 +134,53 @@ class Game:
         return self.__to_json()
 
     def get_ai_move(self) -> dict:
-        if self._game_options.is_black_ai and self._is_first_move:
-            self._is_first_move = False
-            # random move for first move
-            all_moves = StateSpaceGenerator.generate_all_possible_moves(self._current_game_state)
+        # if self._game_options.is_black_ai and self._is_first_move:
+        #     self._is_first_move = False
+        #     # random move for first move
+        #     all_moves = StateSpaceGenerator.generate_all_possible_moves(self._current_game_state)
+        #
+        #     return {
+        #         "move": choice(all_moves).to_json(),
+        #         "time_taken": 0.00
+        #     }
+        # else:
+        start_time = time.time()
+        print("start time:", start_time)
 
-            return {
-                "move": choice(all_moves).to_json(),
-                "time_taken": 0.00
-            }
+        # manually set the depth limit
+        depth_limit = 3
+
+        # set the time limit for the AI based on config
+        if self._current_game_state.turn == Piece.BLACK:
+            time_limit = self._game_options.black_time_limit_seconds
         else:
-            start_time = time.time()
-            print("start time:", start_time)
+            time_limit = self._game_options.white_time_limit_seconds
 
-            # manually set the depth limit
-            depth_limit = 3
-
-            # set the time limit for the AI based on config
-            if self._current_game_state.turn == Piece.BLACK:
-                time_limit = self._game_options.black_time_limit_seconds
-            else:
-                time_limit = self._game_options.white_time_limit_seconds
-
-            # if self._current_game_state.turn == Piece.BLACK:
-            #     agent = AlphaBetaPruningAgent(max_depth=depth_limit, max_time_sec=time_limit)
-            #     move = agent.AlphaBetaPruningSearch(self._current_game_state)
-            # else:
-            agent = alphaBetaPruningAgent(max_depth=depth_limit,
-                                          max_time_sec=time_limit, game_state=self._current_game_state)
+        if self._current_game_state.turn == Piece.BLACK:
+            agent = alphaBetaPruningAgentClumping(
+                max_depth=depth_limit,
+                max_time_sec=time_limit,
+                game_state=self._current_game_state
+            )
+            move = agent.AlphaBetaPruningSearch()
+        else:
+            agent = alphaBetaPruningAgent(
+                max_depth=depth_limit,
+                max_time_sec=time_limit,
+                game_state=self._current_game_state
+            )
             move = agent.AlphaBetaPruningSearch()
 
-            end_time = time.time()
-            print("end time:", end_time)
+        end_time = time.time()
+        print("end time:", end_time)
 
-            time_taken = end_time - start_time
-            print("time taken:", time_taken, "seconds")
+        time_taken = end_time - start_time
+        print("time taken:", time_taken, "seconds")
 
-            return {
-                "move": move.to_json(),
-                "time_taken": float(f"{time_taken:.2f}")  # round to 2 decimal places
-            }
+        return {
+            "move": move.to_json(),
+            "time_taken": float(f"{time_taken:.2f}")  # round to 2 decimal places
+        }
 
     def reset_game(self) -> dict:
         """
