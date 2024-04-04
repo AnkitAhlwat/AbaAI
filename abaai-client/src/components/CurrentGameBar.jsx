@@ -76,18 +76,18 @@ const CurrentGameBar = (props) => {
   return (
     <>
       <GameClock
-        initialTime={blackClock.time}
-        isTurn={activePlayer === "black"}
-        playerId="black"
+        initialTime={config?.whiteTimeLimit}
+        isTurn={activePlayer === "white"}
+        playerId="white"
         activePlayer={activePlayer}
         gameStarted={gameStarted}
         isActive={gameActive}
         resetClockSignal={resetClockSignal}
       />
       <GameClock
-        initialTime={whiteClock.time}
-        isTurn={activePlayer === "white"}
-        playerId="white"
+        initialTime={config?.blackTimeLimit}
+        isTurn={activePlayer === "black"}
+        playerId="black"
         activePlayer={activePlayer}
         gameStarted={gameStarted}
         isActive={gameActive}

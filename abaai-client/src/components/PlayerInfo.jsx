@@ -1,5 +1,6 @@
 import { Grid, Typography, Box } from "@mui/material";
 import { SmartToy, Person } from "@mui/icons-material";
+import GameClock from "./Clock";
 import Proptypes from "prop-types";
 import GameScore from "./GameScore";
 
@@ -10,6 +11,24 @@ const PlayerInfo = (props) => {
     numCapturedMarbles,
     movesRemaining,
     moveTimeRemaining,
+    //clock controls
+    activePlayer,
+    isGameActive,
+    toggleActivePlayer,
+    gameStarted,
+    gameConfigured,
+    startGame,
+    stopGame,
+    resetClockSignal,
+    pauseGame,
+    resumeGame,
+    resetGame,
+    undoMove,
+    // blackClock,
+    // whiteClock,
+    thisClock,
+    updateGame,
+    // onSubmitConfig
   } = props;
 
   const playerProfile = (
@@ -95,7 +114,16 @@ const PlayerInfo = (props) => {
         {movesRemainingDisplay}
       </Grid>
       <Grid container item xs={3} justifyContent="right">
-        {moveTimer}
+        {/* {moveTimer} */}
+        <GameClock
+        initialTime={thisClock}
+        isTurn={activePlayer === color}
+        playerId={color}                   
+        activePlayer={activePlayer}
+        gameStarted={gameStarted}
+        isActive={isGameActive}
+        resetClockSignal={resetClockSignal}
+      />
       </Grid>
     </Grid>
   );
