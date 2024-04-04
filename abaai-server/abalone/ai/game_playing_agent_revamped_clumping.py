@@ -85,8 +85,8 @@ class alphaBetaPruningAgentClumping:
 
     def evaluate(self, game_state: GameState) -> float:
         score = 0
-        score += 10 * self.clumping(game_state)
-        score += 100 * self.board_control(game_state, MANHATTAN_WEIGHT_CONVERTED)
+        score += 2 * self.clumping(game_state)
+        score += 10 * self.board_control(game_state, MANHATTAN_WEIGHT_CONVERTED)
         score += 1000 * self.piece_advantage(game_state)
         score += 10000000 * self.terminal_test(game_state)
         return score
