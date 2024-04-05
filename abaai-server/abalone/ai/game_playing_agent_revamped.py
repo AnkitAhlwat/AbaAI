@@ -2,11 +2,12 @@ import time
 
 from abalone.ai.game_playing_agent import AlphaBetaPruningAgent
 from abalone.ai.state_space_generator import StateSpaceGenerator
+from abalone.board import OptimizedBoard, BoardLayout
 from abalone.state import GameStateUpdate, GameState
 
 
 class alphaBetaPruningAgent:
-    def __init__(self,  game_state, max_depth: int, max_time_sec: int = 10,):
+    def __init__(self,  game_state, max_depth: int, max_time_sec: int = 50,):
         self.max_depth = max_depth
         self.max_time_sec = max_time_sec
         self.min_prunes = 0
@@ -202,12 +203,12 @@ def simulate_agents(game_state: GameState, max_moves: int):
     print(game_state.remaining_player_marbles)
     print(game_state.remaining_opponent_marbles)
 def simulate_moves(game_state: GameState, max_moves: int):
-    print("Initial Board")
-    print(game_state.board)
+    # print("Initial Board")
+    # print(game_state.board)
     i = 0
     start_time = time.time()
     while i < max_moves:
-        agent = alphaBetaPruningAgent(max_depth=3, game_state=game_state)
+        agent = alphaBetaPruningAgent(max_depth=4, game_state=game_state)
         best_move = agent.AlphaBetaPruningSearch()
         print(f"{game_state.turn.name}->({best_move})")
         original_marbles = game_state.remaining_opponent_marbles
@@ -229,4 +230,6 @@ def simulate_moves(game_state: GameState, max_moves: int):
 
 if __name__ == '__main__':
     # simulate_moves(GameState(), 10)
-    simulate_agents(GameState(), 50)
+    # simulate_agents(GameState(), 1)
+    simulate_moves(GameState(OptimizedBoard(BoardLayout.GERMAN_DAISY.value)), 1)
+

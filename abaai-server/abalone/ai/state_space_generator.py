@@ -1,4 +1,5 @@
 from itertools import combinations
+
 from abalone.ai.legal_moves import LegalMoves
 from abalone.movement import Position, Move
 
