@@ -34,7 +34,7 @@ cdef class LegalMovesOptimized:
 
 
     @staticmethod
-    cdef bool is_position_valid(vector[int] board, tuple position, vector[tuple] vacating_positions=None):
+    cdef is_position_valid(vector[int] board, tuple position, list vacating_positions=None):
         """Combined checks for board position status with static typing."""
         cdef int index
         cdef int x = position[0]
@@ -47,7 +47,7 @@ cdef class LegalMovesOptimized:
 
         # Convert Python None to an empty C++ vector if needed
         if vacating_positions is None:
-            vacating_positions = vector[tuple]()
+            vacating_positions = []
 
         return board[index] == 0 or position in vacating_positions
 
@@ -56,6 +56,7 @@ cdef class LegalMovesOptimized:
         cdef int move_x, move_y
         cdef int pos_x, pos_y
         cdef list valid_moves = []
+
 
         board = game_state.board.array
 
