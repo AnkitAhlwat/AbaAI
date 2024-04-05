@@ -1,7 +1,8 @@
 import time
 
-from abalone.ai.game_playing_agent import AlphaBetaPruningAgent
+from abalone.ai.game_playing_agent_revamped import alphaBetaPruningAgent
 from abalone.ai.state_space_generator import StateSpaceGenerator
+from abalone.board import OptimizedBoard, BoardLayout
 from abalone.movement import Position
 from abalone.state import GameStateUpdate, GameState
 
@@ -246,13 +247,13 @@ MANHATTAN_WEIGHT_CONVERTED = [
 def simulate_agents(game_state: GameState, max_moves: int):
     for i in range(max_moves):
         if game_state.turn.value == 1:
-            agent = alphaBetaPruningAgentClumping(max_depth=3, game_state=game_state)
+            agent = alphaBetaPruningAgentClumping(max_depth=2, game_state=game_state)
             best_move = agent.AlphaBetaPruningSearch()
             game_state = GameStateUpdate(game_state, best_move).resulting_state
             print(f'black move {best_move}')
         else:
-            agent = AlphaBetaPruningAgent(max_depth=3)
-            move = agent.AlphaBetaPruningSearch(game_state)
+            agent = alphaBetaPruningAgent(max_depth=2,game_state=game_state)
+            move = agent.AlphaBetaPruningSearch()
             game_state = GameStateUpdate(game_state, move).resulting_state
             print(f'white move {move}')
 
@@ -262,12 +263,12 @@ def simulate_agents(game_state: GameState, max_moves: int):
 
 
 def simulate_moves(game_state: GameState, max_moves: int):
-    print("Initial Board")
-    print(game_state.board)
+    # print("Initial Board")
+    # print(game_state.board)
     i = 0
     start_time = time.time()
     while i < max_moves:
-        agent = alphaBetaPruningAgentClumping(max_depth=3, game_state=game_state)
+        agent = alphaBetaPruningAgentClumping(max_depth=4, game_state=game_state)
         best_move = agent.AlphaBetaPruningSearch()
         print(f"{game_state.turn.name}->({best_move})")
         original_marbles = game_state.remaining_opponent_marbles
@@ -289,4 +290,6 @@ def simulate_moves(game_state: GameState, max_moves: int):
 
 if __name__ == '__main__':
     # simulate_moves(GameState(), 10)
-    simulate_agents(GameState(), 50)
+    # simulate_agents(GameState(OptimizedBoard(BoardLayout.GERMAN_DAISY.value)), 50)
+    # simulate_agents(GameState(),50)
+    simulate_moves(GameState(), 1)
