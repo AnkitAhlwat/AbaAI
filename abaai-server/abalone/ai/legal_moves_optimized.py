@@ -44,6 +44,16 @@ class LegalMovesOptimized:
 
         return valid_moves
 
+
+    @staticmethod
+    def sequence_helper_function(board,position):
+        index = LegalMovesOptimized.get_flat_index(position[0], position[1])
+        if index == -1 or board[index] == -1:
+            return True
+        if board[index] == 0:
+            return True
+
+        return False
     @staticmethod
     def can_sumito_occur(sequence, direction, board):
         """Determine if a Sumito move is possible based on the sequence and direction."""
@@ -56,18 +66,9 @@ class LegalMovesOptimized:
         last_opponent_pos = sequence['opponent'][-1]
         push_target_pos = (last_opponent_pos[0] + direction[0], last_opponent_pos[1] + direction[1])
 
-        return not LegalMovesOptimized.is_position_valid(board, push_target_pos)
+        return LegalMovesOptimized.sequence_helper_function(board, push_target_pos)
 
 
-    @staticmethod
-    def sequence_helper_function(board,position):
-        index = LegalMovesOptimized.get_flat_index(position[0], position[1])
-        if index == -1 or board[index] == -1:
-            return True
-        if board[index] == 0:
-            return True
-
-        return False
 
 
     @staticmethod
@@ -112,9 +113,9 @@ class LegalMovesOptimized:
                 sequence = LegalMovesOptimized.find_marble_sequence(board, start_pos, direction, player_positions,
                                                                     opponent_positions)
                 if sequence and LegalMovesOptimized.can_sumito_occur(sequence, direction, board):
-                    new_positions_player = [(pos.x + direction[0], pos.y + direction[1]) for pos in
+                    new_positions_player = [(pos[0] + direction[0], pos[1] + direction[1]) for pos in
                                             sequence['player']]
-                    new_positions_opponent = [(pos.x + direction[0], pos.y + direction[1]) for pos in
+                    new_positions_opponent = [(pos[0] + direction[0], pos[1] + direction[1]) for pos in
                                               sequence['opponent']
                                               if not LegalMovesOptimized.is_position_valid(board,(pos[0] + direction[0],
                                                                                                    pos[1] + direction[1]))]
