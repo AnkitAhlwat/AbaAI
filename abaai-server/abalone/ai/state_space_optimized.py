@@ -1,8 +1,8 @@
 from itertools import combinations
 
-from abalone.ai.legal_moves import LegalMoves
 from abalone.ai.legal_moves_optimized import LegalMovesOptimized
-from abalone.movement import Position, Move
+from abalone.ai.cython.cython import LegalMovesOptimized as CythonLegalMovesOptimized
+from abalone.movement import Move
 
 
 class StateSpaceGenerator:
@@ -41,16 +41,16 @@ class StateSpaceGenerator:
         possible_move_list = []
         for color, positions in all_moves.items():
             for pos in positions:
-                moves = LegalMovesOptimized.get_valid_moves(game_state, pos)
+                moves = CythonLegalMovesOptimized.get_valid_moves(game_state, pos)
                 if moves:
                     possible_move_list.extend(moves)
             for pos1, pos2 in combinations(positions, 2):
-                moves = LegalMovesOptimized.get_valid_moves(game_state, pos1, pos2)
+                moves = CythonLegalMovesOptimized.get_valid_moves(game_state, pos1, pos2)
                 if moves:
                     possible_move_list.extend(moves)
 
             for pos1, pos2, pos3 in combinations(positions, 3):
-                moves = LegalMovesOptimized.get_valid_moves(game_state, pos1, pos2, pos3)
+                moves = CythonLegalMovesOptimized.get_valid_moves(game_state, pos1, pos2, pos3)
                 if moves:
                     possible_move_list.extend(moves)
 

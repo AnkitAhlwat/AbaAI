@@ -1,6 +1,3 @@
-from libc.stdint cimport int64_t as int64
-from libcpp.vector cimport vector
-
 from abalone.movement_optimized import Move
 from abalone.state import GameState
 
@@ -15,7 +12,7 @@ cdef class LegalMovesOptimized:
     def are_marbles_inline(*positions):
         """Check inline marbles with streamlined direction check."""
         cdef int num_positions = len(positions)
-        cdef int64 dx, dy
+        cdef int dx, dy
         cdef int i
         cdef tuple direction
 
@@ -34,7 +31,7 @@ cdef class LegalMovesOptimized:
 
 
     @staticmethod
-    cdef is_position_valid(vector[int] board, tuple position, list vacating_positions=None):
+    cdef is_position_valid(list[int] board, position, vacating_positions=None):
         """Combined checks for board position status with static typing."""
         cdef int index
         cdef int x = position[0]
@@ -52,10 +49,11 @@ cdef class LegalMovesOptimized:
         return board[index] == 0 or position in vacating_positions
 
     @staticmethod
-    def get_valid_moves(game_state:GameState, *positions):
+    def get_valid_moves(game_state:GameState, *positions:list[tuple[int, int]]):
         cdef int move_x, move_y
         cdef int pos_x, pos_y
         cdef list valid_moves = []
+        cdef new_positions = []
 
 
         board = game_state.board.array
