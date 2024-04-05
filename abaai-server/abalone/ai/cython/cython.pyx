@@ -1,42 +1,69 @@
-from abalone.movement import Position, Move
+from libc.stdint cimport int64_t as int64
+from libcpp.vector cimport vector
 
+from abalone.movement_optimized import Move
+from abalone.state import GameState
 
-class LegalMovesOptimized:
+cdef class LegalMovesOptimized:
     possible_moves = [(-1, 0), (1, 0), (0, -1), (0, 1), (1, -1), (-1, 1)]
 
     @staticmethod
-    def get_flat_index(x, y):
-        """Simplified bounds check integrated."""
-        return y * 9 + x if 0 <= x < 9 and 0 <= y < 9 else -1
+    cdef inline int get_flat_index(int x, int y) nogil:
+        return y * 9 + x if (0 <= x < 9) and (0 <= y < 9) else -1
 
     @staticmethod
     def are_marbles_inline(*positions):
         """Check inline marbles with streamlined direction check."""
-        if len(positions) < 2:
+        cdef int num_positions = len(positions)
+        cdef int64 dx, dy
+        cdef int i
+        cdef tuple direction
+
+        if num_positions < 2:
             return False
-        direction = (positions[1].x - positions[0].x, positions[1].y - positions[0].y)
-        return all((positions[i + 1].x - positions[i].x, positions[i + 1].y - positions[i].y) == direction
-                   for i in range(len(positions) - 1)) and direction in LegalMovesOptimized.possible_moves
+
+        dx = positions[1][0] - positions[0][0]
+        dy = positions[1][1] - positions[0][1]
+        direction = (dx, dy)
+
+        for i in range(1, num_positions - 1):
+            if (positions[i + 1][0] - positions[i][0], positions[i + 1][1] - positions[i][1]) != direction:
+                return False
+
+        return direction in [(-1, 0), (1, 0), (0, -1), (0, 1), (1, -1), (-1, 1)]
+
 
     @staticmethod
-    def is_position_valid(board, position, vacating_positions=None):
-        """Combined checks for board position status."""
-        index = LegalMovesOptimized.get_flat_index(position.x, position.y)
+    cdef bool is_position_valid(vector[int] board, tuple position, vector[tuple] vacating_positions=None):
+        """Combined checks for board position status with static typing."""
+        cdef int index
+        cdef int x = position[0]
+        cdef int y = position[1]
+
+        # Utilize the statically typed flat index calculation method
+        index = LegalMovesOptimized.get_flat_index(x, y)
         if index == -1 or board[index] == -1:
             return False
+
+        # Convert Python None to an empty C++ vector if needed
+        if vacating_positions is None:
+            vacating_positions = vector[tuple]()
+
         return board[index] == 0 or position in vacating_positions
 
     @staticmethod
-    def get_valid_moves(game_state, *positions):
-        """Optimized move validation."""
+    def get_valid_moves(game_state:GameState, *positions):
+        cdef int move_x, move_y
+        cdef int pos_x, pos_y
+        cdef list valid_moves = []
+
+        board = game_state.board.array
+
         if len(positions) > 1 and not LegalMovesOptimized.are_marbles_inline(*positions):
             return []
 
-        board = game_state.board.array
-        valid_moves = []
-
         for move_x, move_y in LegalMovesOptimized.possible_moves:
-            new_positions = [Position(pos.x + move_x, pos.y + move_y) for pos in positions]
+            new_positions = [(pos[0] + move_x, pos[1] + move_y) for pos in positions]
             if all(LegalMovesOptimized.is_position_valid(board, pos, positions) for pos in new_positions):
                 valid_moves.append(Move(list(positions), new_positions, game_state.turn))
 

@@ -125,7 +125,7 @@ class alphaBetaPruningAgentClumping:
         :return: the number of pieces of the same color that are adjacent to the given position
         """
         value = 0
-        x, y = position.x, position.y
+        x, y = position[0], position[1]
         pos_marble = board_array[y][x]
 
         if x > 0:
@@ -268,7 +268,7 @@ def simulate_moves(game_state: GameState, max_moves: int):
     i = 0
     start_time = time.time()
     while i < max_moves:
-        agent = alphaBetaPruningAgentClumping(max_depth=4, game_state=game_state)
+        agent = alphaBetaPruningAgentClumping(max_depth=3, game_state=game_state)
         best_move = agent.AlphaBetaPruningSearch()
         print(f"{game_state.turn.name}->({best_move})")
         original_marbles = game_state.remaining_opponent_marbles
