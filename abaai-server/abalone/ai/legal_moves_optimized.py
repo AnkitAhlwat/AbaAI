@@ -117,7 +117,7 @@ class LegalMovesOptimized:
                                             sequence['player']]
                     new_positions_opponent = [(pos[0] + direction[0], pos[1] + direction[1]) for pos in
                                               sequence['opponent']
-                                              if not LegalMovesOptimized.is_position_valid(board,(pos[0] + direction[0],
+                                              if LegalMovesOptimized.is_position_valid(board,(pos[0] + direction[0],
                                                                                                    pos[1] + direction[1]))]
 
                     sumito_move_list.append(Move(
