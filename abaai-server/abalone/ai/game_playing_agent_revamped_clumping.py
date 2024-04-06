@@ -291,4 +291,4 @@ if __name__ == '__main__':
     # simulate_moves(GameState(), 10)
     # simulate_agents(GameState(OptimizedBoard(BoardLayout.GERMAN_DAISY.value)), 50)
     # simulate_agents(GameState(),50)
-    simulate_moves(GameState(OptimizedBoard(BoardLayout.GERMAN_DAISY.value)), 1)
+    simulate_moves(GameState(OptimizedBoard(BoardLayout.GERMAN_DAISY.value)), 4)

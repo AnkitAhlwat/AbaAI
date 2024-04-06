@@ -30,7 +30,8 @@ class Move:
             self._next_opponent_positions = next_opponent_positions
 
     def __str__(self):
-        return f'{self.previous_player_positions} -> {self.next_player_positions}'
+        return f'Player:{self.previous_player_positions} -> {self.next_player_positions}\n' \
+               f'Opponent:{self.previous_opponent_positions} -> {self.next_opponent_positions}'
 
     def __lt__(self, other):
         if len(self.next_opponent_positions) != len(other.next_opponent_positions):

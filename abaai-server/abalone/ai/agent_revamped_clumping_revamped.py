@@ -288,6 +288,6 @@ def simulate_moves(game_state: GameState, max_moves: int):
 
 if __name__ == '__main__':
     # simulate_moves(GameState(), 10)
-    simulate_moves(GameState(OptimizedBoard(BoardLayout.GERMAN_DAISY.value)), 1)
+    simulate_moves(GameState(OptimizedBoard(BoardLayout.GERMAN_DAISY.value)), 4)
     # simulate_agents(GameState(),50)
     # simulate_moves(GameState(), 1)
