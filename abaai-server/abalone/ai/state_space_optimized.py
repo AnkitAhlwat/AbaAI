@@ -1,6 +1,5 @@
 from itertools import combinations
 
-from abalone.ai.legal_moves_optimized import LegalMovesOptimized
 from abalone.ai.cython.cython import LegalMovesOptimized as CythonLegalMovesOptimized
 from abalone.movement import Move
 
@@ -60,7 +59,7 @@ class StateSpaceGenerator:
     def generate_all_sumitos(game_state, player_pieces) -> list[Move]:
         max_positions = player_pieces["player_max"]
         min_positions = player_pieces["player_min"]
-        return LegalMovesOptimized.generate_all_sumitos(game_state, max_positions, min_positions)
+        return CythonLegalMovesOptimized.generate_all_sumitos(game_state, max_positions, min_positions)
 
     @staticmethod
     def generate_all_possible_moves(game_state) -> list[Move]:

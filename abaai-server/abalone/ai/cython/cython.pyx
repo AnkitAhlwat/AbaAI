@@ -29,7 +29,7 @@ cdef class LegalMovesOptimized:
 
 
     @staticmethod
-    cdef is_position_valid(list[int] board, position, vacating_positions=None):
+    cdef bint is_position_valid(list[int] board, position, vacating_positions=None):
         """Combined checks for board position status with static typing."""
         cdef int index = LegalMovesOptimized.get_flat_index(position[0], position[1])
         if index == -1 or board[index] == -1:
@@ -63,3 +63,89 @@ cdef class LegalMovesOptimized:
                 valid_moves.append(Move(list(positions), new_positions, game_state.turn))
 
         return valid_moves
+
+    @staticmethod
+    cdef bint sequence_helper_function(int[:] board, tuple[int,int] position) nogil:
+        cdef int index = LegalMovesOptimized.get_flat_index(position[0], position[1])
+        if index == -1 or board[index] == -1 or board[index] == 0:
+            return True
+        return False
+
+    @staticmethod
+    cdef bint can_sumito_occur(dict sequence, tuple direction, int[:] board):
+        cdef tuple last_opponent_pos
+        cdef tuple push_target_pos
+        cdef int sequence_length_player
+        cdef int sequence_length_opponent
+
+        if not sequence['opponent']:
+            return False
+
+        sequence_length_player = len(sequence['player'])
+        sequence_length_opponent = len(sequence['opponent'])
+        if sequence_length_player <= sequence_length_opponent:
+            return False
+
+        # Determine the position to push onto and check its validity
+        last_opponent_pos = sequence['opponent'][-1]
+        push_target_pos = (last_opponent_pos[0] + direction[0], last_opponent_pos[1] + direction[1])
+        return LegalMovesOptimized.sequence_helper_function(board, push_target_pos)
+
+    @staticmethod
+    cdef dict find_marble_sequence(int[:] board, tuple start_pos, tuple direction, list player_positions, list opponent_positions):
+        cdef list player_seq = []
+        cdef list opponent_seq = []
+        cdef tuple current_pos = start_pos
+        cdef tuple next_pos
+        cdef bint sequence_found = False
+
+        for _ in range(3):
+            if current_pos in player_positions:
+                player_seq.append(current_pos)
+                next_pos = (current_pos[0] + direction[0], current_pos[1] + direction[1])
+                if next_pos in opponent_positions:
+                    sequence_found = True
+                    current_pos = next_pos
+                    break
+                elif LegalMovesOptimized.sequence_helper_function(board, next_pos):
+                    break
+                current_pos = next_pos
+            else:
+                break
+
+        while sequence_found and current_pos in opponent_positions:
+            opponent_seq.append(current_pos)
+            next_pos = (current_pos[0] + direction[0], current_pos[1] + direction[1])
+            if LegalMovesOptimized.sequence_helper_function(board, next_pos):
+                break
+            current_pos = next_pos
+
+        # Return the sequences if found, else None
+        return {'player': player_seq, 'opponent': opponent_seq} if sequence_found else None
+
+    @staticmethod
+    def generate_all_sumitos(game_state, player_positions, opponent_positions):
+        """Generate all possible Sumitos given the current board state."""
+        board = game_state.board.array
+        sumito_move_list = []
+        for start_pos in player_positions:
+            for direction in LegalMovesOptimized.possible_moves:
+                sequence = LegalMovesOptimized.find_marble_sequence(board, start_pos, direction, player_positions,
+                                                                    opponent_positions)
+                if sequence and LegalMovesOptimized.can_sumito_occur(sequence, direction, board):
+                    new_positions_player = [(pos[0] + direction[0], pos[1] + direction[1]) for pos in
+                                            sequence['player']]
+                    new_positions_opponent = [(pos[0] + direction[0], pos[1] + direction[1]) for pos in
+                                              sequence['opponent']
+                                              if LegalMovesOptimized.is_position_valid(board,(pos[0] + direction[0],
+                                                                                                   pos[1] + direction[1]))]
+
+                    sumito_move_list.append(Move(
+                        sequence['player'],
+                        new_positions_player,
+                        game_state.turn,
+                        sequence['opponent'],
+                        new_positions_opponent)
+                    )
+
+        return sumito_move_list
