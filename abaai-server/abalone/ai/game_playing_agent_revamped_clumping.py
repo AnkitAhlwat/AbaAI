@@ -1,6 +1,5 @@
 import time
 
-from abalone.ai.game_playing_agent_revamped import alphaBetaPruningAgent
 from abalone.ai.state_space_generator import StateSpaceGenerator
 from abalone.board import OptimizedBoard, BoardLayout
 from abalone.movement import Position
@@ -8,7 +7,7 @@ from abalone.state import GameStateUpdate, GameState
 
 
 class alphaBetaPruningAgentClumping:
-    def __init__(self, game_state, max_depth: int, max_time_sec: int = 10, ):
+    def __init__(self, game_state, max_depth: int, max_time_sec: int = 100, ):
         self.max_depth = max_depth
         self.max_time_sec = max_time_sec
         self.min_prunes = 0
@@ -244,22 +243,22 @@ MANHATTAN_WEIGHT_CONVERTED = [
     (0, 4), (1, 4), (2, 4), (3, 4), (4, 4), None, None, None, None]
 
 
-def simulate_agents(game_state: GameState, max_moves: int):
-    for i in range(max_moves):
-        if game_state.turn.value == 1:
-            agent = alphaBetaPruningAgentClumping(max_depth=2, game_state=game_state)
-            best_move = agent.AlphaBetaPruningSearch()
-            game_state = GameStateUpdate(game_state, best_move).resulting_state
-            print(f'black move {best_move}')
-        else:
-            agent = alphaBetaPruningAgent(max_depth=2,game_state=game_state)
-            move = agent.AlphaBetaPruningSearch()
-            game_state = GameStateUpdate(game_state, move).resulting_state
-            print(f'white move {move}')
-
-    print(game_state.turn)
-    print(game_state.remaining_player_marbles)
-    print(game_state.remaining_opponent_marbles)
+# def simulate_agents(game_state: GameState, max_moves: int):
+#     for i in range(max_moves):
+#         if game_state.turn.value == 1:
+#             agent = alphaBetaPruningAgentClumping(max_depth=2, game_state=game_state)
+#             best_move = agent.AlphaBetaPruningSearch()
+#             game_state = GameStateUpdate(game_state, best_move).resulting_state
+#             print(f'black move {best_move}')
+#         else:
+#             agent = alphaBetaPruningAgent(max_depth=2,game_state=game_state)
+#             move = agent.AlphaBetaPruningSearch()
+#             game_state = GameStateUpdate(game_state, move).resulting_state
+#             print(f'white move {move}')
+#
+#     print(game_state.turn)
+#     print(game_state.remaining_player_marbles)
+#     print(game_state.remaining_opponent_marbles)
 
 
 def simulate_moves(game_state: GameState, max_moves: int):
@@ -292,4 +291,4 @@ if __name__ == '__main__':
     # simulate_moves(GameState(), 10)
     # simulate_agents(GameState(OptimizedBoard(BoardLayout.GERMAN_DAISY.value)), 50)
     # simulate_agents(GameState(),50)
-    simulate_moves(GameState(), 1)
+    simulate_moves(GameState(OptimizedBoard(BoardLayout.GERMAN_DAISY.value)), 1)

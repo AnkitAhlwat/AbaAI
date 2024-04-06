@@ -1,5 +1,6 @@
 from abalone.movement_optimized import Move
 from abalone.state import GameState
+from itertools import combinations
 
 cdef class LegalMovesOptimized:
     possible_moves = [(-1, 0), (1, 0), (0, -1), (0, 1), (1, -1), (-1, 1)]
@@ -86,7 +87,6 @@ cdef class LegalMovesOptimized:
         if sequence_length_player <= sequence_length_opponent:
             return False
 
-        # Determine the position to push onto and check its validity
         last_opponent_pos = sequence['opponent'][-1]
         push_target_pos = (last_opponent_pos[0] + direction[0], last_opponent_pos[1] + direction[1])
         return LegalMovesOptimized.sequence_helper_function(board, push_target_pos)
@@ -120,12 +120,10 @@ cdef class LegalMovesOptimized:
                 break
             current_pos = next_pos
 
-        # Return the sequences if found, else None
         return {'player': player_seq, 'opponent': opponent_seq} if sequence_found else None
 
     @staticmethod
     def generate_all_sumitos(game_state, player_positions, opponent_positions):
-        """Generate all possible Sumitos given the current board state."""
         board = game_state.board.array
         sumito_move_list = []
         for start_pos in player_positions:
@@ -149,3 +147,84 @@ cdef class LegalMovesOptimized:
                     )
 
         return sumito_move_list
+
+
+cdef class StateSpaceGenerator:
+    cdef int width
+    cdef list[int] board_array
+
+    @staticmethod
+    def get_player_piece_positions(game_state):
+        cdef:
+            int player_max_value = game_state.turn.value
+            int player_min_value = 2 if player_max_value == 1 else 1
+            dict player_dict = {"player_max": player_max_value, "player_min": player_min_value}
+            list player_max_piece_positions = []
+            list player_min_piece_positions = []
+            int index, x, y
+            int width = 9
+            int array_length = len(game_state.board.array)
+
+        for index in range(array_length):
+            if game_state.board.array[index] == player_max_value:
+                x = index % width
+                y = index // width
+                player_max_piece_positions.append((x, y))
+            elif game_state.board.array[index] == player_min_value:
+                x = index % width
+                y = index // width
+                player_min_piece_positions.append((x, y))
+
+        player_dict["player_max"] = player_max_piece_positions
+        player_dict["player_min"] = player_min_piece_positions
+
+        return player_dict
+
+    @staticmethod
+    def generate_all_moves(game_state: GameState, dict player_piece):
+        cdef:
+            int turn_value = game_state.turn.value
+            list possible_move_list = []
+            list moves
+            list positions
+
+        if game_state.turn.value == 1:
+            black_positions = player_piece['player_max']
+            white_positions = player_piece['player_min']
+        else:
+            black_positions = player_piece['player_min']
+            white_positions = player_piece['player_max']
+
+        all_moves = {"max": black_positions if turn_value == 1 else white_positions}
+
+        for color, positions in all_moves.items():
+            for pos in positions:
+                moves = LegalMovesOptimized.get_valid_moves(game_state, pos)
+                if moves:
+                    possible_move_list.extend(moves)
+            for pos1, pos2 in combinations(positions, 2):
+                moves = LegalMovesOptimized.get_valid_moves(game_state, pos1, pos2)
+                if moves:
+                    possible_move_list.extend(moves)
+
+            for pos1, pos2, pos3 in combinations(positions, 3):
+                moves = LegalMovesOptimized.get_valid_moves(game_state, pos1, pos2, pos3)
+                if moves:
+                    possible_move_list.extend(moves)
+
+        return possible_move_list
+
+    @staticmethod
+    def generate_all_sumitos(game_state, player_pieces) -> list[Move]:
+        max_positions = player_pieces["player_max"]
+        min_positions = player_pieces["player_min"]
+        return LegalMovesOptimized.generate_all_sumitos(game_state, max_positions, min_positions)
+
+    @staticmethod
+    def generate_all_possible_moves(game_state) -> list[Move]:
+        player_pieces = StateSpaceGenerator.get_player_piece_positions(game_state)
+
+        player_piece_moves = StateSpaceGenerator.generate_all_moves(game_state, player_pieces)
+        sumito_moves = StateSpaceGenerator.generate_all_sumitos(game_state, player_pieces)
+
+        return player_piece_moves + sumito_moves
