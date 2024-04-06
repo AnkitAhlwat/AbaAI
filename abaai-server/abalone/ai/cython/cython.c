@@ -1538,7 +1538,7 @@ struct __pyx_obj_7abalone_2ai_6cython_6cython_LegalMovesOptimized {
 };
 
 
-/* "abalone/ai/cython/cython.pyx":152
+/* "abalone/ai/cython/cython.pyx":159
  * 
  * 
  * cdef class StateSpaceGenerator:             # <<<<<<<<<<<<<<
@@ -1596,6 +1596,7 @@ struct __pyx_vtabstruct_7abalone_2ai_6cython_6cython_LegalMovesOptimized {
   int (*are_three_marbles_inline)(__pyx_ctuple_int__and_int, __pyx_ctuple_int__and_int, __pyx_ctuple_int__and_int);
   int (*is_position_valid)(PyObject *, PyObject *, struct __pyx_opt_args_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_is_position_valid *__pyx_optional_args);
   int (*sequence_helper_function)(PyObject *, __pyx_ctuple_int__and_int);
+  int (*is_position_out_of_bounds)(PyObject *, PyObject *);
   int (*can_sumito_occur)(PyObject *, PyObject *, PyObject *);
   PyObject *(*find_marble_sequence)(PyObject *, PyObject *, PyObject *, PyObject *, PyObject *);
 };
@@ -2515,6 +2516,7 @@ static int __pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_are_two_ma
 static int __pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_are_three_marbles_inline(__pyx_ctuple_int__and_int __pyx_v_pos1, __pyx_ctuple_int__and_int __pyx_v_pos2, __pyx_ctuple_int__and_int __pyx_v_pos3); /* proto*/
 static int __pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_is_position_valid(PyObject *__pyx_v_board, PyObject *__pyx_v_position, struct __pyx_opt_args_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_is_position_valid *__pyx_optional_args); /* proto*/
 static int __pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_sequence_helper_function(PyObject *__pyx_v_board, __pyx_ctuple_int__and_int __pyx_v_position); /* proto*/
+static int __pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_is_position_out_of_bounds(PyObject *__pyx_v_board, PyObject *__pyx_v_position); /* proto*/
 static int __pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_can_sumito_occur(PyObject *__pyx_v_sequence, PyObject *__pyx_v_direction, PyObject *__pyx_v_board); /* proto*/
 static PyObject *__pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_find_marble_sequence(PyObject *__pyx_v_board, PyObject *__pyx_v_start_pos, PyObject *__pyx_v_direction, PyObject *__pyx_v_player_positions, PyObject *__pyx_v_opponent_positions); /* proto*/
 
@@ -5020,6 +5022,111 @@ static int __pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_sequence_h
 /* "abalone/ai/cython/cython.pyx":76
  * 
  *     @staticmethod
+ *     cdef bint is_position_out_of_bounds(list[int ]board, position):             # <<<<<<<<<<<<<<
+ *         """Check if a position is out of bounds."""
+ *         cdef int index = LegalMovesOptimized.get_flat_index(position[0], position[1])
+ */
+
+static int __pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_is_position_out_of_bounds(PyObject *__pyx_v_board, PyObject *__pyx_v_position) {
+  int __pyx_v_index;
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  int __pyx_t_2;
+  int __pyx_t_3;
+  int __pyx_t_4;
+  int __pyx_t_5;
+  int __pyx_t_6;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("is_position_out_of_bounds", 1);
+
+  /* "abalone/ai/cython/cython.pyx":78
+ *     cdef bint is_position_out_of_bounds(list[int ]board, position):
+ *         """Check if a position is out of bounds."""
+ *         cdef int index = LegalMovesOptimized.get_flat_index(position[0], position[1])             # <<<<<<<<<<<<<<
+ *         if index ==-1 or board[index] == -1:
+ *             return True
+ */
+  __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_position, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 78, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 78, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_position, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 78, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 78, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_4 = __pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_get_flat_index(__pyx_t_2, __pyx_t_3); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 78, __pyx_L1_error)
+  __pyx_v_index = __pyx_t_4;
+
+  /* "abalone/ai/cython/cython.pyx":79
+ *         """Check if a position is out of bounds."""
+ *         cdef int index = LegalMovesOptimized.get_flat_index(position[0], position[1])
+ *         if index ==-1 or board[index] == -1:             # <<<<<<<<<<<<<<
+ *             return True
+ * 
+ */
+  __pyx_t_6 = (__pyx_v_index == -1L);
+  if (!__pyx_t_6) {
+  } else {
+    __pyx_t_5 = __pyx_t_6;
+    goto __pyx_L4_bool_binop_done;
+  }
+  if (unlikely(__pyx_v_board == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+    __PYX_ERR(0, 79, __pyx_L1_error)
+  }
+  __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_board, __pyx_v_index, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 79, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_6 = (__Pyx_PyInt_BoolEqObjC(__pyx_t_1, __pyx_int_neg_1, -1L, 0)); if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 79, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_5 = __pyx_t_6;
+  __pyx_L4_bool_binop_done:;
+  if (__pyx_t_5) {
+
+    /* "abalone/ai/cython/cython.pyx":80
+ *         cdef int index = LegalMovesOptimized.get_flat_index(position[0], position[1])
+ *         if index ==-1 or board[index] == -1:
+ *             return True             # <<<<<<<<<<<<<<
+ * 
+ *     @staticmethod
+ */
+    __pyx_r = 1;
+    goto __pyx_L0;
+
+    /* "abalone/ai/cython/cython.pyx":79
+ *         """Check if a position is out of bounds."""
+ *         cdef int index = LegalMovesOptimized.get_flat_index(position[0], position[1])
+ *         if index ==-1 or board[index] == -1:             # <<<<<<<<<<<<<<
+ *             return True
+ * 
+ */
+  }
+
+  /* "abalone/ai/cython/cython.pyx":76
+ * 
+ *     @staticmethod
+ *     cdef bint is_position_out_of_bounds(list[int ]board, position):             # <<<<<<<<<<<<<<
+ *         """Check if a position is out of bounds."""
+ *         cdef int index = LegalMovesOptimized.get_flat_index(position[0], position[1])
+ */
+
+  /* function exit code */
+  __pyx_r = 0;
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("abalone.ai.cython.cython.LegalMovesOptimized.is_position_out_of_bounds", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = 0;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "abalone/ai/cython/cython.pyx":83
+ * 
+ *     @staticmethod
  *     cdef bint can_sumito_occur(dict sequence, tuple direction, list[int] board):             # <<<<<<<<<<<<<<
  *         cdef tuple last_opponent_pos
  *         cdef tuple push_target_pos
@@ -5045,7 +5152,7 @@ static int __pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_can_sumito
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("can_sumito_occur", 1);
 
-  /* "abalone/ai/cython/cython.pyx":82
+  /* "abalone/ai/cython/cython.pyx":89
  *         cdef int sequence_length_opponent
  * 
  *         if not sequence['opponent']:             # <<<<<<<<<<<<<<
@@ -5054,16 +5161,16 @@ static int __pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_can_sumito
  */
   if (unlikely(__pyx_v_sequence == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 82, __pyx_L1_error)
+    __PYX_ERR(0, 89, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_sequence, __pyx_n_s_opponent); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 82, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_sequence, __pyx_n_s_opponent); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 89, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_2 < 0))) __PYX_ERR(0, 82, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_2 < 0))) __PYX_ERR(0, 89, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_3 = (!__pyx_t_2);
   if (__pyx_t_3) {
 
-    /* "abalone/ai/cython/cython.pyx":83
+    /* "abalone/ai/cython/cython.pyx":90
  * 
  *         if not sequence['opponent']:
  *             return False             # <<<<<<<<<<<<<<
@@ -5073,7 +5180,7 @@ static int __pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_can_sumito
     __pyx_r = 0;
     goto __pyx_L0;
 
-    /* "abalone/ai/cython/cython.pyx":82
+    /* "abalone/ai/cython/cython.pyx":89
  *         cdef int sequence_length_opponent
  * 
  *         if not sequence['opponent']:             # <<<<<<<<<<<<<<
@@ -5082,7 +5189,7 @@ static int __pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_can_sumito
  */
   }
 
-  /* "abalone/ai/cython/cython.pyx":85
+  /* "abalone/ai/cython/cython.pyx":92
  *             return False
  * 
  *         sequence_length_player = len(sequence['player'])             # <<<<<<<<<<<<<<
@@ -5091,15 +5198,15 @@ static int __pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_can_sumito
  */
   if (unlikely(__pyx_v_sequence == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 85, __pyx_L1_error)
+    __PYX_ERR(0, 92, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_sequence, __pyx_n_s_player); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 85, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_sequence, __pyx_n_s_player); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 92, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_4 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_4 == ((Py_ssize_t)-1))) __PYX_ERR(0, 85, __pyx_L1_error)
+  __pyx_t_4 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_4 == ((Py_ssize_t)-1))) __PYX_ERR(0, 92, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_sequence_length_player = __pyx_t_4;
 
-  /* "abalone/ai/cython/cython.pyx":86
+  /* "abalone/ai/cython/cython.pyx":93
  * 
  *         sequence_length_player = len(sequence['player'])
  *         sequence_length_opponent = len(sequence['opponent'])             # <<<<<<<<<<<<<<
@@ -5108,15 +5215,15 @@ static int __pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_can_sumito
  */
   if (unlikely(__pyx_v_sequence == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 86, __pyx_L1_error)
+    __PYX_ERR(0, 93, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_sequence, __pyx_n_s_opponent); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 86, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_sequence, __pyx_n_s_opponent); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 93, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_4 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_4 == ((Py_ssize_t)-1))) __PYX_ERR(0, 86, __pyx_L1_error)
+  __pyx_t_4 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_4 == ((Py_ssize_t)-1))) __PYX_ERR(0, 93, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_sequence_length_opponent = __pyx_t_4;
 
-  /* "abalone/ai/cython/cython.pyx":87
+  /* "abalone/ai/cython/cython.pyx":94
  *         sequence_length_player = len(sequence['player'])
  *         sequence_length_opponent = len(sequence['opponent'])
  *         if sequence_length_player <= sequence_length_opponent:             # <<<<<<<<<<<<<<
@@ -5126,7 +5233,7 @@ static int __pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_can_sumito
   __pyx_t_3 = (__pyx_v_sequence_length_player <= __pyx_v_sequence_length_opponent);
   if (__pyx_t_3) {
 
-    /* "abalone/ai/cython/cython.pyx":88
+    /* "abalone/ai/cython/cython.pyx":95
  *         sequence_length_opponent = len(sequence['opponent'])
  *         if sequence_length_player <= sequence_length_opponent:
  *             return False             # <<<<<<<<<<<<<<
@@ -5136,7 +5243,7 @@ static int __pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_can_sumito
     __pyx_r = 0;
     goto __pyx_L0;
 
-    /* "abalone/ai/cython/cython.pyx":87
+    /* "abalone/ai/cython/cython.pyx":94
  *         sequence_length_player = len(sequence['player'])
  *         sequence_length_opponent = len(sequence['opponent'])
  *         if sequence_length_player <= sequence_length_opponent:             # <<<<<<<<<<<<<<
@@ -5145,7 +5252,7 @@ static int __pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_can_sumito
  */
   }
 
-  /* "abalone/ai/cython/cython.pyx":90
+  /* "abalone/ai/cython/cython.pyx":97
  *             return False
  * 
  *         last_opponent_pos = sequence['opponent'][-1]             # <<<<<<<<<<<<<<
@@ -5154,18 +5261,18 @@ static int __pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_can_sumito
  */
   if (unlikely(__pyx_v_sequence == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 90, __pyx_L1_error)
+    __PYX_ERR(0, 97, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_sequence, __pyx_n_s_opponent); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 90, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_sequence, __pyx_n_s_opponent); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 97, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_5 = __Pyx_GetItemInt(__pyx_t_1, -1L, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 90, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_GetItemInt(__pyx_t_1, -1L, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 97, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (!(likely(PyTuple_CheckExact(__pyx_t_5))||((__pyx_t_5) == Py_None) || __Pyx_RaiseUnexpectedTypeError("tuple", __pyx_t_5))) __PYX_ERR(0, 90, __pyx_L1_error)
+  if (!(likely(PyTuple_CheckExact(__pyx_t_5))||((__pyx_t_5) == Py_None) || __Pyx_RaiseUnexpectedTypeError("tuple", __pyx_t_5))) __PYX_ERR(0, 97, __pyx_L1_error)
   __pyx_v_last_opponent_pos = ((PyObject*)__pyx_t_5);
   __pyx_t_5 = 0;
 
-  /* "abalone/ai/cython/cython.pyx":91
+  /* "abalone/ai/cython/cython.pyx":98
  * 
  *         last_opponent_pos = sequence['opponent'][-1]
  *         push_target_pos = (last_opponent_pos[0] + direction[0], last_opponent_pos[1] + direction[1])             # <<<<<<<<<<<<<<
@@ -5174,60 +5281,60 @@ static int __pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_can_sumito
  */
   if (unlikely(__pyx_v_last_opponent_pos == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 91, __pyx_L1_error)
+    __PYX_ERR(0, 98, __pyx_L1_error)
   }
-  __pyx_t_5 = __Pyx_GetItemInt_Tuple(__pyx_v_last_opponent_pos, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 91, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_GetItemInt_Tuple(__pyx_v_last_opponent_pos, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 98, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   if (unlikely(__pyx_v_direction == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 91, __pyx_L1_error)
+    __PYX_ERR(0, 98, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v_direction, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 91, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v_direction, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 98, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_6 = PyNumber_Add(__pyx_t_5, __pyx_t_1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 91, __pyx_L1_error)
+  __pyx_t_6 = PyNumber_Add(__pyx_t_5, __pyx_t_1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 98, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (unlikely(__pyx_v_last_opponent_pos == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 91, __pyx_L1_error)
+    __PYX_ERR(0, 98, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v_last_opponent_pos, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 91, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v_last_opponent_pos, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 98, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   if (unlikely(__pyx_v_direction == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 91, __pyx_L1_error)
+    __PYX_ERR(0, 98, __pyx_L1_error)
   }
-  __pyx_t_5 = __Pyx_GetItemInt_Tuple(__pyx_v_direction, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 91, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_GetItemInt_Tuple(__pyx_v_direction, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 98, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_7 = PyNumber_Add(__pyx_t_1, __pyx_t_5); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 91, __pyx_L1_error)
+  __pyx_t_7 = PyNumber_Add(__pyx_t_1, __pyx_t_5); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 98, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_5 = PyTuple_New(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 91, __pyx_L1_error)
+  __pyx_t_5 = PyTuple_New(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 98, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_GIVEREF(__pyx_t_6);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_6)) __PYX_ERR(0, 91, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_6)) __PYX_ERR(0, 98, __pyx_L1_error);
   __Pyx_GIVEREF(__pyx_t_7);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_5, 1, __pyx_t_7)) __PYX_ERR(0, 91, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_5, 1, __pyx_t_7)) __PYX_ERR(0, 98, __pyx_L1_error);
   __pyx_t_6 = 0;
   __pyx_t_7 = 0;
   __pyx_v_push_target_pos = ((PyObject*)__pyx_t_5);
   __pyx_t_5 = 0;
 
-  /* "abalone/ai/cython/cython.pyx":92
+  /* "abalone/ai/cython/cython.pyx":99
  *         last_opponent_pos = sequence['opponent'][-1]
  *         push_target_pos = (last_opponent_pos[0] + direction[0], last_opponent_pos[1] + direction[1])
  *         return LegalMovesOptimized.sequence_helper_function(board, push_target_pos)             # <<<<<<<<<<<<<<
  * 
  *     @staticmethod
  */
-  __pyx_t_8 = __pyx_convert__from_py___pyx_ctuple_int__and_int(__pyx_v_push_target_pos); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 92, __pyx_L1_error)
-  __pyx_t_3 = __pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_sequence_helper_function(__pyx_v_board, __pyx_t_8); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 92, __pyx_L1_error)
+  __pyx_t_8 = __pyx_convert__from_py___pyx_ctuple_int__and_int(__pyx_v_push_target_pos); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 99, __pyx_L1_error)
+  __pyx_t_3 = __pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_sequence_helper_function(__pyx_v_board, __pyx_t_8); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 99, __pyx_L1_error)
   __pyx_r = __pyx_t_3;
   goto __pyx_L0;
 
-  /* "abalone/ai/cython/cython.pyx":76
+  /* "abalone/ai/cython/cython.pyx":83
  * 
  *     @staticmethod
  *     cdef bint can_sumito_occur(dict sequence, tuple direction, list[int] board):             # <<<<<<<<<<<<<<
@@ -5250,7 +5357,7 @@ static int __pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_can_sumito
   return __pyx_r;
 }
 
-/* "abalone/ai/cython/cython.pyx":95
+/* "abalone/ai/cython/cython.pyx":102
  * 
  *     @staticmethod
  *     cdef dict find_marble_sequence(list[int] board, tuple start_pos, tuple direction, list player_positions, list opponent_positions):             # <<<<<<<<<<<<<<
@@ -5281,31 +5388,31 @@ static PyObject *__pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_find
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("find_marble_sequence", 1);
 
-  /* "abalone/ai/cython/cython.pyx":96
+  /* "abalone/ai/cython/cython.pyx":103
  *     @staticmethod
  *     cdef dict find_marble_sequence(list[int] board, tuple start_pos, tuple direction, list player_positions, list opponent_positions):
  *         cdef list player_seq = []             # <<<<<<<<<<<<<<
  *         cdef list opponent_seq = []
  *         cdef tuple current_pos = start_pos
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 96, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 103, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_player_seq = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "abalone/ai/cython/cython.pyx":97
+  /* "abalone/ai/cython/cython.pyx":104
  *     cdef dict find_marble_sequence(list[int] board, tuple start_pos, tuple direction, list player_positions, list opponent_positions):
  *         cdef list player_seq = []
  *         cdef list opponent_seq = []             # <<<<<<<<<<<<<<
  *         cdef tuple current_pos = start_pos
  *         cdef tuple next_pos
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 97, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 104, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_opponent_seq = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "abalone/ai/cython/cython.pyx":98
+  /* "abalone/ai/cython/cython.pyx":105
  *         cdef list player_seq = []
  *         cdef list opponent_seq = []
  *         cdef tuple current_pos = start_pos             # <<<<<<<<<<<<<<
@@ -5315,7 +5422,7 @@ static PyObject *__pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_find
   __Pyx_INCREF(__pyx_v_start_pos);
   __pyx_v_current_pos = __pyx_v_start_pos;
 
-  /* "abalone/ai/cython/cython.pyx":100
+  /* "abalone/ai/cython/cython.pyx":107
  *         cdef tuple current_pos = start_pos
  *         cdef tuple next_pos
  *         cdef bint sequence_found = False             # <<<<<<<<<<<<<<
@@ -5324,7 +5431,7 @@ static PyObject *__pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_find
  */
   __pyx_v_sequence_found = 0;
 
-  /* "abalone/ai/cython/cython.pyx":102
+  /* "abalone/ai/cython/cython.pyx":109
  *         cdef bint sequence_found = False
  * 
  *         for _ in range(3):             # <<<<<<<<<<<<<<
@@ -5334,26 +5441,26 @@ static PyObject *__pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_find
   for (__pyx_t_2 = 0; __pyx_t_2 < 3; __pyx_t_2+=1) {
     __pyx_v__ = __pyx_t_2;
 
-    /* "abalone/ai/cython/cython.pyx":103
+    /* "abalone/ai/cython/cython.pyx":110
  * 
  *         for _ in range(3):
  *             if current_pos in player_positions:             # <<<<<<<<<<<<<<
  *                 player_seq.append(current_pos)
  *                 next_pos = (current_pos[0] + direction[0], current_pos[1] + direction[1])
  */
-    __pyx_t_3 = (__Pyx_PySequence_ContainsTF(__pyx_v_current_pos, __pyx_v_player_positions, Py_EQ)); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 103, __pyx_L1_error)
+    __pyx_t_3 = (__Pyx_PySequence_ContainsTF(__pyx_v_current_pos, __pyx_v_player_positions, Py_EQ)); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 110, __pyx_L1_error)
     if (__pyx_t_3) {
 
-      /* "abalone/ai/cython/cython.pyx":104
+      /* "abalone/ai/cython/cython.pyx":111
  *         for _ in range(3):
  *             if current_pos in player_positions:
  *                 player_seq.append(current_pos)             # <<<<<<<<<<<<<<
  *                 next_pos = (current_pos[0] + direction[0], current_pos[1] + direction[1])
  *                 if next_pos in opponent_positions:
  */
-      __pyx_t_4 = __Pyx_PyList_Append(__pyx_v_player_seq, __pyx_v_current_pos); if (unlikely(__pyx_t_4 == ((int)-1))) __PYX_ERR(0, 104, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_PyList_Append(__pyx_v_player_seq, __pyx_v_current_pos); if (unlikely(__pyx_t_4 == ((int)-1))) __PYX_ERR(0, 111, __pyx_L1_error)
 
-      /* "abalone/ai/cython/cython.pyx":105
+      /* "abalone/ai/cython/cython.pyx":112
  *             if current_pos in player_positions:
  *                 player_seq.append(current_pos)
  *                 next_pos = (current_pos[0] + direction[0], current_pos[1] + direction[1])             # <<<<<<<<<<<<<<
@@ -5362,58 +5469,58 @@ static PyObject *__pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_find
  */
       if (unlikely(__pyx_v_current_pos == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 105, __pyx_L1_error)
+        __PYX_ERR(0, 112, __pyx_L1_error)
       }
-      __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v_current_pos, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 105, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v_current_pos, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 112, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (unlikely(__pyx_v_direction == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 105, __pyx_L1_error)
+        __PYX_ERR(0, 112, __pyx_L1_error)
       }
-      __pyx_t_5 = __Pyx_GetItemInt_Tuple(__pyx_v_direction, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 105, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_GetItemInt_Tuple(__pyx_v_direction, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 112, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_6 = PyNumber_Add(__pyx_t_1, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 105, __pyx_L1_error)
+      __pyx_t_6 = PyNumber_Add(__pyx_t_1, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 112, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       if (unlikely(__pyx_v_current_pos == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 105, __pyx_L1_error)
+        __PYX_ERR(0, 112, __pyx_L1_error)
       }
-      __pyx_t_5 = __Pyx_GetItemInt_Tuple(__pyx_v_current_pos, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 105, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_GetItemInt_Tuple(__pyx_v_current_pos, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 112, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       if (unlikely(__pyx_v_direction == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 105, __pyx_L1_error)
+        __PYX_ERR(0, 112, __pyx_L1_error)
       }
-      __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v_direction, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 105, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v_direction, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 112, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_7 = PyNumber_Add(__pyx_t_5, __pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 105, __pyx_L1_error)
+      __pyx_t_7 = PyNumber_Add(__pyx_t_5, __pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 112, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 105, __pyx_L1_error)
+      __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 112, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_GIVEREF(__pyx_t_6);
-      if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_6)) __PYX_ERR(0, 105, __pyx_L1_error);
+      if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_6)) __PYX_ERR(0, 112, __pyx_L1_error);
       __Pyx_GIVEREF(__pyx_t_7);
-      if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_7)) __PYX_ERR(0, 105, __pyx_L1_error);
+      if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_7)) __PYX_ERR(0, 112, __pyx_L1_error);
       __pyx_t_6 = 0;
       __pyx_t_7 = 0;
       __Pyx_XDECREF_SET(__pyx_v_next_pos, ((PyObject*)__pyx_t_1));
       __pyx_t_1 = 0;
 
-      /* "abalone/ai/cython/cython.pyx":106
+      /* "abalone/ai/cython/cython.pyx":113
  *                 player_seq.append(current_pos)
  *                 next_pos = (current_pos[0] + direction[0], current_pos[1] + direction[1])
  *                 if next_pos in opponent_positions:             # <<<<<<<<<<<<<<
  *                     sequence_found = True
  *                     current_pos = next_pos
  */
-      __pyx_t_3 = (__Pyx_PySequence_ContainsTF(__pyx_v_next_pos, __pyx_v_opponent_positions, Py_EQ)); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 106, __pyx_L1_error)
+      __pyx_t_3 = (__Pyx_PySequence_ContainsTF(__pyx_v_next_pos, __pyx_v_opponent_positions, Py_EQ)); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 113, __pyx_L1_error)
       if (__pyx_t_3) {
 
-        /* "abalone/ai/cython/cython.pyx":107
+        /* "abalone/ai/cython/cython.pyx":114
  *                 next_pos = (current_pos[0] + direction[0], current_pos[1] + direction[1])
  *                 if next_pos in opponent_positions:
  *                     sequence_found = True             # <<<<<<<<<<<<<<
@@ -5422,7 +5529,7 @@ static PyObject *__pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_find
  */
         __pyx_v_sequence_found = 1;
 
-        /* "abalone/ai/cython/cython.pyx":108
+        /* "abalone/ai/cython/cython.pyx":115
  *                 if next_pos in opponent_positions:
  *                     sequence_found = True
  *                     current_pos = next_pos             # <<<<<<<<<<<<<<
@@ -5432,7 +5539,7 @@ static PyObject *__pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_find
         __Pyx_INCREF(__pyx_v_next_pos);
         __Pyx_DECREF_SET(__pyx_v_current_pos, __pyx_v_next_pos);
 
-        /* "abalone/ai/cython/cython.pyx":109
+        /* "abalone/ai/cython/cython.pyx":116
  *                     sequence_found = True
  *                     current_pos = next_pos
  *                     break             # <<<<<<<<<<<<<<
@@ -5441,7 +5548,7 @@ static PyObject *__pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_find
  */
         goto __pyx_L4_break;
 
-        /* "abalone/ai/cython/cython.pyx":106
+        /* "abalone/ai/cython/cython.pyx":113
  *                 player_seq.append(current_pos)
  *                 next_pos = (current_pos[0] + direction[0], current_pos[1] + direction[1])
  *                 if next_pos in opponent_positions:             # <<<<<<<<<<<<<<
@@ -5450,18 +5557,18 @@ static PyObject *__pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_find
  */
       }
 
-      /* "abalone/ai/cython/cython.pyx":110
+      /* "abalone/ai/cython/cython.pyx":117
  *                     current_pos = next_pos
  *                     break
  *                 elif LegalMovesOptimized.sequence_helper_function(board, next_pos):             # <<<<<<<<<<<<<<
  *                     break
  *                 current_pos = next_pos
  */
-      __pyx_t_8 = __pyx_convert__from_py___pyx_ctuple_int__and_int(__pyx_v_next_pos); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 110, __pyx_L1_error)
-      __pyx_t_3 = __pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_sequence_helper_function(__pyx_v_board, __pyx_t_8); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 110, __pyx_L1_error)
+      __pyx_t_8 = __pyx_convert__from_py___pyx_ctuple_int__and_int(__pyx_v_next_pos); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 117, __pyx_L1_error)
+      __pyx_t_3 = __pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_sequence_helper_function(__pyx_v_board, __pyx_t_8); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 117, __pyx_L1_error)
       if (__pyx_t_3) {
 
-        /* "abalone/ai/cython/cython.pyx":111
+        /* "abalone/ai/cython/cython.pyx":118
  *                     break
  *                 elif LegalMovesOptimized.sequence_helper_function(board, next_pos):
  *                     break             # <<<<<<<<<<<<<<
@@ -5470,7 +5577,7 @@ static PyObject *__pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_find
  */
         goto __pyx_L4_break;
 
-        /* "abalone/ai/cython/cython.pyx":110
+        /* "abalone/ai/cython/cython.pyx":117
  *                     current_pos = next_pos
  *                     break
  *                 elif LegalMovesOptimized.sequence_helper_function(board, next_pos):             # <<<<<<<<<<<<<<
@@ -5479,7 +5586,7 @@ static PyObject *__pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_find
  */
       }
 
-      /* "abalone/ai/cython/cython.pyx":112
+      /* "abalone/ai/cython/cython.pyx":119
  *                 elif LegalMovesOptimized.sequence_helper_function(board, next_pos):
  *                     break
  *                 current_pos = next_pos             # <<<<<<<<<<<<<<
@@ -5489,7 +5596,7 @@ static PyObject *__pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_find
       __Pyx_INCREF(__pyx_v_next_pos);
       __Pyx_DECREF_SET(__pyx_v_current_pos, __pyx_v_next_pos);
 
-      /* "abalone/ai/cython/cython.pyx":103
+      /* "abalone/ai/cython/cython.pyx":110
  * 
  *         for _ in range(3):
  *             if current_pos in player_positions:             # <<<<<<<<<<<<<<
@@ -5499,7 +5606,7 @@ static PyObject *__pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_find
       goto __pyx_L5;
     }
 
-    /* "abalone/ai/cython/cython.pyx":114
+    /* "abalone/ai/cython/cython.pyx":121
  *                 current_pos = next_pos
  *             else:
  *                 break             # <<<<<<<<<<<<<<
@@ -5513,7 +5620,7 @@ static PyObject *__pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_find
   }
   __pyx_L4_break:;
 
-  /* "abalone/ai/cython/cython.pyx":116
+  /* "abalone/ai/cython/cython.pyx":123
  *                 break
  * 
  *         while sequence_found and current_pos in opponent_positions:             # <<<<<<<<<<<<<<
@@ -5526,21 +5633,21 @@ static PyObject *__pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_find
       __pyx_t_3 = __pyx_v_sequence_found;
       goto __pyx_L9_bool_binop_done;
     }
-    __pyx_t_9 = (__Pyx_PySequence_ContainsTF(__pyx_v_current_pos, __pyx_v_opponent_positions, Py_EQ)); if (unlikely((__pyx_t_9 < 0))) __PYX_ERR(0, 116, __pyx_L1_error)
+    __pyx_t_9 = (__Pyx_PySequence_ContainsTF(__pyx_v_current_pos, __pyx_v_opponent_positions, Py_EQ)); if (unlikely((__pyx_t_9 < 0))) __PYX_ERR(0, 123, __pyx_L1_error)
     __pyx_t_3 = __pyx_t_9;
     __pyx_L9_bool_binop_done:;
     if (!__pyx_t_3) break;
 
-    /* "abalone/ai/cython/cython.pyx":117
+    /* "abalone/ai/cython/cython.pyx":124
  * 
  *         while sequence_found and current_pos in opponent_positions:
  *             opponent_seq.append(current_pos)             # <<<<<<<<<<<<<<
  *             next_pos = (current_pos[0] + direction[0], current_pos[1] + direction[1])
  *             if LegalMovesOptimized.sequence_helper_function(board, next_pos):
  */
-    __pyx_t_4 = __Pyx_PyList_Append(__pyx_v_opponent_seq, __pyx_v_current_pos); if (unlikely(__pyx_t_4 == ((int)-1))) __PYX_ERR(0, 117, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyList_Append(__pyx_v_opponent_seq, __pyx_v_current_pos); if (unlikely(__pyx_t_4 == ((int)-1))) __PYX_ERR(0, 124, __pyx_L1_error)
 
-    /* "abalone/ai/cython/cython.pyx":118
+    /* "abalone/ai/cython/cython.pyx":125
  *         while sequence_found and current_pos in opponent_positions:
  *             opponent_seq.append(current_pos)
  *             next_pos = (current_pos[0] + direction[0], current_pos[1] + direction[1])             # <<<<<<<<<<<<<<
@@ -5549,59 +5656,59 @@ static PyObject *__pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_find
  */
     if (unlikely(__pyx_v_current_pos == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 118, __pyx_L1_error)
+      __PYX_ERR(0, 125, __pyx_L1_error)
     }
-    __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v_current_pos, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 118, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v_current_pos, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 125, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     if (unlikely(__pyx_v_direction == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 118, __pyx_L1_error)
+      __PYX_ERR(0, 125, __pyx_L1_error)
     }
-    __pyx_t_7 = __Pyx_GetItemInt_Tuple(__pyx_v_direction, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 118, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_GetItemInt_Tuple(__pyx_v_direction, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 125, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
-    __pyx_t_6 = PyNumber_Add(__pyx_t_1, __pyx_t_7); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 118, __pyx_L1_error)
+    __pyx_t_6 = PyNumber_Add(__pyx_t_1, __pyx_t_7); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 125, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     if (unlikely(__pyx_v_current_pos == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 118, __pyx_L1_error)
+      __PYX_ERR(0, 125, __pyx_L1_error)
     }
-    __pyx_t_7 = __Pyx_GetItemInt_Tuple(__pyx_v_current_pos, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 118, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_GetItemInt_Tuple(__pyx_v_current_pos, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 125, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     if (unlikely(__pyx_v_direction == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 118, __pyx_L1_error)
+      __PYX_ERR(0, 125, __pyx_L1_error)
     }
-    __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v_direction, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 118, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v_direction, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 125, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_5 = PyNumber_Add(__pyx_t_7, __pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 118, __pyx_L1_error)
+    __pyx_t_5 = PyNumber_Add(__pyx_t_7, __pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 125, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 118, __pyx_L1_error)
+    __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 125, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_GIVEREF(__pyx_t_6);
-    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_6)) __PYX_ERR(0, 118, __pyx_L1_error);
+    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_6)) __PYX_ERR(0, 125, __pyx_L1_error);
     __Pyx_GIVEREF(__pyx_t_5);
-    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_5)) __PYX_ERR(0, 118, __pyx_L1_error);
+    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_5)) __PYX_ERR(0, 125, __pyx_L1_error);
     __pyx_t_6 = 0;
     __pyx_t_5 = 0;
     __Pyx_XDECREF_SET(__pyx_v_next_pos, ((PyObject*)__pyx_t_1));
     __pyx_t_1 = 0;
 
-    /* "abalone/ai/cython/cython.pyx":119
+    /* "abalone/ai/cython/cython.pyx":126
  *             opponent_seq.append(current_pos)
  *             next_pos = (current_pos[0] + direction[0], current_pos[1] + direction[1])
  *             if LegalMovesOptimized.sequence_helper_function(board, next_pos):             # <<<<<<<<<<<<<<
  *                 break
  *             current_pos = next_pos
  */
-    __pyx_t_8 = __pyx_convert__from_py___pyx_ctuple_int__and_int(__pyx_v_next_pos); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 119, __pyx_L1_error)
-    __pyx_t_3 = __pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_sequence_helper_function(__pyx_v_board, __pyx_t_8); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 119, __pyx_L1_error)
+    __pyx_t_8 = __pyx_convert__from_py___pyx_ctuple_int__and_int(__pyx_v_next_pos); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 126, __pyx_L1_error)
+    __pyx_t_3 = __pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_sequence_helper_function(__pyx_v_board, __pyx_t_8); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 126, __pyx_L1_error)
     if (__pyx_t_3) {
 
-      /* "abalone/ai/cython/cython.pyx":120
+      /* "abalone/ai/cython/cython.pyx":127
  *             next_pos = (current_pos[0] + direction[0], current_pos[1] + direction[1])
  *             if LegalMovesOptimized.sequence_helper_function(board, next_pos):
  *                 break             # <<<<<<<<<<<<<<
@@ -5610,7 +5717,7 @@ static PyObject *__pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_find
  */
       goto __pyx_L8_break;
 
-      /* "abalone/ai/cython/cython.pyx":119
+      /* "abalone/ai/cython/cython.pyx":126
  *             opponent_seq.append(current_pos)
  *             next_pos = (current_pos[0] + direction[0], current_pos[1] + direction[1])
  *             if LegalMovesOptimized.sequence_helper_function(board, next_pos):             # <<<<<<<<<<<<<<
@@ -5619,7 +5726,7 @@ static PyObject *__pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_find
  */
     }
 
-    /* "abalone/ai/cython/cython.pyx":121
+    /* "abalone/ai/cython/cython.pyx":128
  *             if LegalMovesOptimized.sequence_helper_function(board, next_pos):
  *                 break
  *             current_pos = next_pos             # <<<<<<<<<<<<<<
@@ -5631,7 +5738,7 @@ static PyObject *__pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_find
   }
   __pyx_L8_break:;
 
-  /* "abalone/ai/cython/cython.pyx":123
+  /* "abalone/ai/cython/cython.pyx":130
  *             current_pos = next_pos
  * 
  *         return {'player': player_seq, 'opponent': opponent_seq} if sequence_found else None             # <<<<<<<<<<<<<<
@@ -5640,22 +5747,22 @@ static PyObject *__pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_find
  */
   __Pyx_XDECREF(__pyx_r);
   if (__pyx_v_sequence_found) {
-    __pyx_t_5 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 123, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 130, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_player, __pyx_v_player_seq) < 0) __PYX_ERR(0, 123, __pyx_L1_error)
-    if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_opponent, __pyx_v_opponent_seq) < 0) __PYX_ERR(0, 123, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_player, __pyx_v_player_seq) < 0) __PYX_ERR(0, 130, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_opponent, __pyx_v_opponent_seq) < 0) __PYX_ERR(0, 130, __pyx_L1_error)
     __pyx_t_1 = __pyx_t_5;
     __pyx_t_5 = 0;
   } else {
     __Pyx_INCREF(Py_None);
     __pyx_t_1 = Py_None;
   }
-  if (!(likely(PyDict_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None) || __Pyx_RaiseUnexpectedTypeError("dict", __pyx_t_1))) __PYX_ERR(0, 123, __pyx_L1_error)
+  if (!(likely(PyDict_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None) || __Pyx_RaiseUnexpectedTypeError("dict", __pyx_t_1))) __PYX_ERR(0, 130, __pyx_L1_error)
   __pyx_r = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "abalone/ai/cython/cython.pyx":95
+  /* "abalone/ai/cython/cython.pyx":102
  * 
  *     @staticmethod
  *     cdef dict find_marble_sequence(list[int] board, tuple start_pos, tuple direction, list player_positions, list opponent_positions):             # <<<<<<<<<<<<<<
@@ -5681,7 +5788,7 @@ static PyObject *__pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_find
   return __pyx_r;
 }
 
-/* "abalone/ai/cython/cython.pyx":125
+/* "abalone/ai/cython/cython.pyx":132
  *         return {'player': player_seq, 'opponent': opponent_seq} if sequence_found else None
  * 
  *     @staticmethod             # <<<<<<<<<<<<<<
@@ -5748,7 +5855,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[0]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 125, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 132, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
         CYTHON_FALLTHROUGH;
         case  1:
@@ -5756,9 +5863,9 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[1]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 125, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 132, __pyx_L3_error)
         else {
-          __Pyx_RaiseArgtupleInvalid("generate_all_sumitos", 1, 3, 3, 1); __PYX_ERR(0, 125, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("generate_all_sumitos", 1, 3, 3, 1); __PYX_ERR(0, 132, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
@@ -5766,14 +5873,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[2]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 125, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 132, __pyx_L3_error)
         else {
-          __Pyx_RaiseArgtupleInvalid("generate_all_sumitos", 1, 3, 3, 2); __PYX_ERR(0, 125, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("generate_all_sumitos", 1, 3, 3, 2); __PYX_ERR(0, 132, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "generate_all_sumitos") < 0)) __PYX_ERR(0, 125, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "generate_all_sumitos") < 0)) __PYX_ERR(0, 132, __pyx_L3_error)
       }
     } else if (unlikely(__pyx_nargs != 3)) {
       goto __pyx_L5_argtuple_error;
@@ -5788,7 +5895,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("generate_all_sumitos", 1, 3, 3, __pyx_nargs); __PYX_ERR(0, 125, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("generate_all_sumitos", 1, 3, 3, __pyx_nargs); __PYX_ERR(0, 132, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -5850,34 +5957,34 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_2ge
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("generate_all_sumitos", 1);
 
-  /* "abalone/ai/cython/cython.pyx":127
+  /* "abalone/ai/cython/cython.pyx":134
  *     @staticmethod
  *     def generate_all_sumitos(game_state, player_positions, opponent_positions):
  *         board = game_state.board.array             # <<<<<<<<<<<<<<
  *         sumito_move_list = []
  *         for start_pos in player_positions:
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_game_state, __pyx_n_s_board); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 127, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_game_state, __pyx_n_s_board); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 134, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_array); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 127, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_array); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 134, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_board = __pyx_t_2;
   __pyx_t_2 = 0;
 
-  /* "abalone/ai/cython/cython.pyx":128
+  /* "abalone/ai/cython/cython.pyx":135
  *     def generate_all_sumitos(game_state, player_positions, opponent_positions):
  *         board = game_state.board.array
  *         sumito_move_list = []             # <<<<<<<<<<<<<<
  *         for start_pos in player_positions:
  *             for direction in LegalMovesOptimized.possible_moves:
  */
-  __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 128, __pyx_L1_error)
+  __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 135, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_v_sumito_move_list = ((PyObject*)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "abalone/ai/cython/cython.pyx":129
+  /* "abalone/ai/cython/cython.pyx":136
  *         board = game_state.board.array
  *         sumito_move_list = []
  *         for start_pos in player_positions:             # <<<<<<<<<<<<<<
@@ -5889,9 +5996,9 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_2ge
     __pyx_t_3 = 0;
     __pyx_t_4 = NULL;
   } else {
-    __pyx_t_3 = -1; __pyx_t_2 = PyObject_GetIter(__pyx_v_player_positions); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 129, __pyx_L1_error)
+    __pyx_t_3 = -1; __pyx_t_2 = PyObject_GetIter(__pyx_v_player_positions); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 136, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_4 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 129, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 136, __pyx_L1_error)
   }
   for (;;) {
     if (likely(!__pyx_t_4)) {
@@ -5899,28 +6006,28 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_2ge
         {
           Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_2);
           #if !CYTHON_ASSUME_SAFE_MACROS
-          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 129, __pyx_L1_error)
+          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 136, __pyx_L1_error)
           #endif
           if (__pyx_t_3 >= __pyx_temp) break;
         }
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_1 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_3); __Pyx_INCREF(__pyx_t_1); __pyx_t_3++; if (unlikely((0 < 0))) __PYX_ERR(0, 129, __pyx_L1_error)
+        __pyx_t_1 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_3); __Pyx_INCREF(__pyx_t_1); __pyx_t_3++; if (unlikely((0 < 0))) __PYX_ERR(0, 136, __pyx_L1_error)
         #else
-        __pyx_t_1 = __Pyx_PySequence_ITEM(__pyx_t_2, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 129, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PySequence_ITEM(__pyx_t_2, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 136, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         #endif
       } else {
         {
           Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_2);
           #if !CYTHON_ASSUME_SAFE_MACROS
-          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 129, __pyx_L1_error)
+          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 136, __pyx_L1_error)
           #endif
           if (__pyx_t_3 >= __pyx_temp) break;
         }
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_2, __pyx_t_3); __Pyx_INCREF(__pyx_t_1); __pyx_t_3++; if (unlikely((0 < 0))) __PYX_ERR(0, 129, __pyx_L1_error)
+        __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_2, __pyx_t_3); __Pyx_INCREF(__pyx_t_1); __pyx_t_3++; if (unlikely((0 < 0))) __PYX_ERR(0, 136, __pyx_L1_error)
         #else
-        __pyx_t_1 = __Pyx_PySequence_ITEM(__pyx_t_2, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 129, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PySequence_ITEM(__pyx_t_2, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 136, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         #endif
       }
@@ -5930,7 +6037,7 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_2ge
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
           if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else __PYX_ERR(0, 129, __pyx_L1_error)
+          else __PYX_ERR(0, 136, __pyx_L1_error)
         }
         break;
       }
@@ -5939,23 +6046,23 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_2ge
     __Pyx_XDECREF_SET(__pyx_v_start_pos, __pyx_t_1);
     __pyx_t_1 = 0;
 
-    /* "abalone/ai/cython/cython.pyx":130
+    /* "abalone/ai/cython/cython.pyx":137
  *         sumito_move_list = []
  *         for start_pos in player_positions:
  *             for direction in LegalMovesOptimized.possible_moves:             # <<<<<<<<<<<<<<
  *                 sequence = LegalMovesOptimized.find_marble_sequence(board, start_pos, direction, player_positions,
  *                                                                     opponent_positions)
  */
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_LegalMovesOptimized), __pyx_n_s_possible_moves); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 130, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_LegalMovesOptimized), __pyx_n_s_possible_moves); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 137, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     if (likely(PyList_CheckExact(__pyx_t_1)) || PyTuple_CheckExact(__pyx_t_1)) {
       __pyx_t_5 = __pyx_t_1; __Pyx_INCREF(__pyx_t_5);
       __pyx_t_6 = 0;
       __pyx_t_7 = NULL;
     } else {
-      __pyx_t_6 = -1; __pyx_t_5 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 130, __pyx_L1_error)
+      __pyx_t_6 = -1; __pyx_t_5 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 137, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_7 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_5); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 130, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_5); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 137, __pyx_L1_error)
     }
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     for (;;) {
@@ -5964,28 +6071,28 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_2ge
           {
             Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_5);
             #if !CYTHON_ASSUME_SAFE_MACROS
-            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 130, __pyx_L1_error)
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 137, __pyx_L1_error)
             #endif
             if (__pyx_t_6 >= __pyx_temp) break;
           }
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_1 = PyList_GET_ITEM(__pyx_t_5, __pyx_t_6); __Pyx_INCREF(__pyx_t_1); __pyx_t_6++; if (unlikely((0 < 0))) __PYX_ERR(0, 130, __pyx_L1_error)
+          __pyx_t_1 = PyList_GET_ITEM(__pyx_t_5, __pyx_t_6); __Pyx_INCREF(__pyx_t_1); __pyx_t_6++; if (unlikely((0 < 0))) __PYX_ERR(0, 137, __pyx_L1_error)
           #else
-          __pyx_t_1 = __Pyx_PySequence_ITEM(__pyx_t_5, __pyx_t_6); __pyx_t_6++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 130, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_PySequence_ITEM(__pyx_t_5, __pyx_t_6); __pyx_t_6++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 137, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
           #endif
         } else {
           {
             Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_5);
             #if !CYTHON_ASSUME_SAFE_MACROS
-            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 130, __pyx_L1_error)
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 137, __pyx_L1_error)
             #endif
             if (__pyx_t_6 >= __pyx_temp) break;
           }
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_5, __pyx_t_6); __Pyx_INCREF(__pyx_t_1); __pyx_t_6++; if (unlikely((0 < 0))) __PYX_ERR(0, 130, __pyx_L1_error)
+          __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_5, __pyx_t_6); __Pyx_INCREF(__pyx_t_1); __pyx_t_6++; if (unlikely((0 < 0))) __PYX_ERR(0, 137, __pyx_L1_error)
           #else
-          __pyx_t_1 = __Pyx_PySequence_ITEM(__pyx_t_5, __pyx_t_6); __pyx_t_6++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 130, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_PySequence_ITEM(__pyx_t_5, __pyx_t_6); __pyx_t_6++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 137, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
           #endif
         }
@@ -5995,7 +6102,7 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_2ge
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
             if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-            else __PYX_ERR(0, 130, __pyx_L1_error)
+            else __PYX_ERR(0, 137, __pyx_L1_error)
           }
           break;
         }
@@ -6004,60 +6111,60 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_2ge
       __Pyx_XDECREF_SET(__pyx_v_direction, __pyx_t_1);
       __pyx_t_1 = 0;
 
-      /* "abalone/ai/cython/cython.pyx":131
+      /* "abalone/ai/cython/cython.pyx":138
  *         for start_pos in player_positions:
  *             for direction in LegalMovesOptimized.possible_moves:
  *                 sequence = LegalMovesOptimized.find_marble_sequence(board, start_pos, direction, player_positions,             # <<<<<<<<<<<<<<
  *                                                                     opponent_positions)
  *                 if sequence and LegalMovesOptimized.can_sumito_occur(sequence, direction, board):
  */
-      if (!(likely(PyList_CheckExact(__pyx_v_board))||((__pyx_v_board) == Py_None) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_v_board))) __PYX_ERR(0, 131, __pyx_L1_error)
-      if (!(likely(PyTuple_CheckExact(__pyx_v_start_pos))||((__pyx_v_start_pos) == Py_None) || __Pyx_RaiseUnexpectedTypeError("tuple", __pyx_v_start_pos))) __PYX_ERR(0, 131, __pyx_L1_error)
-      if (!(likely(PyTuple_CheckExact(__pyx_v_direction))||((__pyx_v_direction) == Py_None) || __Pyx_RaiseUnexpectedTypeError("tuple", __pyx_v_direction))) __PYX_ERR(0, 131, __pyx_L1_error)
-      if (!(likely(PyList_CheckExact(__pyx_v_player_positions))||((__pyx_v_player_positions) == Py_None) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_v_player_positions))) __PYX_ERR(0, 131, __pyx_L1_error)
+      if (!(likely(PyList_CheckExact(__pyx_v_board))||((__pyx_v_board) == Py_None) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_v_board))) __PYX_ERR(0, 138, __pyx_L1_error)
+      if (!(likely(PyTuple_CheckExact(__pyx_v_start_pos))||((__pyx_v_start_pos) == Py_None) || __Pyx_RaiseUnexpectedTypeError("tuple", __pyx_v_start_pos))) __PYX_ERR(0, 138, __pyx_L1_error)
+      if (!(likely(PyTuple_CheckExact(__pyx_v_direction))||((__pyx_v_direction) == Py_None) || __Pyx_RaiseUnexpectedTypeError("tuple", __pyx_v_direction))) __PYX_ERR(0, 138, __pyx_L1_error)
+      if (!(likely(PyList_CheckExact(__pyx_v_player_positions))||((__pyx_v_player_positions) == Py_None) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_v_player_positions))) __PYX_ERR(0, 138, __pyx_L1_error)
 
-      /* "abalone/ai/cython/cython.pyx":132
+      /* "abalone/ai/cython/cython.pyx":139
  *             for direction in LegalMovesOptimized.possible_moves:
  *                 sequence = LegalMovesOptimized.find_marble_sequence(board, start_pos, direction, player_positions,
  *                                                                     opponent_positions)             # <<<<<<<<<<<<<<
  *                 if sequence and LegalMovesOptimized.can_sumito_occur(sequence, direction, board):
  *                     new_positions_player = [(pos[0] + direction[0], pos[1] + direction[1]) for pos in
  */
-      if (!(likely(PyList_CheckExact(__pyx_v_opponent_positions))||((__pyx_v_opponent_positions) == Py_None) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_v_opponent_positions))) __PYX_ERR(0, 132, __pyx_L1_error)
+      if (!(likely(PyList_CheckExact(__pyx_v_opponent_positions))||((__pyx_v_opponent_positions) == Py_None) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_v_opponent_positions))) __PYX_ERR(0, 139, __pyx_L1_error)
 
-      /* "abalone/ai/cython/cython.pyx":131
+      /* "abalone/ai/cython/cython.pyx":138
  *         for start_pos in player_positions:
  *             for direction in LegalMovesOptimized.possible_moves:
  *                 sequence = LegalMovesOptimized.find_marble_sequence(board, start_pos, direction, player_positions,             # <<<<<<<<<<<<<<
  *                                                                     opponent_positions)
  *                 if sequence and LegalMovesOptimized.can_sumito_occur(sequence, direction, board):
  */
-      __pyx_t_1 = __pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_find_marble_sequence(((PyObject*)__pyx_v_board), ((PyObject*)__pyx_v_start_pos), ((PyObject*)__pyx_v_direction), ((PyObject*)__pyx_v_player_positions), ((PyObject*)__pyx_v_opponent_positions)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 131, __pyx_L1_error)
+      __pyx_t_1 = __pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_find_marble_sequence(((PyObject*)__pyx_v_board), ((PyObject*)__pyx_v_start_pos), ((PyObject*)__pyx_v_direction), ((PyObject*)__pyx_v_player_positions), ((PyObject*)__pyx_v_opponent_positions)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 138, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_XDECREF_SET(__pyx_v_sequence, ((PyObject*)__pyx_t_1));
       __pyx_t_1 = 0;
 
-      /* "abalone/ai/cython/cython.pyx":133
+      /* "abalone/ai/cython/cython.pyx":140
  *                 sequence = LegalMovesOptimized.find_marble_sequence(board, start_pos, direction, player_positions,
  *                                                                     opponent_positions)
  *                 if sequence and LegalMovesOptimized.can_sumito_occur(sequence, direction, board):             # <<<<<<<<<<<<<<
  *                     new_positions_player = [(pos[0] + direction[0], pos[1] + direction[1]) for pos in
  *                                             sequence['player']]
  */
-      __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_v_sequence); if (unlikely((__pyx_t_9 < 0))) __PYX_ERR(0, 133, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_v_sequence); if (unlikely((__pyx_t_9 < 0))) __PYX_ERR(0, 140, __pyx_L1_error)
       if (__pyx_t_9) {
       } else {
         __pyx_t_8 = __pyx_t_9;
         goto __pyx_L8_bool_binop_done;
       }
-      if (!(likely(PyTuple_CheckExact(__pyx_v_direction))||((__pyx_v_direction) == Py_None) || __Pyx_RaiseUnexpectedTypeError("tuple", __pyx_v_direction))) __PYX_ERR(0, 133, __pyx_L1_error)
-      if (!(likely(PyList_CheckExact(__pyx_v_board))||((__pyx_v_board) == Py_None) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_v_board))) __PYX_ERR(0, 133, __pyx_L1_error)
-      __pyx_t_9 = __pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_can_sumito_occur(__pyx_v_sequence, ((PyObject*)__pyx_v_direction), ((PyObject*)__pyx_v_board)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 133, __pyx_L1_error)
+      if (!(likely(PyTuple_CheckExact(__pyx_v_direction))||((__pyx_v_direction) == Py_None) || __Pyx_RaiseUnexpectedTypeError("tuple", __pyx_v_direction))) __PYX_ERR(0, 140, __pyx_L1_error)
+      if (!(likely(PyList_CheckExact(__pyx_v_board))||((__pyx_v_board) == Py_None) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_v_board))) __PYX_ERR(0, 140, __pyx_L1_error)
+      __pyx_t_9 = __pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_can_sumito_occur(__pyx_v_sequence, ((PyObject*)__pyx_v_direction), ((PyObject*)__pyx_v_board)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 140, __pyx_L1_error)
       __pyx_t_8 = __pyx_t_9;
       __pyx_L8_bool_binop_done:;
       if (__pyx_t_8) {
 
-        /* "abalone/ai/cython/cython.pyx":134
+        /* "abalone/ai/cython/cython.pyx":141
  *                                                                     opponent_positions)
  *                 if sequence and LegalMovesOptimized.can_sumito_occur(sequence, direction, board):
  *                     new_positions_player = [(pos[0] + direction[0], pos[1] + direction[1]) for pos in             # <<<<<<<<<<<<<<
@@ -6065,10 +6172,10 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_2ge
  *                     new_positions_opponent = [(pos[0] + direction[0], pos[1] + direction[1]) for pos in
  */
         { /* enter inner scope */
-          __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 134, __pyx_L12_error)
+          __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 141, __pyx_L12_error)
           __Pyx_GOTREF(__pyx_t_1);
 
-          /* "abalone/ai/cython/cython.pyx":135
+          /* "abalone/ai/cython/cython.pyx":142
  *                 if sequence and LegalMovesOptimized.can_sumito_occur(sequence, direction, board):
  *                     new_positions_player = [(pos[0] + direction[0], pos[1] + direction[1]) for pos in
  *                                             sequence['player']]             # <<<<<<<<<<<<<<
@@ -6077,18 +6184,18 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_2ge
  */
           if (unlikely(__pyx_v_sequence == Py_None)) {
             PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-            __PYX_ERR(0, 135, __pyx_L12_error)
+            __PYX_ERR(0, 142, __pyx_L12_error)
           }
-          __pyx_t_10 = __Pyx_PyDict_GetItem(__pyx_v_sequence, __pyx_n_s_player); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 135, __pyx_L12_error)
+          __pyx_t_10 = __Pyx_PyDict_GetItem(__pyx_v_sequence, __pyx_n_s_player); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 142, __pyx_L12_error)
           __Pyx_GOTREF(__pyx_t_10);
           if (likely(PyList_CheckExact(__pyx_t_10)) || PyTuple_CheckExact(__pyx_t_10)) {
             __pyx_t_11 = __pyx_t_10; __Pyx_INCREF(__pyx_t_11);
             __pyx_t_12 = 0;
             __pyx_t_13 = NULL;
           } else {
-            __pyx_t_12 = -1; __pyx_t_11 = PyObject_GetIter(__pyx_t_10); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 135, __pyx_L12_error)
+            __pyx_t_12 = -1; __pyx_t_11 = PyObject_GetIter(__pyx_t_10); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 142, __pyx_L12_error)
             __Pyx_GOTREF(__pyx_t_11);
-            __pyx_t_13 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_11); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 135, __pyx_L12_error)
+            __pyx_t_13 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_11); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 142, __pyx_L12_error)
           }
           __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
           for (;;) {
@@ -6097,28 +6204,28 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_2ge
                 {
                   Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_11);
                   #if !CYTHON_ASSUME_SAFE_MACROS
-                  if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 135, __pyx_L12_error)
+                  if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 142, __pyx_L12_error)
                   #endif
                   if (__pyx_t_12 >= __pyx_temp) break;
                 }
                 #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-                __pyx_t_10 = PyList_GET_ITEM(__pyx_t_11, __pyx_t_12); __Pyx_INCREF(__pyx_t_10); __pyx_t_12++; if (unlikely((0 < 0))) __PYX_ERR(0, 135, __pyx_L12_error)
+                __pyx_t_10 = PyList_GET_ITEM(__pyx_t_11, __pyx_t_12); __Pyx_INCREF(__pyx_t_10); __pyx_t_12++; if (unlikely((0 < 0))) __PYX_ERR(0, 142, __pyx_L12_error)
                 #else
-                __pyx_t_10 = __Pyx_PySequence_ITEM(__pyx_t_11, __pyx_t_12); __pyx_t_12++; if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 135, __pyx_L12_error)
+                __pyx_t_10 = __Pyx_PySequence_ITEM(__pyx_t_11, __pyx_t_12); __pyx_t_12++; if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 142, __pyx_L12_error)
                 __Pyx_GOTREF(__pyx_t_10);
                 #endif
               } else {
                 {
                   Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_11);
                   #if !CYTHON_ASSUME_SAFE_MACROS
-                  if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 135, __pyx_L12_error)
+                  if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 142, __pyx_L12_error)
                   #endif
                   if (__pyx_t_12 >= __pyx_temp) break;
                 }
                 #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-                __pyx_t_10 = PyTuple_GET_ITEM(__pyx_t_11, __pyx_t_12); __Pyx_INCREF(__pyx_t_10); __pyx_t_12++; if (unlikely((0 < 0))) __PYX_ERR(0, 135, __pyx_L12_error)
+                __pyx_t_10 = PyTuple_GET_ITEM(__pyx_t_11, __pyx_t_12); __Pyx_INCREF(__pyx_t_10); __pyx_t_12++; if (unlikely((0 < 0))) __PYX_ERR(0, 142, __pyx_L12_error)
                 #else
-                __pyx_t_10 = __Pyx_PySequence_ITEM(__pyx_t_11, __pyx_t_12); __pyx_t_12++; if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 135, __pyx_L12_error)
+                __pyx_t_10 = __Pyx_PySequence_ITEM(__pyx_t_11, __pyx_t_12); __pyx_t_12++; if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 142, __pyx_L12_error)
                 __Pyx_GOTREF(__pyx_t_10);
                 #endif
               }
@@ -6128,7 +6235,7 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_2ge
                 PyObject* exc_type = PyErr_Occurred();
                 if (exc_type) {
                   if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-                  else __PYX_ERR(0, 135, __pyx_L12_error)
+                  else __PYX_ERR(0, 142, __pyx_L12_error)
                 }
                 break;
               }
@@ -6137,38 +6244,38 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_2ge
             __Pyx_XDECREF_SET(__pyx_8genexpr2__pyx_v_pos, __pyx_t_10);
             __pyx_t_10 = 0;
 
-            /* "abalone/ai/cython/cython.pyx":134
+            /* "abalone/ai/cython/cython.pyx":141
  *                                                                     opponent_positions)
  *                 if sequence and LegalMovesOptimized.can_sumito_occur(sequence, direction, board):
  *                     new_positions_player = [(pos[0] + direction[0], pos[1] + direction[1]) for pos in             # <<<<<<<<<<<<<<
  *                                             sequence['player']]
  *                     new_positions_opponent = [(pos[0] + direction[0], pos[1] + direction[1]) for pos in
  */
-            __pyx_t_10 = __Pyx_GetItemInt(__pyx_8genexpr2__pyx_v_pos, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 134, __pyx_L12_error)
+            __pyx_t_10 = __Pyx_GetItemInt(__pyx_8genexpr2__pyx_v_pos, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 141, __pyx_L12_error)
             __Pyx_GOTREF(__pyx_t_10);
-            __pyx_t_14 = __Pyx_GetItemInt(__pyx_v_direction, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 134, __pyx_L12_error)
+            __pyx_t_14 = __Pyx_GetItemInt(__pyx_v_direction, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 141, __pyx_L12_error)
             __Pyx_GOTREF(__pyx_t_14);
-            __pyx_t_15 = PyNumber_Add(__pyx_t_10, __pyx_t_14); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 134, __pyx_L12_error)
+            __pyx_t_15 = PyNumber_Add(__pyx_t_10, __pyx_t_14); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 141, __pyx_L12_error)
             __Pyx_GOTREF(__pyx_t_15);
             __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
             __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-            __pyx_t_14 = __Pyx_GetItemInt(__pyx_8genexpr2__pyx_v_pos, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 134, __pyx_L12_error)
+            __pyx_t_14 = __Pyx_GetItemInt(__pyx_8genexpr2__pyx_v_pos, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 141, __pyx_L12_error)
             __Pyx_GOTREF(__pyx_t_14);
-            __pyx_t_10 = __Pyx_GetItemInt(__pyx_v_direction, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 134, __pyx_L12_error)
+            __pyx_t_10 = __Pyx_GetItemInt(__pyx_v_direction, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 141, __pyx_L12_error)
             __Pyx_GOTREF(__pyx_t_10);
-            __pyx_t_16 = PyNumber_Add(__pyx_t_14, __pyx_t_10); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 134, __pyx_L12_error)
+            __pyx_t_16 = PyNumber_Add(__pyx_t_14, __pyx_t_10); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 141, __pyx_L12_error)
             __Pyx_GOTREF(__pyx_t_16);
             __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
             __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-            __pyx_t_10 = PyTuple_New(2); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 134, __pyx_L12_error)
+            __pyx_t_10 = PyTuple_New(2); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 141, __pyx_L12_error)
             __Pyx_GOTREF(__pyx_t_10);
             __Pyx_GIVEREF(__pyx_t_15);
-            if (__Pyx_PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_t_15)) __PYX_ERR(0, 134, __pyx_L12_error);
+            if (__Pyx_PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_t_15)) __PYX_ERR(0, 141, __pyx_L12_error);
             __Pyx_GIVEREF(__pyx_t_16);
-            if (__Pyx_PyTuple_SET_ITEM(__pyx_t_10, 1, __pyx_t_16)) __PYX_ERR(0, 134, __pyx_L12_error);
+            if (__Pyx_PyTuple_SET_ITEM(__pyx_t_10, 1, __pyx_t_16)) __PYX_ERR(0, 141, __pyx_L12_error);
             __pyx_t_15 = 0;
             __pyx_t_16 = 0;
-            if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_10))) __PYX_ERR(0, 134, __pyx_L12_error)
+            if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_10))) __PYX_ERR(0, 141, __pyx_L12_error)
             __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
           }
           __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
@@ -6182,38 +6289,38 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_2ge
         __Pyx_XDECREF_SET(__pyx_v_new_positions_player, ((PyObject*)__pyx_t_1));
         __pyx_t_1 = 0;
 
-        /* "abalone/ai/cython/cython.pyx":136
+        /* "abalone/ai/cython/cython.pyx":143
  *                     new_positions_player = [(pos[0] + direction[0], pos[1] + direction[1]) for pos in
  *                                             sequence['player']]
  *                     new_positions_opponent = [(pos[0] + direction[0], pos[1] + direction[1]) for pos in             # <<<<<<<<<<<<<<
  *                                               sequence['opponent']
- *                                               if LegalMovesOptimized.is_position_valid(board,(pos[0] + direction[0],
+ *                                               if not LegalMovesOptimized.is_position_out_of_bounds(board,(pos[0] + direction[0],
  */
         { /* enter inner scope */
-          __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 136, __pyx_L19_error)
+          __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 143, __pyx_L19_error)
           __Pyx_GOTREF(__pyx_t_1);
 
-          /* "abalone/ai/cython/cython.pyx":137
+          /* "abalone/ai/cython/cython.pyx":144
  *                                             sequence['player']]
  *                     new_positions_opponent = [(pos[0] + direction[0], pos[1] + direction[1]) for pos in
  *                                               sequence['opponent']             # <<<<<<<<<<<<<<
- *                                               if LegalMovesOptimized.is_position_valid(board,(pos[0] + direction[0],
+ *                                               if not LegalMovesOptimized.is_position_out_of_bounds(board,(pos[0] + direction[0],
  *                                                                                                    pos[1] + direction[1]))]
  */
           if (unlikely(__pyx_v_sequence == Py_None)) {
             PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-            __PYX_ERR(0, 137, __pyx_L19_error)
+            __PYX_ERR(0, 144, __pyx_L19_error)
           }
-          __pyx_t_11 = __Pyx_PyDict_GetItem(__pyx_v_sequence, __pyx_n_s_opponent); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 137, __pyx_L19_error)
+          __pyx_t_11 = __Pyx_PyDict_GetItem(__pyx_v_sequence, __pyx_n_s_opponent); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 144, __pyx_L19_error)
           __Pyx_GOTREF(__pyx_t_11);
           if (likely(PyList_CheckExact(__pyx_t_11)) || PyTuple_CheckExact(__pyx_t_11)) {
             __pyx_t_10 = __pyx_t_11; __Pyx_INCREF(__pyx_t_10);
             __pyx_t_12 = 0;
             __pyx_t_13 = NULL;
           } else {
-            __pyx_t_12 = -1; __pyx_t_10 = PyObject_GetIter(__pyx_t_11); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 137, __pyx_L19_error)
+            __pyx_t_12 = -1; __pyx_t_10 = PyObject_GetIter(__pyx_t_11); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 144, __pyx_L19_error)
             __Pyx_GOTREF(__pyx_t_10);
-            __pyx_t_13 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_10); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 137, __pyx_L19_error)
+            __pyx_t_13 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_10); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 144, __pyx_L19_error)
           }
           __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
           for (;;) {
@@ -6222,28 +6329,28 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_2ge
                 {
                   Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_10);
                   #if !CYTHON_ASSUME_SAFE_MACROS
-                  if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 137, __pyx_L19_error)
+                  if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 144, __pyx_L19_error)
                   #endif
                   if (__pyx_t_12 >= __pyx_temp) break;
                 }
                 #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-                __pyx_t_11 = PyList_GET_ITEM(__pyx_t_10, __pyx_t_12); __Pyx_INCREF(__pyx_t_11); __pyx_t_12++; if (unlikely((0 < 0))) __PYX_ERR(0, 137, __pyx_L19_error)
+                __pyx_t_11 = PyList_GET_ITEM(__pyx_t_10, __pyx_t_12); __Pyx_INCREF(__pyx_t_11); __pyx_t_12++; if (unlikely((0 < 0))) __PYX_ERR(0, 144, __pyx_L19_error)
                 #else
-                __pyx_t_11 = __Pyx_PySequence_ITEM(__pyx_t_10, __pyx_t_12); __pyx_t_12++; if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 137, __pyx_L19_error)
+                __pyx_t_11 = __Pyx_PySequence_ITEM(__pyx_t_10, __pyx_t_12); __pyx_t_12++; if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 144, __pyx_L19_error)
                 __Pyx_GOTREF(__pyx_t_11);
                 #endif
               } else {
                 {
                   Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_10);
                   #if !CYTHON_ASSUME_SAFE_MACROS
-                  if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 137, __pyx_L19_error)
+                  if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 144, __pyx_L19_error)
                   #endif
                   if (__pyx_t_12 >= __pyx_temp) break;
                 }
                 #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-                __pyx_t_11 = PyTuple_GET_ITEM(__pyx_t_10, __pyx_t_12); __Pyx_INCREF(__pyx_t_11); __pyx_t_12++; if (unlikely((0 < 0))) __PYX_ERR(0, 137, __pyx_L19_error)
+                __pyx_t_11 = PyTuple_GET_ITEM(__pyx_t_10, __pyx_t_12); __Pyx_INCREF(__pyx_t_11); __pyx_t_12++; if (unlikely((0 < 0))) __PYX_ERR(0, 144, __pyx_L19_error)
                 #else
-                __pyx_t_11 = __Pyx_PySequence_ITEM(__pyx_t_10, __pyx_t_12); __pyx_t_12++; if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 137, __pyx_L19_error)
+                __pyx_t_11 = __Pyx_PySequence_ITEM(__pyx_t_10, __pyx_t_12); __pyx_t_12++; if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 144, __pyx_L19_error)
                 __Pyx_GOTREF(__pyx_t_11);
                 #endif
               }
@@ -6253,7 +6360,7 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_2ge
                 PyObject* exc_type = PyErr_Occurred();
                 if (exc_type) {
                   if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-                  else __PYX_ERR(0, 137, __pyx_L19_error)
+                  else __PYX_ERR(0, 144, __pyx_L19_error)
                 }
                 break;
               }
@@ -6262,107 +6369,108 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_2ge
             __Pyx_XDECREF_SET(__pyx_8genexpr3__pyx_v_pos, __pyx_t_11);
             __pyx_t_11 = 0;
 
-            /* "abalone/ai/cython/cython.pyx":138
+            /* "abalone/ai/cython/cython.pyx":145
  *                     new_positions_opponent = [(pos[0] + direction[0], pos[1] + direction[1]) for pos in
  *                                               sequence['opponent']
- *                                               if LegalMovesOptimized.is_position_valid(board,(pos[0] + direction[0],             # <<<<<<<<<<<<<<
+ *                                               if not LegalMovesOptimized.is_position_out_of_bounds(board,(pos[0] + direction[0],             # <<<<<<<<<<<<<<
  *                                                                                                    pos[1] + direction[1]))]
  * 
  */
-            if (!(likely(PyList_CheckExact(__pyx_v_board))||((__pyx_v_board) == Py_None) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_v_board))) __PYX_ERR(0, 138, __pyx_L19_error)
-            __pyx_t_11 = __Pyx_GetItemInt(__pyx_8genexpr3__pyx_v_pos, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 138, __pyx_L19_error)
+            if (!(likely(PyList_CheckExact(__pyx_v_board))||((__pyx_v_board) == Py_None) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_v_board))) __PYX_ERR(0, 145, __pyx_L19_error)
+            __pyx_t_11 = __Pyx_GetItemInt(__pyx_8genexpr3__pyx_v_pos, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 145, __pyx_L19_error)
             __Pyx_GOTREF(__pyx_t_11);
-            __pyx_t_16 = __Pyx_GetItemInt(__pyx_v_direction, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 138, __pyx_L19_error)
+            __pyx_t_16 = __Pyx_GetItemInt(__pyx_v_direction, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 145, __pyx_L19_error)
             __Pyx_GOTREF(__pyx_t_16);
-            __pyx_t_15 = PyNumber_Add(__pyx_t_11, __pyx_t_16); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 138, __pyx_L19_error)
+            __pyx_t_15 = PyNumber_Add(__pyx_t_11, __pyx_t_16); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 145, __pyx_L19_error)
             __Pyx_GOTREF(__pyx_t_15);
             __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
             __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
 
-            /* "abalone/ai/cython/cython.pyx":139
+            /* "abalone/ai/cython/cython.pyx":146
  *                                               sequence['opponent']
- *                                               if LegalMovesOptimized.is_position_valid(board,(pos[0] + direction[0],
+ *                                               if not LegalMovesOptimized.is_position_out_of_bounds(board,(pos[0] + direction[0],
  *                                                                                                    pos[1] + direction[1]))]             # <<<<<<<<<<<<<<
  * 
  *                     sumito_move_list.append(Move(
  */
-            __pyx_t_16 = __Pyx_GetItemInt(__pyx_8genexpr3__pyx_v_pos, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 139, __pyx_L19_error)
+            __pyx_t_16 = __Pyx_GetItemInt(__pyx_8genexpr3__pyx_v_pos, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 146, __pyx_L19_error)
             __Pyx_GOTREF(__pyx_t_16);
-            __pyx_t_11 = __Pyx_GetItemInt(__pyx_v_direction, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 139, __pyx_L19_error)
+            __pyx_t_11 = __Pyx_GetItemInt(__pyx_v_direction, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 146, __pyx_L19_error)
             __Pyx_GOTREF(__pyx_t_11);
-            __pyx_t_14 = PyNumber_Add(__pyx_t_16, __pyx_t_11); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 139, __pyx_L19_error)
+            __pyx_t_14 = PyNumber_Add(__pyx_t_16, __pyx_t_11); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 146, __pyx_L19_error)
             __Pyx_GOTREF(__pyx_t_14);
             __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
             __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
-            /* "abalone/ai/cython/cython.pyx":138
+            /* "abalone/ai/cython/cython.pyx":145
  *                     new_positions_opponent = [(pos[0] + direction[0], pos[1] + direction[1]) for pos in
  *                                               sequence['opponent']
- *                                               if LegalMovesOptimized.is_position_valid(board,(pos[0] + direction[0],             # <<<<<<<<<<<<<<
+ *                                               if not LegalMovesOptimized.is_position_out_of_bounds(board,(pos[0] + direction[0],             # <<<<<<<<<<<<<<
  *                                                                                                    pos[1] + direction[1]))]
  * 
  */
-            __pyx_t_11 = PyTuple_New(2); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 138, __pyx_L19_error)
+            __pyx_t_11 = PyTuple_New(2); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 145, __pyx_L19_error)
             __Pyx_GOTREF(__pyx_t_11);
             __Pyx_GIVEREF(__pyx_t_15);
-            if (__Pyx_PyTuple_SET_ITEM(__pyx_t_11, 0, __pyx_t_15)) __PYX_ERR(0, 138, __pyx_L19_error);
+            if (__Pyx_PyTuple_SET_ITEM(__pyx_t_11, 0, __pyx_t_15)) __PYX_ERR(0, 145, __pyx_L19_error);
             __Pyx_GIVEREF(__pyx_t_14);
-            if (__Pyx_PyTuple_SET_ITEM(__pyx_t_11, 1, __pyx_t_14)) __PYX_ERR(0, 138, __pyx_L19_error);
+            if (__Pyx_PyTuple_SET_ITEM(__pyx_t_11, 1, __pyx_t_14)) __PYX_ERR(0, 145, __pyx_L19_error);
             __pyx_t_15 = 0;
             __pyx_t_14 = 0;
-            __pyx_t_8 = __pyx_vtabptr_7abalone_2ai_6cython_6cython_LegalMovesOptimized->is_position_valid(((PyObject*)__pyx_v_board), __pyx_t_11, NULL); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 138, __pyx_L19_error)
+            __pyx_t_8 = __pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_is_position_out_of_bounds(((PyObject*)__pyx_v_board), __pyx_t_11); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 145, __pyx_L19_error)
             __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-            if (__pyx_t_8) {
+            __pyx_t_9 = (!__pyx_t_8);
+            if (__pyx_t_9) {
 
-              /* "abalone/ai/cython/cython.pyx":136
+              /* "abalone/ai/cython/cython.pyx":143
  *                     new_positions_player = [(pos[0] + direction[0], pos[1] + direction[1]) for pos in
  *                                             sequence['player']]
  *                     new_positions_opponent = [(pos[0] + direction[0], pos[1] + direction[1]) for pos in             # <<<<<<<<<<<<<<
  *                                               sequence['opponent']
- *                                               if LegalMovesOptimized.is_position_valid(board,(pos[0] + direction[0],
+ *                                               if not LegalMovesOptimized.is_position_out_of_bounds(board,(pos[0] + direction[0],
  */
-              __pyx_t_11 = __Pyx_GetItemInt(__pyx_8genexpr3__pyx_v_pos, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 136, __pyx_L19_error)
+              __pyx_t_11 = __Pyx_GetItemInt(__pyx_8genexpr3__pyx_v_pos, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 143, __pyx_L19_error)
               __Pyx_GOTREF(__pyx_t_11);
-              __pyx_t_14 = __Pyx_GetItemInt(__pyx_v_direction, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 136, __pyx_L19_error)
+              __pyx_t_14 = __Pyx_GetItemInt(__pyx_v_direction, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 143, __pyx_L19_error)
               __Pyx_GOTREF(__pyx_t_14);
-              __pyx_t_15 = PyNumber_Add(__pyx_t_11, __pyx_t_14); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 136, __pyx_L19_error)
+              __pyx_t_15 = PyNumber_Add(__pyx_t_11, __pyx_t_14); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 143, __pyx_L19_error)
               __Pyx_GOTREF(__pyx_t_15);
               __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
               __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-              __pyx_t_14 = __Pyx_GetItemInt(__pyx_8genexpr3__pyx_v_pos, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 136, __pyx_L19_error)
+              __pyx_t_14 = __Pyx_GetItemInt(__pyx_8genexpr3__pyx_v_pos, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 143, __pyx_L19_error)
               __Pyx_GOTREF(__pyx_t_14);
-              __pyx_t_11 = __Pyx_GetItemInt(__pyx_v_direction, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 136, __pyx_L19_error)
+              __pyx_t_11 = __Pyx_GetItemInt(__pyx_v_direction, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 143, __pyx_L19_error)
               __Pyx_GOTREF(__pyx_t_11);
-              __pyx_t_16 = PyNumber_Add(__pyx_t_14, __pyx_t_11); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 136, __pyx_L19_error)
+              __pyx_t_16 = PyNumber_Add(__pyx_t_14, __pyx_t_11); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 143, __pyx_L19_error)
               __Pyx_GOTREF(__pyx_t_16);
               __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
               __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-              __pyx_t_11 = PyTuple_New(2); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 136, __pyx_L19_error)
+              __pyx_t_11 = PyTuple_New(2); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 143, __pyx_L19_error)
               __Pyx_GOTREF(__pyx_t_11);
               __Pyx_GIVEREF(__pyx_t_15);
-              if (__Pyx_PyTuple_SET_ITEM(__pyx_t_11, 0, __pyx_t_15)) __PYX_ERR(0, 136, __pyx_L19_error);
+              if (__Pyx_PyTuple_SET_ITEM(__pyx_t_11, 0, __pyx_t_15)) __PYX_ERR(0, 143, __pyx_L19_error);
               __Pyx_GIVEREF(__pyx_t_16);
-              if (__Pyx_PyTuple_SET_ITEM(__pyx_t_11, 1, __pyx_t_16)) __PYX_ERR(0, 136, __pyx_L19_error);
+              if (__Pyx_PyTuple_SET_ITEM(__pyx_t_11, 1, __pyx_t_16)) __PYX_ERR(0, 143, __pyx_L19_error);
               __pyx_t_15 = 0;
               __pyx_t_16 = 0;
-              if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_11))) __PYX_ERR(0, 136, __pyx_L19_error)
+              if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_11))) __PYX_ERR(0, 143, __pyx_L19_error)
               __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
-              /* "abalone/ai/cython/cython.pyx":138
+              /* "abalone/ai/cython/cython.pyx":145
  *                     new_positions_opponent = [(pos[0] + direction[0], pos[1] + direction[1]) for pos in
  *                                               sequence['opponent']
- *                                               if LegalMovesOptimized.is_position_valid(board,(pos[0] + direction[0],             # <<<<<<<<<<<<<<
+ *                                               if not LegalMovesOptimized.is_position_out_of_bounds(board,(pos[0] + direction[0],             # <<<<<<<<<<<<<<
  *                                                                                                    pos[1] + direction[1]))]
  * 
  */
             }
 
-            /* "abalone/ai/cython/cython.pyx":136
+            /* "abalone/ai/cython/cython.pyx":143
  *                     new_positions_player = [(pos[0] + direction[0], pos[1] + direction[1]) for pos in
  *                                             sequence['player']]
  *                     new_positions_opponent = [(pos[0] + direction[0], pos[1] + direction[1]) for pos in             # <<<<<<<<<<<<<<
  *                                               sequence['opponent']
- *                                               if LegalMovesOptimized.is_position_valid(board,(pos[0] + direction[0],
+ *                                               if not LegalMovesOptimized.is_position_out_of_bounds(board,(pos[0] + direction[0],
  */
           }
           __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
@@ -6376,17 +6484,17 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_2ge
         __Pyx_XDECREF_SET(__pyx_v_new_positions_opponent, ((PyObject*)__pyx_t_1));
         __pyx_t_1 = 0;
 
-        /* "abalone/ai/cython/cython.pyx":141
+        /* "abalone/ai/cython/cython.pyx":148
  *                                                                                                    pos[1] + direction[1]))]
  * 
  *                     sumito_move_list.append(Move(             # <<<<<<<<<<<<<<
  *                         sequence['player'],
  *                         new_positions_player,
  */
-        __Pyx_GetModuleGlobalName(__pyx_t_10, __pyx_n_s_Move); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 141, __pyx_L1_error)
+        __Pyx_GetModuleGlobalName(__pyx_t_10, __pyx_n_s_Move); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 148, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
 
-        /* "abalone/ai/cython/cython.pyx":142
+        /* "abalone/ai/cython/cython.pyx":149
  * 
  *                     sumito_move_list.append(Move(
  *                         sequence['player'],             # <<<<<<<<<<<<<<
@@ -6395,22 +6503,22 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_2ge
  */
         if (unlikely(__pyx_v_sequence == Py_None)) {
           PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-          __PYX_ERR(0, 142, __pyx_L1_error)
+          __PYX_ERR(0, 149, __pyx_L1_error)
         }
-        __pyx_t_11 = __Pyx_PyDict_GetItem(__pyx_v_sequence, __pyx_n_s_player); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 142, __pyx_L1_error)
+        __pyx_t_11 = __Pyx_PyDict_GetItem(__pyx_v_sequence, __pyx_n_s_player); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 149, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
 
-        /* "abalone/ai/cython/cython.pyx":144
+        /* "abalone/ai/cython/cython.pyx":151
  *                         sequence['player'],
  *                         new_positions_player,
  *                         game_state.turn,             # <<<<<<<<<<<<<<
  *                         sequence['opponent'],
  *                         new_positions_opponent)
  */
-        __pyx_t_16 = __Pyx_PyObject_GetAttrStr(__pyx_v_game_state, __pyx_n_s_turn); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 144, __pyx_L1_error)
+        __pyx_t_16 = __Pyx_PyObject_GetAttrStr(__pyx_v_game_state, __pyx_n_s_turn); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 151, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_16);
 
-        /* "abalone/ai/cython/cython.pyx":145
+        /* "abalone/ai/cython/cython.pyx":152
  *                         new_positions_player,
  *                         game_state.turn,
  *                         sequence['opponent'],             # <<<<<<<<<<<<<<
@@ -6419,12 +6527,12 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_2ge
  */
         if (unlikely(__pyx_v_sequence == Py_None)) {
           PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-          __PYX_ERR(0, 145, __pyx_L1_error)
+          __PYX_ERR(0, 152, __pyx_L1_error)
         }
-        __pyx_t_15 = __Pyx_PyDict_GetItem(__pyx_v_sequence, __pyx_n_s_opponent); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 145, __pyx_L1_error)
+        __pyx_t_15 = __Pyx_PyDict_GetItem(__pyx_v_sequence, __pyx_n_s_opponent); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 152, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_15);
 
-        /* "abalone/ai/cython/cython.pyx":146
+        /* "abalone/ai/cython/cython.pyx":153
  *                         game_state.turn,
  *                         sequence['opponent'],
  *                         new_positions_opponent)             # <<<<<<<<<<<<<<
@@ -6452,22 +6560,22 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_2ge
           __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
           __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
           __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
-          if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 141, __pyx_L1_error)
+          if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 148, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
           __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
         }
 
-        /* "abalone/ai/cython/cython.pyx":141
+        /* "abalone/ai/cython/cython.pyx":148
  *                                                                                                    pos[1] + direction[1]))]
  * 
  *                     sumito_move_list.append(Move(             # <<<<<<<<<<<<<<
  *                         sequence['player'],
  *                         new_positions_player,
  */
-        __pyx_t_18 = __Pyx_PyList_Append(__pyx_v_sumito_move_list, __pyx_t_1); if (unlikely(__pyx_t_18 == ((int)-1))) __PYX_ERR(0, 141, __pyx_L1_error)
+        __pyx_t_18 = __Pyx_PyList_Append(__pyx_v_sumito_move_list, __pyx_t_1); if (unlikely(__pyx_t_18 == ((int)-1))) __PYX_ERR(0, 148, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-        /* "abalone/ai/cython/cython.pyx":133
+        /* "abalone/ai/cython/cython.pyx":140
  *                 sequence = LegalMovesOptimized.find_marble_sequence(board, start_pos, direction, player_positions,
  *                                                                     opponent_positions)
  *                 if sequence and LegalMovesOptimized.can_sumito_occur(sequence, direction, board):             # <<<<<<<<<<<<<<
@@ -6476,7 +6584,7 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_2ge
  */
       }
 
-      /* "abalone/ai/cython/cython.pyx":130
+      /* "abalone/ai/cython/cython.pyx":137
  *         sumito_move_list = []
  *         for start_pos in player_positions:
  *             for direction in LegalMovesOptimized.possible_moves:             # <<<<<<<<<<<<<<
@@ -6486,7 +6594,7 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_2ge
     }
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-    /* "abalone/ai/cython/cython.pyx":129
+    /* "abalone/ai/cython/cython.pyx":136
  *         board = game_state.board.array
  *         sumito_move_list = []
  *         for start_pos in player_positions:             # <<<<<<<<<<<<<<
@@ -6496,7 +6604,7 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_2ge
   }
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "abalone/ai/cython/cython.pyx":149
+  /* "abalone/ai/cython/cython.pyx":156
  *                     )
  * 
  *         return sumito_move_list             # <<<<<<<<<<<<<<
@@ -6508,7 +6616,7 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_2ge
   __pyx_r = __pyx_v_sumito_move_list;
   goto __pyx_L0;
 
-  /* "abalone/ai/cython/cython.pyx":125
+  /* "abalone/ai/cython/cython.pyx":132
  *         return {'player': player_seq, 'opponent': opponent_seq} if sequence_found else None
  * 
  *     @staticmethod             # <<<<<<<<<<<<<<
@@ -6938,7 +7046,7 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_6__
   return __pyx_r;
 }
 
-/* "abalone/ai/cython/cython.pyx":156
+/* "abalone/ai/cython/cython.pyx":163
  *     cdef list[int] board_array
  * 
  *     @staticmethod             # <<<<<<<<<<<<<<
@@ -6999,12 +7107,12 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[0]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 156, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 163, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "get_player_piece_positions") < 0)) __PYX_ERR(0, 156, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "get_player_piece_positions") < 0)) __PYX_ERR(0, 163, __pyx_L3_error)
       }
     } else if (unlikely(__pyx_nargs != 1)) {
       goto __pyx_L5_argtuple_error;
@@ -7015,7 +7123,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("get_player_piece_positions", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 156, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("get_player_piece_positions", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 163, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -7069,23 +7177,23 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_get
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_player_piece_positions", 1);
 
-  /* "abalone/ai/cython/cython.pyx":159
+  /* "abalone/ai/cython/cython.pyx":166
  *     def get_player_piece_positions(game_state):
  *         cdef:
  *             int player_max_value = game_state.turn.value             # <<<<<<<<<<<<<<
  *             int player_min_value = 2 if player_max_value == 1 else 1
  *             dict player_dict = {"player_max": player_max_value, "player_min": player_min_value}
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_game_state, __pyx_n_s_turn); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 159, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_game_state, __pyx_n_s_turn); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 166, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_value); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 159, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_value); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 166, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 159, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 166, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_player_max_value = __pyx_t_3;
 
-  /* "abalone/ai/cython/cython.pyx":160
+  /* "abalone/ai/cython/cython.pyx":167
  *         cdef:
  *             int player_max_value = game_state.turn.value
  *             int player_min_value = 2 if player_max_value == 1 else 1             # <<<<<<<<<<<<<<
@@ -7100,51 +7208,51 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_get
   }
   __pyx_v_player_min_value = __pyx_t_3;
 
-  /* "abalone/ai/cython/cython.pyx":161
+  /* "abalone/ai/cython/cython.pyx":168
  *             int player_max_value = game_state.turn.value
  *             int player_min_value = 2 if player_max_value == 1 else 1
  *             dict player_dict = {"player_max": player_max_value, "player_min": player_min_value}             # <<<<<<<<<<<<<<
  *             list player_max_piece_positions = []
  *             list player_min_piece_positions = []
  */
-  __pyx_t_2 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 161, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 168, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_player_max_value); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 161, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_player_max_value); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 168, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_player_max, __pyx_t_1) < 0) __PYX_ERR(0, 161, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_player_max, __pyx_t_1) < 0) __PYX_ERR(0, 168, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_player_min_value); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 161, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_player_min_value); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 168, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_player_min, __pyx_t_1) < 0) __PYX_ERR(0, 161, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_player_min, __pyx_t_1) < 0) __PYX_ERR(0, 168, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_player_dict = ((PyObject*)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "abalone/ai/cython/cython.pyx":162
+  /* "abalone/ai/cython/cython.pyx":169
  *             int player_min_value = 2 if player_max_value == 1 else 1
  *             dict player_dict = {"player_max": player_max_value, "player_min": player_min_value}
  *             list player_max_piece_positions = []             # <<<<<<<<<<<<<<
  *             list player_min_piece_positions = []
  *             int index, x, y
  */
-  __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 162, __pyx_L1_error)
+  __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 169, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_v_player_max_piece_positions = ((PyObject*)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "abalone/ai/cython/cython.pyx":163
+  /* "abalone/ai/cython/cython.pyx":170
  *             dict player_dict = {"player_max": player_max_value, "player_min": player_min_value}
  *             list player_max_piece_positions = []
  *             list player_min_piece_positions = []             # <<<<<<<<<<<<<<
  *             int index, x, y
  *             int width = 9
  */
-  __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 163, __pyx_L1_error)
+  __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 170, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_v_player_min_piece_positions = ((PyObject*)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "abalone/ai/cython/cython.pyx":165
+  /* "abalone/ai/cython/cython.pyx":172
  *             list player_min_piece_positions = []
  *             int index, x, y
  *             int width = 9             # <<<<<<<<<<<<<<
@@ -7153,23 +7261,23 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_get
  */
   __pyx_v_width = 9;
 
-  /* "abalone/ai/cython/cython.pyx":166
+  /* "abalone/ai/cython/cython.pyx":173
  *             int index, x, y
  *             int width = 9
  *             int array_length = len(game_state.board.array)             # <<<<<<<<<<<<<<
  * 
  *         for index in range(array_length):
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_game_state, __pyx_n_s_board); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 166, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_game_state, __pyx_n_s_board); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 173, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_array); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 166, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_array); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 173, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_5 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_5 == ((Py_ssize_t)-1))) __PYX_ERR(0, 166, __pyx_L1_error)
+  __pyx_t_5 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_5 == ((Py_ssize_t)-1))) __PYX_ERR(0, 173, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_array_length = __pyx_t_5;
 
-  /* "abalone/ai/cython/cython.pyx":168
+  /* "abalone/ai/cython/cython.pyx":175
  *             int array_length = len(game_state.board.array)
  * 
  *         for index in range(array_length):             # <<<<<<<<<<<<<<
@@ -7181,31 +7289,31 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_get
   for (__pyx_t_7 = 0; __pyx_t_7 < __pyx_t_6; __pyx_t_7+=1) {
     __pyx_v_index = __pyx_t_7;
 
-    /* "abalone/ai/cython/cython.pyx":169
+    /* "abalone/ai/cython/cython.pyx":176
  * 
  *         for index in range(array_length):
  *             if game_state.board.array[index] == player_max_value:             # <<<<<<<<<<<<<<
  *                 x = index % width
  *                 y = index // width
  */
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_game_state, __pyx_n_s_board); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 169, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_game_state, __pyx_n_s_board); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 176, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_array); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 169, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_array); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 176, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_2, __pyx_v_index, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 169, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_2, __pyx_v_index, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 176, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_player_max_value); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 169, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_player_max_value); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 176, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_8 = PyObject_RichCompare(__pyx_t_1, __pyx_t_2, Py_EQ); __Pyx_XGOTREF(__pyx_t_8); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 169, __pyx_L1_error)
+    __pyx_t_8 = PyObject_RichCompare(__pyx_t_1, __pyx_t_2, Py_EQ); __Pyx_XGOTREF(__pyx_t_8); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 176, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_8); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 169, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_8); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 176, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     if (__pyx_t_4) {
 
-      /* "abalone/ai/cython/cython.pyx":170
+      /* "abalone/ai/cython/cython.pyx":177
  *         for index in range(array_length):
  *             if game_state.board.array[index] == player_max_value:
  *                 x = index % width             # <<<<<<<<<<<<<<
@@ -7214,11 +7322,11 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_get
  */
       if (unlikely(__pyx_v_width == 0)) {
         PyErr_SetString(PyExc_ZeroDivisionError, "integer division or modulo by zero");
-        __PYX_ERR(0, 170, __pyx_L1_error)
+        __PYX_ERR(0, 177, __pyx_L1_error)
       }
       __pyx_v_x = __Pyx_mod_int(__pyx_v_index, __pyx_v_width);
 
-      /* "abalone/ai/cython/cython.pyx":171
+      /* "abalone/ai/cython/cython.pyx":178
  *             if game_state.board.array[index] == player_max_value:
  *                 x = index % width
  *                 y = index // width             # <<<<<<<<<<<<<<
@@ -7227,37 +7335,37 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_get
  */
       if (unlikely(__pyx_v_width == 0)) {
         PyErr_SetString(PyExc_ZeroDivisionError, "integer division or modulo by zero");
-        __PYX_ERR(0, 171, __pyx_L1_error)
+        __PYX_ERR(0, 178, __pyx_L1_error)
       }
       else if (sizeof(int) == sizeof(long) && (!(((int)-1) > 0)) && unlikely(__pyx_v_width == (int)-1)  && unlikely(__Pyx_UNARY_NEG_WOULD_OVERFLOW(__pyx_v_index))) {
         PyErr_SetString(PyExc_OverflowError, "value too large to perform division");
-        __PYX_ERR(0, 171, __pyx_L1_error)
+        __PYX_ERR(0, 178, __pyx_L1_error)
       }
       __pyx_v_y = __Pyx_div_int(__pyx_v_index, __pyx_v_width);
 
-      /* "abalone/ai/cython/cython.pyx":172
+      /* "abalone/ai/cython/cython.pyx":179
  *                 x = index % width
  *                 y = index // width
  *                 player_max_piece_positions.append((x, y))             # <<<<<<<<<<<<<<
  *             elif game_state.board.array[index] == player_min_value:
  *                 x = index % width
  */
-      __pyx_t_8 = __Pyx_PyInt_From_int(__pyx_v_x); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 172, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyInt_From_int(__pyx_v_x); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 179, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
-      __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_y); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 172, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_y); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 179, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 172, __pyx_L1_error)
+      __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 179, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_GIVEREF(__pyx_t_8);
-      if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_8)) __PYX_ERR(0, 172, __pyx_L1_error);
+      if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_8)) __PYX_ERR(0, 179, __pyx_L1_error);
       __Pyx_GIVEREF(__pyx_t_2);
-      if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_2)) __PYX_ERR(0, 172, __pyx_L1_error);
+      if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_2)) __PYX_ERR(0, 179, __pyx_L1_error);
       __pyx_t_8 = 0;
       __pyx_t_2 = 0;
-      __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_player_max_piece_positions, __pyx_t_1); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 172, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_player_max_piece_positions, __pyx_t_1); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 179, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-      /* "abalone/ai/cython/cython.pyx":169
+      /* "abalone/ai/cython/cython.pyx":176
  * 
  *         for index in range(array_length):
  *             if game_state.board.array[index] == player_max_value:             # <<<<<<<<<<<<<<
@@ -7267,31 +7375,31 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_get
       goto __pyx_L5;
     }
 
-    /* "abalone/ai/cython/cython.pyx":173
+    /* "abalone/ai/cython/cython.pyx":180
  *                 y = index // width
  *                 player_max_piece_positions.append((x, y))
  *             elif game_state.board.array[index] == player_min_value:             # <<<<<<<<<<<<<<
  *                 x = index % width
  *                 y = index // width
  */
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_game_state, __pyx_n_s_board); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 173, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_game_state, __pyx_n_s_board); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 180, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_array); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 173, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_array); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 180, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_2, __pyx_v_index, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 173, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_2, __pyx_v_index, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 180, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_player_min_value); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 173, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_player_min_value); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 180, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_8 = PyObject_RichCompare(__pyx_t_1, __pyx_t_2, Py_EQ); __Pyx_XGOTREF(__pyx_t_8); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 173, __pyx_L1_error)
+    __pyx_t_8 = PyObject_RichCompare(__pyx_t_1, __pyx_t_2, Py_EQ); __Pyx_XGOTREF(__pyx_t_8); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 180, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_8); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 173, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_8); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 180, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     if (__pyx_t_4) {
 
-      /* "abalone/ai/cython/cython.pyx":174
+      /* "abalone/ai/cython/cython.pyx":181
  *                 player_max_piece_positions.append((x, y))
  *             elif game_state.board.array[index] == player_min_value:
  *                 x = index % width             # <<<<<<<<<<<<<<
@@ -7300,11 +7408,11 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_get
  */
       if (unlikely(__pyx_v_width == 0)) {
         PyErr_SetString(PyExc_ZeroDivisionError, "integer division or modulo by zero");
-        __PYX_ERR(0, 174, __pyx_L1_error)
+        __PYX_ERR(0, 181, __pyx_L1_error)
       }
       __pyx_v_x = __Pyx_mod_int(__pyx_v_index, __pyx_v_width);
 
-      /* "abalone/ai/cython/cython.pyx":175
+      /* "abalone/ai/cython/cython.pyx":182
  *             elif game_state.board.array[index] == player_min_value:
  *                 x = index % width
  *                 y = index // width             # <<<<<<<<<<<<<<
@@ -7313,37 +7421,37 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_get
  */
       if (unlikely(__pyx_v_width == 0)) {
         PyErr_SetString(PyExc_ZeroDivisionError, "integer division or modulo by zero");
-        __PYX_ERR(0, 175, __pyx_L1_error)
+        __PYX_ERR(0, 182, __pyx_L1_error)
       }
       else if (sizeof(int) == sizeof(long) && (!(((int)-1) > 0)) && unlikely(__pyx_v_width == (int)-1)  && unlikely(__Pyx_UNARY_NEG_WOULD_OVERFLOW(__pyx_v_index))) {
         PyErr_SetString(PyExc_OverflowError, "value too large to perform division");
-        __PYX_ERR(0, 175, __pyx_L1_error)
+        __PYX_ERR(0, 182, __pyx_L1_error)
       }
       __pyx_v_y = __Pyx_div_int(__pyx_v_index, __pyx_v_width);
 
-      /* "abalone/ai/cython/cython.pyx":176
+      /* "abalone/ai/cython/cython.pyx":183
  *                 x = index % width
  *                 y = index // width
  *                 player_min_piece_positions.append((x, y))             # <<<<<<<<<<<<<<
  * 
  *         player_dict["player_max"] = player_max_piece_positions
  */
-      __pyx_t_8 = __Pyx_PyInt_From_int(__pyx_v_x); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 176, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyInt_From_int(__pyx_v_x); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 183, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
-      __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_y); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 176, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_y); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 183, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 176, __pyx_L1_error)
+      __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 183, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_GIVEREF(__pyx_t_8);
-      if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_8)) __PYX_ERR(0, 176, __pyx_L1_error);
+      if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_8)) __PYX_ERR(0, 183, __pyx_L1_error);
       __Pyx_GIVEREF(__pyx_t_2);
-      if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_2)) __PYX_ERR(0, 176, __pyx_L1_error);
+      if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_2)) __PYX_ERR(0, 183, __pyx_L1_error);
       __pyx_t_8 = 0;
       __pyx_t_2 = 0;
-      __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_player_min_piece_positions, __pyx_t_1); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 176, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_player_min_piece_positions, __pyx_t_1); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 183, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-      /* "abalone/ai/cython/cython.pyx":173
+      /* "abalone/ai/cython/cython.pyx":180
  *                 y = index // width
  *                 player_max_piece_positions.append((x, y))
  *             elif game_state.board.array[index] == player_min_value:             # <<<<<<<<<<<<<<
@@ -7354,25 +7462,25 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_get
     __pyx_L5:;
   }
 
-  /* "abalone/ai/cython/cython.pyx":178
+  /* "abalone/ai/cython/cython.pyx":185
  *                 player_min_piece_positions.append((x, y))
  * 
  *         player_dict["player_max"] = player_max_piece_positions             # <<<<<<<<<<<<<<
  *         player_dict["player_min"] = player_min_piece_positions
  * 
  */
-  if (unlikely((PyDict_SetItem(__pyx_v_player_dict, __pyx_n_s_player_max, __pyx_v_player_max_piece_positions) < 0))) __PYX_ERR(0, 178, __pyx_L1_error)
+  if (unlikely((PyDict_SetItem(__pyx_v_player_dict, __pyx_n_s_player_max, __pyx_v_player_max_piece_positions) < 0))) __PYX_ERR(0, 185, __pyx_L1_error)
 
-  /* "abalone/ai/cython/cython.pyx":179
+  /* "abalone/ai/cython/cython.pyx":186
  * 
  *         player_dict["player_max"] = player_max_piece_positions
  *         player_dict["player_min"] = player_min_piece_positions             # <<<<<<<<<<<<<<
  * 
  *         return player_dict
  */
-  if (unlikely((PyDict_SetItem(__pyx_v_player_dict, __pyx_n_s_player_min, __pyx_v_player_min_piece_positions) < 0))) __PYX_ERR(0, 179, __pyx_L1_error)
+  if (unlikely((PyDict_SetItem(__pyx_v_player_dict, __pyx_n_s_player_min, __pyx_v_player_min_piece_positions) < 0))) __PYX_ERR(0, 186, __pyx_L1_error)
 
-  /* "abalone/ai/cython/cython.pyx":181
+  /* "abalone/ai/cython/cython.pyx":188
  *         player_dict["player_min"] = player_min_piece_positions
  * 
  *         return player_dict             # <<<<<<<<<<<<<<
@@ -7384,7 +7492,7 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_get
   __pyx_r = __pyx_v_player_dict;
   goto __pyx_L0;
 
-  /* "abalone/ai/cython/cython.pyx":156
+  /* "abalone/ai/cython/cython.pyx":163
  *     cdef list[int] board_array
  * 
  *     @staticmethod             # <<<<<<<<<<<<<<
@@ -7408,7 +7516,7 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_get
   return __pyx_r;
 }
 
-/* "abalone/ai/cython/cython.pyx":183
+/* "abalone/ai/cython/cython.pyx":190
  *         return player_dict
  * 
  *     @staticmethod             # <<<<<<<<<<<<<<
@@ -7472,7 +7580,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[0]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 183, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 190, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
         CYTHON_FALLTHROUGH;
         case  1:
@@ -7480,14 +7588,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[1]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 183, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 190, __pyx_L3_error)
         else {
-          __Pyx_RaiseArgtupleInvalid("generate_all_moves", 1, 2, 2, 1); __PYX_ERR(0, 183, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("generate_all_moves", 1, 2, 2, 1); __PYX_ERR(0, 190, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "generate_all_moves") < 0)) __PYX_ERR(0, 183, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "generate_all_moves") < 0)) __PYX_ERR(0, 190, __pyx_L3_error)
       }
     } else if (unlikely(__pyx_nargs != 2)) {
       goto __pyx_L5_argtuple_error;
@@ -7500,7 +7608,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("generate_all_moves", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 183, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("generate_all_moves", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 190, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -7514,7 +7622,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_player_piece), (&PyDict_Type), 1, "player_piece", 1))) __PYX_ERR(0, 184, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_player_piece), (&PyDict_Type), 1, "player_piece", 1))) __PYX_ERR(0, 191, __pyx_L1_error)
   __pyx_r = __pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2generate_all_moves(__pyx_v_game_state, __pyx_v_player_piece);
 
   /* function exit code */
@@ -7568,51 +7676,51 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("generate_all_moves", 1);
 
-  /* "abalone/ai/cython/cython.pyx":186
+  /* "abalone/ai/cython/cython.pyx":193
  *     def generate_all_moves(game_state: GameState, dict player_piece):
  *         cdef:
  *             int turn_value = game_state.turn.value             # <<<<<<<<<<<<<<
  *             list possible_move_list = []
  *             list moves
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_game_state, __pyx_n_s_turn); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 186, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_game_state, __pyx_n_s_turn); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 193, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_value); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 186, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_value); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 193, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 186, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 193, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_turn_value = __pyx_t_3;
 
-  /* "abalone/ai/cython/cython.pyx":187
+  /* "abalone/ai/cython/cython.pyx":194
  *         cdef:
  *             int turn_value = game_state.turn.value
  *             list possible_move_list = []             # <<<<<<<<<<<<<<
  *             list moves
  *             list positions
  */
-  __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 187, __pyx_L1_error)
+  __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 194, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_v_possible_move_list = ((PyObject*)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "abalone/ai/cython/cython.pyx":191
+  /* "abalone/ai/cython/cython.pyx":198
  *             list positions
  * 
  *         if game_state.turn.value == 1:             # <<<<<<<<<<<<<<
  *             black_positions = player_piece['player_max']
  *             white_positions = player_piece['player_min']
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_game_state, __pyx_n_s_turn); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 191, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_game_state, __pyx_n_s_turn); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 198, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_value); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 191, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_value); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 198, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_4 = (__Pyx_PyInt_BoolEqObjC(__pyx_t_1, __pyx_int_1, 1, 0)); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 191, __pyx_L1_error)
+  __pyx_t_4 = (__Pyx_PyInt_BoolEqObjC(__pyx_t_1, __pyx_int_1, 1, 0)); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 198, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (__pyx_t_4) {
 
-    /* "abalone/ai/cython/cython.pyx":192
+    /* "abalone/ai/cython/cython.pyx":199
  * 
  *         if game_state.turn.value == 1:
  *             black_positions = player_piece['player_max']             # <<<<<<<<<<<<<<
@@ -7621,14 +7729,14 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
  */
     if (unlikely(__pyx_v_player_piece == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 192, __pyx_L1_error)
+      __PYX_ERR(0, 199, __pyx_L1_error)
     }
-    __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_player_piece, __pyx_n_s_player_max); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 192, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_player_piece, __pyx_n_s_player_max); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 199, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __pyx_v_black_positions = __pyx_t_1;
     __pyx_t_1 = 0;
 
-    /* "abalone/ai/cython/cython.pyx":193
+    /* "abalone/ai/cython/cython.pyx":200
  *         if game_state.turn.value == 1:
  *             black_positions = player_piece['player_max']
  *             white_positions = player_piece['player_min']             # <<<<<<<<<<<<<<
@@ -7637,14 +7745,14 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
  */
     if (unlikely(__pyx_v_player_piece == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 193, __pyx_L1_error)
+      __PYX_ERR(0, 200, __pyx_L1_error)
     }
-    __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_player_piece, __pyx_n_s_player_min); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 193, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_player_piece, __pyx_n_s_player_min); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 200, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __pyx_v_white_positions = __pyx_t_1;
     __pyx_t_1 = 0;
 
-    /* "abalone/ai/cython/cython.pyx":191
+    /* "abalone/ai/cython/cython.pyx":198
  *             list positions
  * 
  *         if game_state.turn.value == 1:             # <<<<<<<<<<<<<<
@@ -7654,7 +7762,7 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
     goto __pyx_L3;
   }
 
-  /* "abalone/ai/cython/cython.pyx":195
+  /* "abalone/ai/cython/cython.pyx":202
  *             white_positions = player_piece['player_min']
  *         else:
  *             black_positions = player_piece['player_min']             # <<<<<<<<<<<<<<
@@ -7664,14 +7772,14 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
   /*else*/ {
     if (unlikely(__pyx_v_player_piece == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 195, __pyx_L1_error)
+      __PYX_ERR(0, 202, __pyx_L1_error)
     }
-    __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_player_piece, __pyx_n_s_player_min); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 195, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_player_piece, __pyx_n_s_player_min); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 202, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __pyx_v_black_positions = __pyx_t_1;
     __pyx_t_1 = 0;
 
-    /* "abalone/ai/cython/cython.pyx":196
+    /* "abalone/ai/cython/cython.pyx":203
  *         else:
  *             black_positions = player_piece['player_min']
  *             white_positions = player_piece['player_max']             # <<<<<<<<<<<<<<
@@ -7680,23 +7788,23 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
  */
     if (unlikely(__pyx_v_player_piece == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 196, __pyx_L1_error)
+      __PYX_ERR(0, 203, __pyx_L1_error)
     }
-    __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_player_piece, __pyx_n_s_player_max); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 196, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_player_piece, __pyx_n_s_player_max); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 203, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __pyx_v_white_positions = __pyx_t_1;
     __pyx_t_1 = 0;
   }
   __pyx_L3:;
 
-  /* "abalone/ai/cython/cython.pyx":198
+  /* "abalone/ai/cython/cython.pyx":205
  *             white_positions = player_piece['player_max']
  * 
  *         all_moves = {"max": black_positions if turn_value == 1 else white_positions}             # <<<<<<<<<<<<<<
  * 
  *         for color, positions in all_moves.items():
  */
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 198, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 205, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_4 = (__pyx_v_turn_value == 1);
   if (__pyx_t_4) {
@@ -7706,12 +7814,12 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
     __Pyx_INCREF(__pyx_v_white_positions);
     __pyx_t_2 = __pyx_v_white_positions;
   }
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_max, __pyx_t_2) < 0) __PYX_ERR(0, 198, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_max, __pyx_t_2) < 0) __PYX_ERR(0, 205, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_all_moves = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "abalone/ai/cython/cython.pyx":200
+  /* "abalone/ai/cython/cython.pyx":207
  *         all_moves = {"max": black_positions if turn_value == 1 else white_positions}
  * 
  *         for color, positions in all_moves.items():             # <<<<<<<<<<<<<<
@@ -7719,7 +7827,7 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
  *                 moves = LegalMovesOptimized.get_valid_moves(game_state, pos)
  */
   __pyx_t_5 = 0;
-  __pyx_t_2 = __Pyx_dict_iterator(__pyx_v_all_moves, 1, __pyx_n_s_items, (&__pyx_t_6), (&__pyx_t_3)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 200, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_dict_iterator(__pyx_v_all_moves, 1, __pyx_n_s_items, (&__pyx_t_6), (&__pyx_t_3)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 207, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_1);
   __pyx_t_1 = __pyx_t_2;
@@ -7727,16 +7835,16 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
   while (1) {
     __pyx_t_8 = __Pyx_dict_iter_next(__pyx_t_1, __pyx_t_6, &__pyx_t_5, &__pyx_t_2, &__pyx_t_7, NULL, __pyx_t_3);
     if (unlikely(__pyx_t_8 == 0)) break;
-    if (unlikely(__pyx_t_8 == -1)) __PYX_ERR(0, 200, __pyx_L1_error)
+    if (unlikely(__pyx_t_8 == -1)) __PYX_ERR(0, 207, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_GOTREF(__pyx_t_7);
-    if (!(likely(PyList_CheckExact(__pyx_t_7))||((__pyx_t_7) == Py_None) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_t_7))) __PYX_ERR(0, 200, __pyx_L1_error)
+    if (!(likely(PyList_CheckExact(__pyx_t_7))||((__pyx_t_7) == Py_None) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_t_7))) __PYX_ERR(0, 207, __pyx_L1_error)
     __Pyx_XDECREF_SET(__pyx_v_color, __pyx_t_2);
     __pyx_t_2 = 0;
     __Pyx_XDECREF_SET(__pyx_v_positions, ((PyObject*)__pyx_t_7));
     __pyx_t_7 = 0;
 
-    /* "abalone/ai/cython/cython.pyx":201
+    /* "abalone/ai/cython/cython.pyx":208
  * 
  *         for color, positions in all_moves.items():
  *             for pos in positions:             # <<<<<<<<<<<<<<
@@ -7745,7 +7853,7 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
  */
     if (unlikely(__pyx_v_positions == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
-      __PYX_ERR(0, 201, __pyx_L1_error)
+      __PYX_ERR(0, 208, __pyx_L1_error)
     }
     __pyx_t_7 = __pyx_v_positions; __Pyx_INCREF(__pyx_t_7);
     __pyx_t_9 = 0;
@@ -7753,27 +7861,27 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
       {
         Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_7);
         #if !CYTHON_ASSUME_SAFE_MACROS
-        if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 201, __pyx_L1_error)
+        if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 208, __pyx_L1_error)
         #endif
         if (__pyx_t_9 >= __pyx_temp) break;
       }
       #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-      __pyx_t_2 = PyList_GET_ITEM(__pyx_t_7, __pyx_t_9); __Pyx_INCREF(__pyx_t_2); __pyx_t_9++; if (unlikely((0 < 0))) __PYX_ERR(0, 201, __pyx_L1_error)
+      __pyx_t_2 = PyList_GET_ITEM(__pyx_t_7, __pyx_t_9); __Pyx_INCREF(__pyx_t_2); __pyx_t_9++; if (unlikely((0 < 0))) __PYX_ERR(0, 208, __pyx_L1_error)
       #else
-      __pyx_t_2 = __Pyx_PySequence_ITEM(__pyx_t_7, __pyx_t_9); __pyx_t_9++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 201, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_PySequence_ITEM(__pyx_t_7, __pyx_t_9); __pyx_t_9++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 208, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
       #endif
       __Pyx_XDECREF_SET(__pyx_v_pos, __pyx_t_2);
       __pyx_t_2 = 0;
 
-      /* "abalone/ai/cython/cython.pyx":202
+      /* "abalone/ai/cython/cython.pyx":209
  *         for color, positions in all_moves.items():
  *             for pos in positions:
  *                 moves = LegalMovesOptimized.get_valid_moves(game_state, pos)             # <<<<<<<<<<<<<<
  *                 if moves:
  *                     possible_move_list.extend(moves)
  */
-      __pyx_t_10 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_LegalMovesOptimized), __pyx_n_s_get_valid_moves); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 202, __pyx_L1_error)
+      __pyx_t_10 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_LegalMovesOptimized), __pyx_n_s_get_valid_moves); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 209, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
       __pyx_t_11 = NULL;
       __pyx_t_8 = 0;
@@ -7793,15 +7901,15 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
         PyObject *__pyx_callargs[3] = {__pyx_t_11, __pyx_v_game_state, __pyx_v_pos};
         __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_10, __pyx_callargs+1-__pyx_t_8, 2+__pyx_t_8);
         __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 202, __pyx_L1_error)
+        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 209, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
       }
-      if (!(likely(PyList_CheckExact(__pyx_t_2))||((__pyx_t_2) == Py_None) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_t_2))) __PYX_ERR(0, 202, __pyx_L1_error)
+      if (!(likely(PyList_CheckExact(__pyx_t_2))||((__pyx_t_2) == Py_None) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_t_2))) __PYX_ERR(0, 209, __pyx_L1_error)
       __Pyx_XDECREF_SET(__pyx_v_moves, ((PyObject*)__pyx_t_2));
       __pyx_t_2 = 0;
 
-      /* "abalone/ai/cython/cython.pyx":203
+      /* "abalone/ai/cython/cython.pyx":210
  *             for pos in positions:
  *                 moves = LegalMovesOptimized.get_valid_moves(game_state, pos)
  *                 if moves:             # <<<<<<<<<<<<<<
@@ -7811,16 +7919,16 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
       __pyx_t_4 = (__pyx_v_moves != Py_None)&&(PyList_GET_SIZE(__pyx_v_moves) != 0);
       if (__pyx_t_4) {
 
-        /* "abalone/ai/cython/cython.pyx":204
+        /* "abalone/ai/cython/cython.pyx":211
  *                 moves = LegalMovesOptimized.get_valid_moves(game_state, pos)
  *                 if moves:
  *                     possible_move_list.extend(moves)             # <<<<<<<<<<<<<<
  *             for pos1, pos2 in combinations(positions, 2):
  *                 moves = LegalMovesOptimized.get_valid_moves(game_state, pos1, pos2)
  */
-        __pyx_t_12 = __Pyx_PyList_Extend(__pyx_v_possible_move_list, __pyx_v_moves); if (unlikely(__pyx_t_12 == ((int)-1))) __PYX_ERR(0, 204, __pyx_L1_error)
+        __pyx_t_12 = __Pyx_PyList_Extend(__pyx_v_possible_move_list, __pyx_v_moves); if (unlikely(__pyx_t_12 == ((int)-1))) __PYX_ERR(0, 211, __pyx_L1_error)
 
-        /* "abalone/ai/cython/cython.pyx":203
+        /* "abalone/ai/cython/cython.pyx":210
  *             for pos in positions:
  *                 moves = LegalMovesOptimized.get_valid_moves(game_state, pos)
  *                 if moves:             # <<<<<<<<<<<<<<
@@ -7829,7 +7937,7 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
  */
       }
 
-      /* "abalone/ai/cython/cython.pyx":201
+      /* "abalone/ai/cython/cython.pyx":208
  * 
  *         for color, positions in all_moves.items():
  *             for pos in positions:             # <<<<<<<<<<<<<<
@@ -7839,14 +7947,14 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
     }
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-    /* "abalone/ai/cython/cython.pyx":205
+    /* "abalone/ai/cython/cython.pyx":212
  *                 if moves:
  *                     possible_move_list.extend(moves)
  *             for pos1, pos2 in combinations(positions, 2):             # <<<<<<<<<<<<<<
  *                 moves = LegalMovesOptimized.get_valid_moves(game_state, pos1, pos2)
  *                 if moves:
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_combinations); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 205, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_combinations); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 212, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_t_10 = NULL;
     __pyx_t_8 = 0;
@@ -7866,7 +7974,7 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
       PyObject *__pyx_callargs[3] = {__pyx_t_10, __pyx_v_positions, __pyx_int_2};
       __pyx_t_7 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+1-__pyx_t_8, 2+__pyx_t_8);
       __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
-      if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 205, __pyx_L1_error)
+      if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 212, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     }
@@ -7875,9 +7983,9 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
       __pyx_t_9 = 0;
       __pyx_t_13 = NULL;
     } else {
-      __pyx_t_9 = -1; __pyx_t_2 = PyObject_GetIter(__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 205, __pyx_L1_error)
+      __pyx_t_9 = -1; __pyx_t_2 = PyObject_GetIter(__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 212, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_13 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_2); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 205, __pyx_L1_error)
+      __pyx_t_13 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_2); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 212, __pyx_L1_error)
     }
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     for (;;) {
@@ -7886,28 +7994,28 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
           {
             Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_2);
             #if !CYTHON_ASSUME_SAFE_MACROS
-            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 205, __pyx_L1_error)
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 212, __pyx_L1_error)
             #endif
             if (__pyx_t_9 >= __pyx_temp) break;
           }
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_7 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_9); __Pyx_INCREF(__pyx_t_7); __pyx_t_9++; if (unlikely((0 < 0))) __PYX_ERR(0, 205, __pyx_L1_error)
+          __pyx_t_7 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_9); __Pyx_INCREF(__pyx_t_7); __pyx_t_9++; if (unlikely((0 < 0))) __PYX_ERR(0, 212, __pyx_L1_error)
           #else
-          __pyx_t_7 = __Pyx_PySequence_ITEM(__pyx_t_2, __pyx_t_9); __pyx_t_9++; if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 205, __pyx_L1_error)
+          __pyx_t_7 = __Pyx_PySequence_ITEM(__pyx_t_2, __pyx_t_9); __pyx_t_9++; if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 212, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_7);
           #endif
         } else {
           {
             Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_2);
             #if !CYTHON_ASSUME_SAFE_MACROS
-            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 205, __pyx_L1_error)
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 212, __pyx_L1_error)
             #endif
             if (__pyx_t_9 >= __pyx_temp) break;
           }
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_7 = PyTuple_GET_ITEM(__pyx_t_2, __pyx_t_9); __Pyx_INCREF(__pyx_t_7); __pyx_t_9++; if (unlikely((0 < 0))) __PYX_ERR(0, 205, __pyx_L1_error)
+          __pyx_t_7 = PyTuple_GET_ITEM(__pyx_t_2, __pyx_t_9); __Pyx_INCREF(__pyx_t_7); __pyx_t_9++; if (unlikely((0 < 0))) __PYX_ERR(0, 212, __pyx_L1_error)
           #else
-          __pyx_t_7 = __Pyx_PySequence_ITEM(__pyx_t_2, __pyx_t_9); __pyx_t_9++; if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 205, __pyx_L1_error)
+          __pyx_t_7 = __Pyx_PySequence_ITEM(__pyx_t_2, __pyx_t_9); __pyx_t_9++; if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 212, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_7);
           #endif
         }
@@ -7917,7 +8025,7 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
             if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-            else __PYX_ERR(0, 205, __pyx_L1_error)
+            else __PYX_ERR(0, 212, __pyx_L1_error)
           }
           break;
         }
@@ -7929,7 +8037,7 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
         if (unlikely(size != 2)) {
           if (size > 2) __Pyx_RaiseTooManyValuesError(2);
           else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-          __PYX_ERR(0, 205, __pyx_L1_error)
+          __PYX_ERR(0, 212, __pyx_L1_error)
         }
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
         if (likely(PyTuple_CheckExact(sequence))) {
@@ -7942,15 +8050,15 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
         __Pyx_INCREF(__pyx_t_10);
         __Pyx_INCREF(__pyx_t_11);
         #else
-        __pyx_t_10 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 205, __pyx_L1_error)
+        __pyx_t_10 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 212, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
-        __pyx_t_11 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 205, __pyx_L1_error)
+        __pyx_t_11 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 212, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
         #endif
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
       } else {
         Py_ssize_t index = -1;
-        __pyx_t_14 = PyObject_GetIter(__pyx_t_7); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 205, __pyx_L1_error)
+        __pyx_t_14 = PyObject_GetIter(__pyx_t_7); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 212, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_14);
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
         __pyx_t_15 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_14);
@@ -7958,7 +8066,7 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
         __Pyx_GOTREF(__pyx_t_10);
         index = 1; __pyx_t_11 = __pyx_t_15(__pyx_t_14); if (unlikely(!__pyx_t_11)) goto __pyx_L12_unpacking_failed;
         __Pyx_GOTREF(__pyx_t_11);
-        if (__Pyx_IternextUnpackEndCheck(__pyx_t_15(__pyx_t_14), 2) < 0) __PYX_ERR(0, 205, __pyx_L1_error)
+        if (__Pyx_IternextUnpackEndCheck(__pyx_t_15(__pyx_t_14), 2) < 0) __PYX_ERR(0, 212, __pyx_L1_error)
         __pyx_t_15 = NULL;
         __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
         goto __pyx_L13_unpacking_done;
@@ -7966,7 +8074,7 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
         __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
         __pyx_t_15 = NULL;
         if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-        __PYX_ERR(0, 205, __pyx_L1_error)
+        __PYX_ERR(0, 212, __pyx_L1_error)
         __pyx_L13_unpacking_done:;
       }
       __Pyx_XDECREF_SET(__pyx_v_pos1, __pyx_t_10);
@@ -7974,14 +8082,14 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
       __Pyx_XDECREF_SET(__pyx_v_pos2, __pyx_t_11);
       __pyx_t_11 = 0;
 
-      /* "abalone/ai/cython/cython.pyx":206
+      /* "abalone/ai/cython/cython.pyx":213
  *                     possible_move_list.extend(moves)
  *             for pos1, pos2 in combinations(positions, 2):
  *                 moves = LegalMovesOptimized.get_valid_moves(game_state, pos1, pos2)             # <<<<<<<<<<<<<<
  *                 if moves:
  *                     possible_move_list.extend(moves)
  */
-      __pyx_t_11 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_LegalMovesOptimized), __pyx_n_s_get_valid_moves); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 206, __pyx_L1_error)
+      __pyx_t_11 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_LegalMovesOptimized), __pyx_n_s_get_valid_moves); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 213, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
       __pyx_t_10 = NULL;
       __pyx_t_8 = 0;
@@ -8001,15 +8109,15 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
         PyObject *__pyx_callargs[4] = {__pyx_t_10, __pyx_v_game_state, __pyx_v_pos1, __pyx_v_pos2};
         __pyx_t_7 = __Pyx_PyObject_FastCall(__pyx_t_11, __pyx_callargs+1-__pyx_t_8, 3+__pyx_t_8);
         __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
-        if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 206, __pyx_L1_error)
+        if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 213, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_7);
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
       }
-      if (!(likely(PyList_CheckExact(__pyx_t_7))||((__pyx_t_7) == Py_None) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_t_7))) __PYX_ERR(0, 206, __pyx_L1_error)
+      if (!(likely(PyList_CheckExact(__pyx_t_7))||((__pyx_t_7) == Py_None) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_t_7))) __PYX_ERR(0, 213, __pyx_L1_error)
       __Pyx_XDECREF_SET(__pyx_v_moves, ((PyObject*)__pyx_t_7));
       __pyx_t_7 = 0;
 
-      /* "abalone/ai/cython/cython.pyx":207
+      /* "abalone/ai/cython/cython.pyx":214
  *             for pos1, pos2 in combinations(positions, 2):
  *                 moves = LegalMovesOptimized.get_valid_moves(game_state, pos1, pos2)
  *                 if moves:             # <<<<<<<<<<<<<<
@@ -8019,16 +8127,16 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
       __pyx_t_4 = (__pyx_v_moves != Py_None)&&(PyList_GET_SIZE(__pyx_v_moves) != 0);
       if (__pyx_t_4) {
 
-        /* "abalone/ai/cython/cython.pyx":208
+        /* "abalone/ai/cython/cython.pyx":215
  *                 moves = LegalMovesOptimized.get_valid_moves(game_state, pos1, pos2)
  *                 if moves:
  *                     possible_move_list.extend(moves)             # <<<<<<<<<<<<<<
  * 
  *             for pos1, pos2, pos3 in combinations(positions, 3):
  */
-        __pyx_t_12 = __Pyx_PyList_Extend(__pyx_v_possible_move_list, __pyx_v_moves); if (unlikely(__pyx_t_12 == ((int)-1))) __PYX_ERR(0, 208, __pyx_L1_error)
+        __pyx_t_12 = __Pyx_PyList_Extend(__pyx_v_possible_move_list, __pyx_v_moves); if (unlikely(__pyx_t_12 == ((int)-1))) __PYX_ERR(0, 215, __pyx_L1_error)
 
-        /* "abalone/ai/cython/cython.pyx":207
+        /* "abalone/ai/cython/cython.pyx":214
  *             for pos1, pos2 in combinations(positions, 2):
  *                 moves = LegalMovesOptimized.get_valid_moves(game_state, pos1, pos2)
  *                 if moves:             # <<<<<<<<<<<<<<
@@ -8037,7 +8145,7 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
  */
       }
 
-      /* "abalone/ai/cython/cython.pyx":205
+      /* "abalone/ai/cython/cython.pyx":212
  *                 if moves:
  *                     possible_move_list.extend(moves)
  *             for pos1, pos2 in combinations(positions, 2):             # <<<<<<<<<<<<<<
@@ -8047,14 +8155,14 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
     }
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "abalone/ai/cython/cython.pyx":210
+    /* "abalone/ai/cython/cython.pyx":217
  *                     possible_move_list.extend(moves)
  * 
  *             for pos1, pos2, pos3 in combinations(positions, 3):             # <<<<<<<<<<<<<<
  *                 moves = LegalMovesOptimized.get_valid_moves(game_state, pos1, pos2, pos3)
  *                 if moves:
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_combinations); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 210, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_combinations); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 217, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __pyx_t_11 = NULL;
     __pyx_t_8 = 0;
@@ -8074,7 +8182,7 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
       PyObject *__pyx_callargs[3] = {__pyx_t_11, __pyx_v_positions, __pyx_int_3};
       __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_7, __pyx_callargs+1-__pyx_t_8, 2+__pyx_t_8);
       __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 210, __pyx_L1_error)
+      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 217, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     }
@@ -8083,9 +8191,9 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
       __pyx_t_9 = 0;
       __pyx_t_13 = NULL;
     } else {
-      __pyx_t_9 = -1; __pyx_t_7 = PyObject_GetIter(__pyx_t_2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 210, __pyx_L1_error)
+      __pyx_t_9 = -1; __pyx_t_7 = PyObject_GetIter(__pyx_t_2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 217, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
-      __pyx_t_13 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_7); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 210, __pyx_L1_error)
+      __pyx_t_13 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_7); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 217, __pyx_L1_error)
     }
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     for (;;) {
@@ -8094,28 +8202,28 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
           {
             Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_7);
             #if !CYTHON_ASSUME_SAFE_MACROS
-            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 210, __pyx_L1_error)
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 217, __pyx_L1_error)
             #endif
             if (__pyx_t_9 >= __pyx_temp) break;
           }
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_2 = PyList_GET_ITEM(__pyx_t_7, __pyx_t_9); __Pyx_INCREF(__pyx_t_2); __pyx_t_9++; if (unlikely((0 < 0))) __PYX_ERR(0, 210, __pyx_L1_error)
+          __pyx_t_2 = PyList_GET_ITEM(__pyx_t_7, __pyx_t_9); __Pyx_INCREF(__pyx_t_2); __pyx_t_9++; if (unlikely((0 < 0))) __PYX_ERR(0, 217, __pyx_L1_error)
           #else
-          __pyx_t_2 = __Pyx_PySequence_ITEM(__pyx_t_7, __pyx_t_9); __pyx_t_9++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 210, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PySequence_ITEM(__pyx_t_7, __pyx_t_9); __pyx_t_9++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 217, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
           #endif
         } else {
           {
             Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_7);
             #if !CYTHON_ASSUME_SAFE_MACROS
-            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 210, __pyx_L1_error)
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 217, __pyx_L1_error)
             #endif
             if (__pyx_t_9 >= __pyx_temp) break;
           }
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_7, __pyx_t_9); __Pyx_INCREF(__pyx_t_2); __pyx_t_9++; if (unlikely((0 < 0))) __PYX_ERR(0, 210, __pyx_L1_error)
+          __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_7, __pyx_t_9); __Pyx_INCREF(__pyx_t_2); __pyx_t_9++; if (unlikely((0 < 0))) __PYX_ERR(0, 217, __pyx_L1_error)
           #else
-          __pyx_t_2 = __Pyx_PySequence_ITEM(__pyx_t_7, __pyx_t_9); __pyx_t_9++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 210, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PySequence_ITEM(__pyx_t_7, __pyx_t_9); __pyx_t_9++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 217, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
           #endif
         }
@@ -8125,7 +8233,7 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
             if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-            else __PYX_ERR(0, 210, __pyx_L1_error)
+            else __PYX_ERR(0, 217, __pyx_L1_error)
           }
           break;
         }
@@ -8137,7 +8245,7 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
         if (unlikely(size != 3)) {
           if (size > 3) __Pyx_RaiseTooManyValuesError(3);
           else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-          __PYX_ERR(0, 210, __pyx_L1_error)
+          __PYX_ERR(0, 217, __pyx_L1_error)
         }
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
         if (likely(PyTuple_CheckExact(sequence))) {
@@ -8153,17 +8261,17 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
         __Pyx_INCREF(__pyx_t_10);
         __Pyx_INCREF(__pyx_t_14);
         #else
-        __pyx_t_11 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 210, __pyx_L1_error)
+        __pyx_t_11 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 217, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
-        __pyx_t_10 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 210, __pyx_L1_error)
+        __pyx_t_10 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 217, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
-        __pyx_t_14 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 210, __pyx_L1_error)
+        __pyx_t_14 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 217, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_14);
         #endif
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       } else {
         Py_ssize_t index = -1;
-        __pyx_t_16 = PyObject_GetIter(__pyx_t_2); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 210, __pyx_L1_error)
+        __pyx_t_16 = PyObject_GetIter(__pyx_t_2); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 217, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_16);
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
         __pyx_t_15 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_16);
@@ -8173,7 +8281,7 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
         __Pyx_GOTREF(__pyx_t_10);
         index = 2; __pyx_t_14 = __pyx_t_15(__pyx_t_16); if (unlikely(!__pyx_t_14)) goto __pyx_L18_unpacking_failed;
         __Pyx_GOTREF(__pyx_t_14);
-        if (__Pyx_IternextUnpackEndCheck(__pyx_t_15(__pyx_t_16), 3) < 0) __PYX_ERR(0, 210, __pyx_L1_error)
+        if (__Pyx_IternextUnpackEndCheck(__pyx_t_15(__pyx_t_16), 3) < 0) __PYX_ERR(0, 217, __pyx_L1_error)
         __pyx_t_15 = NULL;
         __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
         goto __pyx_L19_unpacking_done;
@@ -8181,7 +8289,7 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
         __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
         __pyx_t_15 = NULL;
         if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-        __PYX_ERR(0, 210, __pyx_L1_error)
+        __PYX_ERR(0, 217, __pyx_L1_error)
         __pyx_L19_unpacking_done:;
       }
       __Pyx_XDECREF_SET(__pyx_v_pos1, __pyx_t_11);
@@ -8191,14 +8299,14 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
       __Pyx_XDECREF_SET(__pyx_v_pos3, __pyx_t_14);
       __pyx_t_14 = 0;
 
-      /* "abalone/ai/cython/cython.pyx":211
+      /* "abalone/ai/cython/cython.pyx":218
  * 
  *             for pos1, pos2, pos3 in combinations(positions, 3):
  *                 moves = LegalMovesOptimized.get_valid_moves(game_state, pos1, pos2, pos3)             # <<<<<<<<<<<<<<
  *                 if moves:
  *                     possible_move_list.extend(moves)
  */
-      __pyx_t_14 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_LegalMovesOptimized), __pyx_n_s_get_valid_moves); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 211, __pyx_L1_error)
+      __pyx_t_14 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_LegalMovesOptimized), __pyx_n_s_get_valid_moves); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 218, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_14);
       __pyx_t_10 = NULL;
       __pyx_t_8 = 0;
@@ -8218,15 +8326,15 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
         PyObject *__pyx_callargs[5] = {__pyx_t_10, __pyx_v_game_state, __pyx_v_pos1, __pyx_v_pos2, __pyx_v_pos3};
         __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_14, __pyx_callargs+1-__pyx_t_8, 4+__pyx_t_8);
         __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
-        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 211, __pyx_L1_error)
+        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 218, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
       }
-      if (!(likely(PyList_CheckExact(__pyx_t_2))||((__pyx_t_2) == Py_None) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_t_2))) __PYX_ERR(0, 211, __pyx_L1_error)
+      if (!(likely(PyList_CheckExact(__pyx_t_2))||((__pyx_t_2) == Py_None) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_t_2))) __PYX_ERR(0, 218, __pyx_L1_error)
       __Pyx_XDECREF_SET(__pyx_v_moves, ((PyObject*)__pyx_t_2));
       __pyx_t_2 = 0;
 
-      /* "abalone/ai/cython/cython.pyx":212
+      /* "abalone/ai/cython/cython.pyx":219
  *             for pos1, pos2, pos3 in combinations(positions, 3):
  *                 moves = LegalMovesOptimized.get_valid_moves(game_state, pos1, pos2, pos3)
  *                 if moves:             # <<<<<<<<<<<<<<
@@ -8236,16 +8344,16 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
       __pyx_t_4 = (__pyx_v_moves != Py_None)&&(PyList_GET_SIZE(__pyx_v_moves) != 0);
       if (__pyx_t_4) {
 
-        /* "abalone/ai/cython/cython.pyx":213
+        /* "abalone/ai/cython/cython.pyx":220
  *                 moves = LegalMovesOptimized.get_valid_moves(game_state, pos1, pos2, pos3)
  *                 if moves:
  *                     possible_move_list.extend(moves)             # <<<<<<<<<<<<<<
  * 
  *         return possible_move_list
  */
-        __pyx_t_12 = __Pyx_PyList_Extend(__pyx_v_possible_move_list, __pyx_v_moves); if (unlikely(__pyx_t_12 == ((int)-1))) __PYX_ERR(0, 213, __pyx_L1_error)
+        __pyx_t_12 = __Pyx_PyList_Extend(__pyx_v_possible_move_list, __pyx_v_moves); if (unlikely(__pyx_t_12 == ((int)-1))) __PYX_ERR(0, 220, __pyx_L1_error)
 
-        /* "abalone/ai/cython/cython.pyx":212
+        /* "abalone/ai/cython/cython.pyx":219
  *             for pos1, pos2, pos3 in combinations(positions, 3):
  *                 moves = LegalMovesOptimized.get_valid_moves(game_state, pos1, pos2, pos3)
  *                 if moves:             # <<<<<<<<<<<<<<
@@ -8254,7 +8362,7 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
  */
       }
 
-      /* "abalone/ai/cython/cython.pyx":210
+      /* "abalone/ai/cython/cython.pyx":217
  *                     possible_move_list.extend(moves)
  * 
  *             for pos1, pos2, pos3 in combinations(positions, 3):             # <<<<<<<<<<<<<<
@@ -8266,7 +8374,7 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "abalone/ai/cython/cython.pyx":215
+  /* "abalone/ai/cython/cython.pyx":222
  *                     possible_move_list.extend(moves)
  * 
  *         return possible_move_list             # <<<<<<<<<<<<<<
@@ -8278,7 +8386,7 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
   __pyx_r = __pyx_v_possible_move_list;
   goto __pyx_L0;
 
-  /* "abalone/ai/cython/cython.pyx":183
+  /* "abalone/ai/cython/cython.pyx":190
  *         return player_dict
  * 
  *     @staticmethod             # <<<<<<<<<<<<<<
@@ -8314,7 +8422,7 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_2ge
   return __pyx_r;
 }
 
-/* "abalone/ai/cython/cython.pyx":217
+/* "abalone/ai/cython/cython.pyx":224
  *         return possible_move_list
  * 
  *     @staticmethod             # <<<<<<<<<<<<<<
@@ -8378,7 +8486,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[0]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 217, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 224, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
         CYTHON_FALLTHROUGH;
         case  1:
@@ -8386,14 +8494,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[1]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 217, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 224, __pyx_L3_error)
         else {
-          __Pyx_RaiseArgtupleInvalid("generate_all_sumitos", 1, 2, 2, 1); __PYX_ERR(0, 217, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("generate_all_sumitos", 1, 2, 2, 1); __PYX_ERR(0, 224, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "generate_all_sumitos") < 0)) __PYX_ERR(0, 217, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "generate_all_sumitos") < 0)) __PYX_ERR(0, 224, __pyx_L3_error)
       }
     } else if (unlikely(__pyx_nargs != 2)) {
       goto __pyx_L5_argtuple_error;
@@ -8406,7 +8514,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("generate_all_sumitos", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 217, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("generate_all_sumitos", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 224, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -8447,31 +8555,31 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_4ge
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("generate_all_sumitos", 1);
 
-  /* "abalone/ai/cython/cython.pyx":219
+  /* "abalone/ai/cython/cython.pyx":226
  *     @staticmethod
  *     def generate_all_sumitos(game_state, player_pieces) -> list[Move]:
  *         max_positions = player_pieces["player_max"]             # <<<<<<<<<<<<<<
  *         min_positions = player_pieces["player_min"]
  *         return LegalMovesOptimized.generate_all_sumitos(game_state, max_positions, min_positions)
  */
-  __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v_player_pieces, __pyx_n_s_player_max); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 219, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v_player_pieces, __pyx_n_s_player_max); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 226, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_max_positions = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "abalone/ai/cython/cython.pyx":220
+  /* "abalone/ai/cython/cython.pyx":227
  *     def generate_all_sumitos(game_state, player_pieces) -> list[Move]:
  *         max_positions = player_pieces["player_max"]
  *         min_positions = player_pieces["player_min"]             # <<<<<<<<<<<<<<
  *         return LegalMovesOptimized.generate_all_sumitos(game_state, max_positions, min_positions)
  * 
  */
-  __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v_player_pieces, __pyx_n_s_player_min); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 220, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v_player_pieces, __pyx_n_s_player_min); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 227, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_min_positions = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "abalone/ai/cython/cython.pyx":221
+  /* "abalone/ai/cython/cython.pyx":228
  *         max_positions = player_pieces["player_max"]
  *         min_positions = player_pieces["player_min"]
  *         return LegalMovesOptimized.generate_all_sumitos(game_state, max_positions, min_positions)             # <<<<<<<<<<<<<<
@@ -8479,7 +8587,7 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_4ge
  *     @staticmethod
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_LegalMovesOptimized), __pyx_n_s_generate_all_sumitos); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 221, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_LegalMovesOptimized), __pyx_n_s_generate_all_sumitos); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 228, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   __pyx_t_4 = 0;
@@ -8499,16 +8607,16 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_4ge
     PyObject *__pyx_callargs[4] = {__pyx_t_3, __pyx_v_game_state, __pyx_v_max_positions, __pyx_v_min_positions};
     __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+1-__pyx_t_4, 3+__pyx_t_4);
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 221, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 228, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   }
-  if (!(likely(PyList_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_t_1))) __PYX_ERR(0, 221, __pyx_L1_error)
+  if (!(likely(PyList_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_t_1))) __PYX_ERR(0, 228, __pyx_L1_error)
   __pyx_r = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "abalone/ai/cython/cython.pyx":217
+  /* "abalone/ai/cython/cython.pyx":224
  *         return possible_move_list
  * 
  *     @staticmethod             # <<<<<<<<<<<<<<
@@ -8531,7 +8639,7 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_4ge
   return __pyx_r;
 }
 
-/* "abalone/ai/cython/cython.pyx":223
+/* "abalone/ai/cython/cython.pyx":230
  *         return LegalMovesOptimized.generate_all_sumitos(game_state, max_positions, min_positions)
  * 
  *     @staticmethod             # <<<<<<<<<<<<<<
@@ -8592,12 +8700,12 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[0]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 223, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 230, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "generate_all_possible_moves") < 0)) __PYX_ERR(0, 223, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "generate_all_possible_moves") < 0)) __PYX_ERR(0, 230, __pyx_L3_error)
       }
     } else if (unlikely(__pyx_nargs != 1)) {
       goto __pyx_L5_argtuple_error;
@@ -8608,7 +8716,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("generate_all_possible_moves", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 223, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("generate_all_possible_moves", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 230, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -8650,14 +8758,14 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_6ge
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("generate_all_possible_moves", 1);
 
-  /* "abalone/ai/cython/cython.pyx":225
+  /* "abalone/ai/cython/cython.pyx":232
  *     @staticmethod
  *     def generate_all_possible_moves(game_state) -> list[Move]:
  *         player_pieces = StateSpaceGenerator.get_player_piece_positions(game_state)             # <<<<<<<<<<<<<<
  * 
  *         player_piece_moves = StateSpaceGenerator.generate_all_moves(game_state, player_pieces)
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator), __pyx_n_s_get_player_piece_positions); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 225, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator), __pyx_n_s_get_player_piece_positions); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 232, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   __pyx_t_4 = 0;
@@ -8677,21 +8785,21 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_6ge
     PyObject *__pyx_callargs[2] = {__pyx_t_3, __pyx_v_game_state};
     __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+1-__pyx_t_4, 1+__pyx_t_4);
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 225, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 232, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   }
   __pyx_v_player_pieces = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "abalone/ai/cython/cython.pyx":227
+  /* "abalone/ai/cython/cython.pyx":234
  *         player_pieces = StateSpaceGenerator.get_player_piece_positions(game_state)
  * 
  *         player_piece_moves = StateSpaceGenerator.generate_all_moves(game_state, player_pieces)             # <<<<<<<<<<<<<<
  *         sumito_moves = StateSpaceGenerator.generate_all_sumitos(game_state, player_pieces)
  * 
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator), __pyx_n_s_generate_all_moves); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 227, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator), __pyx_n_s_generate_all_moves); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 234, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   __pyx_t_4 = 0;
@@ -8711,21 +8819,21 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_6ge
     PyObject *__pyx_callargs[3] = {__pyx_t_3, __pyx_v_game_state, __pyx_v_player_pieces};
     __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+1-__pyx_t_4, 2+__pyx_t_4);
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 227, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 234, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   }
   __pyx_v_player_piece_moves = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "abalone/ai/cython/cython.pyx":228
+  /* "abalone/ai/cython/cython.pyx":235
  * 
  *         player_piece_moves = StateSpaceGenerator.generate_all_moves(game_state, player_pieces)
  *         sumito_moves = StateSpaceGenerator.generate_all_sumitos(game_state, player_pieces)             # <<<<<<<<<<<<<<
  * 
  *         return player_piece_moves + sumito_moves
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator), __pyx_n_s_generate_all_sumitos); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 228, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator), __pyx_n_s_generate_all_sumitos); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 235, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   __pyx_t_4 = 0;
@@ -8745,27 +8853,27 @@ static PyObject *__pyx_pf_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_6ge
     PyObject *__pyx_callargs[3] = {__pyx_t_3, __pyx_v_game_state, __pyx_v_player_pieces};
     __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+1-__pyx_t_4, 2+__pyx_t_4);
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 228, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 235, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   }
   __pyx_v_sumito_moves = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "abalone/ai/cython/cython.pyx":230
+  /* "abalone/ai/cython/cython.pyx":237
  *         sumito_moves = StateSpaceGenerator.generate_all_sumitos(game_state, player_pieces)
  * 
  *         return player_piece_moves + sumito_moves             # <<<<<<<<<<<<<<
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyNumber_Add(__pyx_v_player_piece_moves, __pyx_v_sumito_moves); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 230, __pyx_L1_error)
+  __pyx_t_1 = PyNumber_Add(__pyx_v_player_piece_moves, __pyx_v_sumito_moves); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 237, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (!(likely(PyList_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_t_1))) __PYX_ERR(0, 230, __pyx_L1_error)
+  if (!(likely(PyList_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_t_1))) __PYX_ERR(0, 237, __pyx_L1_error)
   __pyx_r = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "abalone/ai/cython/cython.pyx":223
+  /* "abalone/ai/cython/cython.pyx":230
  *         return LegalMovesOptimized.generate_all_sumitos(game_state, max_positions, min_positions)
  * 
  *     @staticmethod             # <<<<<<<<<<<<<<
@@ -10881,7 +10989,7 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
 /* #### Code section: cached_builtins ### */
 static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
   __pyx_builtin_staticmethod = __Pyx_GetBuiltinName(__pyx_n_s_staticmethod); if (!__pyx_builtin_staticmethod) __PYX_ERR(0, 44, __pyx_L1_error)
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 102, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 109, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -10944,17 +11052,17 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__10);
   __pyx_codeobj__11 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 12, 0, CO_OPTIMIZED|CO_NEWLOCALS|CO_VARARGS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__10, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_abalone_ai_cython_cython_pyx, __pyx_n_s_get_valid_moves, 44, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__11)) __PYX_ERR(0, 44, __pyx_L1_error)
 
-  /* "abalone/ai/cython/cython.pyx":125
+  /* "abalone/ai/cython/cython.pyx":132
  *         return {'player': player_seq, 'opponent': opponent_seq} if sequence_found else None
  * 
  *     @staticmethod             # <<<<<<<<<<<<<<
  *     def generate_all_sumitos(game_state, player_positions, opponent_positions):
  *         board = game_state.board.array
  */
-  __pyx_tuple__12 = PyTuple_Pack(12, __pyx_n_s_game_state, __pyx_n_s_player_positions, __pyx_n_s_opponent_positions, __pyx_n_s_board, __pyx_n_s_sumito_move_list, __pyx_n_s_start_pos, __pyx_n_s_direction, __pyx_n_s_sequence, __pyx_n_s_new_positions_player, __pyx_n_s_new_positions_opponent, __pyx_n_s_pos, __pyx_n_s_pos); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(0, 125, __pyx_L1_error)
+  __pyx_tuple__12 = PyTuple_Pack(12, __pyx_n_s_game_state, __pyx_n_s_player_positions, __pyx_n_s_opponent_positions, __pyx_n_s_board, __pyx_n_s_sumito_move_list, __pyx_n_s_start_pos, __pyx_n_s_direction, __pyx_n_s_sequence, __pyx_n_s_new_positions_player, __pyx_n_s_new_positions_opponent, __pyx_n_s_pos, __pyx_n_s_pos); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(0, 132, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__12);
   __Pyx_GIVEREF(__pyx_tuple__12);
-  __pyx_codeobj__13 = (PyObject*)__Pyx_PyCode_New(3, 0, 0, 12, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__12, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_abalone_ai_cython_cython_pyx, __pyx_n_s_generate_all_sumitos, 125, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__13)) __PYX_ERR(0, 125, __pyx_L1_error)
+  __pyx_codeobj__13 = (PyObject*)__Pyx_PyCode_New(3, 0, 0, 12, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__12, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_abalone_ai_cython_cython_pyx, __pyx_n_s_generate_all_sumitos, 132, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__13)) __PYX_ERR(0, 132, __pyx_L1_error)
 
   /* "(tree fragment)":1
  * def __reduce_cython__(self):             # <<<<<<<<<<<<<<
@@ -10977,53 +11085,53 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__16);
   __pyx_codeobj__17 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__16, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_stringsource, __pyx_n_s_setstate_cython, 16, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__17)) __PYX_ERR(1, 16, __pyx_L1_error)
 
-  /* "abalone/ai/cython/cython.pyx":156
+  /* "abalone/ai/cython/cython.pyx":163
  *     cdef list[int] board_array
  * 
  *     @staticmethod             # <<<<<<<<<<<<<<
  *     def get_player_piece_positions(game_state):
  *         cdef:
  */
-  __pyx_tuple__18 = PyTuple_Pack(11, __pyx_n_s_game_state, __pyx_n_s_player_max_value, __pyx_n_s_player_min_value, __pyx_n_s_player_dict, __pyx_n_s_player_max_piece_positions, __pyx_n_s_player_min_piece_positions, __pyx_n_s_index, __pyx_n_s_x, __pyx_n_s_y, __pyx_n_s_width, __pyx_n_s_array_length); if (unlikely(!__pyx_tuple__18)) __PYX_ERR(0, 156, __pyx_L1_error)
+  __pyx_tuple__18 = PyTuple_Pack(11, __pyx_n_s_game_state, __pyx_n_s_player_max_value, __pyx_n_s_player_min_value, __pyx_n_s_player_dict, __pyx_n_s_player_max_piece_positions, __pyx_n_s_player_min_piece_positions, __pyx_n_s_index, __pyx_n_s_x, __pyx_n_s_y, __pyx_n_s_width, __pyx_n_s_array_length); if (unlikely(!__pyx_tuple__18)) __PYX_ERR(0, 163, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__18);
   __Pyx_GIVEREF(__pyx_tuple__18);
-  __pyx_codeobj__19 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 11, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__18, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_abalone_ai_cython_cython_pyx, __pyx_n_s_get_player_piece_positions, 156, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__19)) __PYX_ERR(0, 156, __pyx_L1_error)
+  __pyx_codeobj__19 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 11, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__18, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_abalone_ai_cython_cython_pyx, __pyx_n_s_get_player_piece_positions, 163, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__19)) __PYX_ERR(0, 163, __pyx_L1_error)
 
-  /* "abalone/ai/cython/cython.pyx":183
+  /* "abalone/ai/cython/cython.pyx":190
  *         return player_dict
  * 
  *     @staticmethod             # <<<<<<<<<<<<<<
  *     def generate_all_moves(game_state: GameState, dict player_piece):
  *         cdef:
  */
-  __pyx_tuple__20 = PyTuple_Pack(14, __pyx_n_s_game_state, __pyx_n_s_player_piece, __pyx_n_s_turn_value, __pyx_n_s_possible_move_list, __pyx_n_s_moves, __pyx_n_s_positions, __pyx_n_s_black_positions, __pyx_n_s_white_positions, __pyx_n_s_all_moves, __pyx_n_s_color, __pyx_n_s_pos, __pyx_n_s_pos1, __pyx_n_s_pos2, __pyx_n_s_pos3); if (unlikely(!__pyx_tuple__20)) __PYX_ERR(0, 183, __pyx_L1_error)
+  __pyx_tuple__20 = PyTuple_Pack(14, __pyx_n_s_game_state, __pyx_n_s_player_piece, __pyx_n_s_turn_value, __pyx_n_s_possible_move_list, __pyx_n_s_moves, __pyx_n_s_positions, __pyx_n_s_black_positions, __pyx_n_s_white_positions, __pyx_n_s_all_moves, __pyx_n_s_color, __pyx_n_s_pos, __pyx_n_s_pos1, __pyx_n_s_pos2, __pyx_n_s_pos3); if (unlikely(!__pyx_tuple__20)) __PYX_ERR(0, 190, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__20);
   __Pyx_GIVEREF(__pyx_tuple__20);
-  __pyx_codeobj__21 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 14, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__20, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_abalone_ai_cython_cython_pyx, __pyx_n_s_generate_all_moves, 183, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__21)) __PYX_ERR(0, 183, __pyx_L1_error)
+  __pyx_codeobj__21 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 14, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__20, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_abalone_ai_cython_cython_pyx, __pyx_n_s_generate_all_moves, 190, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__21)) __PYX_ERR(0, 190, __pyx_L1_error)
 
-  /* "abalone/ai/cython/cython.pyx":217
+  /* "abalone/ai/cython/cython.pyx":224
  *         return possible_move_list
  * 
  *     @staticmethod             # <<<<<<<<<<<<<<
  *     def generate_all_sumitos(game_state, player_pieces) -> list[Move]:
  *         max_positions = player_pieces["player_max"]
  */
-  __pyx_tuple__22 = PyTuple_Pack(4, __pyx_n_s_game_state, __pyx_n_s_player_pieces, __pyx_n_s_max_positions, __pyx_n_s_min_positions); if (unlikely(!__pyx_tuple__22)) __PYX_ERR(0, 217, __pyx_L1_error)
+  __pyx_tuple__22 = PyTuple_Pack(4, __pyx_n_s_game_state, __pyx_n_s_player_pieces, __pyx_n_s_max_positions, __pyx_n_s_min_positions); if (unlikely(!__pyx_tuple__22)) __PYX_ERR(0, 224, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__22);
   __Pyx_GIVEREF(__pyx_tuple__22);
-  __pyx_codeobj__23 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__22, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_abalone_ai_cython_cython_pyx, __pyx_n_s_generate_all_sumitos, 217, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__23)) __PYX_ERR(0, 217, __pyx_L1_error)
+  __pyx_codeobj__23 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__22, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_abalone_ai_cython_cython_pyx, __pyx_n_s_generate_all_sumitos, 224, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__23)) __PYX_ERR(0, 224, __pyx_L1_error)
 
-  /* "abalone/ai/cython/cython.pyx":223
+  /* "abalone/ai/cython/cython.pyx":230
  *         return LegalMovesOptimized.generate_all_sumitos(game_state, max_positions, min_positions)
  * 
  *     @staticmethod             # <<<<<<<<<<<<<<
  *     def generate_all_possible_moves(game_state) -> list[Move]:
  *         player_pieces = StateSpaceGenerator.get_player_piece_positions(game_state)
  */
-  __pyx_tuple__24 = PyTuple_Pack(4, __pyx_n_s_game_state, __pyx_n_s_player_pieces, __pyx_n_s_player_piece_moves, __pyx_n_s_sumito_moves); if (unlikely(!__pyx_tuple__24)) __PYX_ERR(0, 223, __pyx_L1_error)
+  __pyx_tuple__24 = PyTuple_Pack(4, __pyx_n_s_game_state, __pyx_n_s_player_pieces, __pyx_n_s_player_piece_moves, __pyx_n_s_sumito_moves); if (unlikely(!__pyx_tuple__24)) __PYX_ERR(0, 230, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__24);
   __Pyx_GIVEREF(__pyx_tuple__24);
-  __pyx_codeobj__25 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__24, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_abalone_ai_cython_cython_pyx, __pyx_n_s_generate_all_possible_moves, 223, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__25)) __PYX_ERR(0, 223, __pyx_L1_error)
+  __pyx_codeobj__25 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__24, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_abalone_ai_cython_cython_pyx, __pyx_n_s_generate_all_possible_moves, 230, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__25)) __PYX_ERR(0, 230, __pyx_L1_error)
 
   /* "(tree fragment)":1
  * def __reduce_cython__(self):             # <<<<<<<<<<<<<<
@@ -11127,6 +11235,7 @@ static int __Pyx_modinit_type_init_code(void) {
   __pyx_vtable_7abalone_2ai_6cython_6cython_LegalMovesOptimized.are_three_marbles_inline = (int (*)(__pyx_ctuple_int__and_int, __pyx_ctuple_int__and_int, __pyx_ctuple_int__and_int))__pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_are_three_marbles_inline;
   __pyx_vtable_7abalone_2ai_6cython_6cython_LegalMovesOptimized.is_position_valid = (int (*)(PyObject *, PyObject *, struct __pyx_opt_args_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_is_position_valid *__pyx_optional_args))__pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_is_position_valid;
   __pyx_vtable_7abalone_2ai_6cython_6cython_LegalMovesOptimized.sequence_helper_function = (int (*)(PyObject *, __pyx_ctuple_int__and_int))__pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_sequence_helper_function;
+  __pyx_vtable_7abalone_2ai_6cython_6cython_LegalMovesOptimized.is_position_out_of_bounds = (int (*)(PyObject *, PyObject *))__pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_is_position_out_of_bounds;
   __pyx_vtable_7abalone_2ai_6cython_6cython_LegalMovesOptimized.can_sumito_occur = (int (*)(PyObject *, PyObject *, PyObject *))__pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_can_sumito_occur;
   __pyx_vtable_7abalone_2ai_6cython_6cython_LegalMovesOptimized.find_marble_sequence = (PyObject *(*)(PyObject *, PyObject *, PyObject *, PyObject *, PyObject *))__pyx_f_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_find_marble_sequence;
   #if CYTHON_USE_TYPE_SPECS
@@ -11157,15 +11266,15 @@ static int __Pyx_modinit_type_init_code(void) {
   if (__Pyx_setup_reduce((PyObject *) __pyx_ptype_7abalone_2ai_6cython_6cython_LegalMovesOptimized) < 0) __PYX_ERR(0, 5, __pyx_L1_error)
   #endif
   #if CYTHON_USE_TYPE_SPECS
-  __pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator = (PyTypeObject *) __Pyx_PyType_FromModuleAndSpec(__pyx_m, &__pyx_type_7abalone_2ai_6cython_6cython_StateSpaceGenerator_spec, NULL); if (unlikely(!__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator)) __PYX_ERR(0, 152, __pyx_L1_error)
-  if (__Pyx_fix_up_extension_type_from_spec(&__pyx_type_7abalone_2ai_6cython_6cython_StateSpaceGenerator_spec, __pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator) < 0) __PYX_ERR(0, 152, __pyx_L1_error)
+  __pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator = (PyTypeObject *) __Pyx_PyType_FromModuleAndSpec(__pyx_m, &__pyx_type_7abalone_2ai_6cython_6cython_StateSpaceGenerator_spec, NULL); if (unlikely(!__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator)) __PYX_ERR(0, 159, __pyx_L1_error)
+  if (__Pyx_fix_up_extension_type_from_spec(&__pyx_type_7abalone_2ai_6cython_6cython_StateSpaceGenerator_spec, __pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator) < 0) __PYX_ERR(0, 159, __pyx_L1_error)
   #else
   __pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator = &__pyx_type_7abalone_2ai_6cython_6cython_StateSpaceGenerator;
   #endif
   #if !CYTHON_COMPILING_IN_LIMITED_API
   #endif
   #if !CYTHON_USE_TYPE_SPECS
-  if (__Pyx_PyType_Ready(__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator) < 0) __PYX_ERR(0, 152, __pyx_L1_error)
+  if (__Pyx_PyType_Ready(__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator) < 0) __PYX_ERR(0, 159, __pyx_L1_error)
   #endif
   #if PY_MAJOR_VERSION < 3
   __pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator->tp_print = 0;
@@ -11175,9 +11284,9 @@ static int __Pyx_modinit_type_init_code(void) {
     __pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator->tp_getattro = __Pyx_PyObject_GenericGetAttr;
   }
   #endif
-  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_StateSpaceGenerator, (PyObject *) __pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator) < 0) __PYX_ERR(0, 152, __pyx_L1_error)
+  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_StateSpaceGenerator, (PyObject *) __pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator) < 0) __PYX_ERR(0, 159, __pyx_L1_error)
   #if !CYTHON_COMPILING_IN_LIMITED_API
-  if (__Pyx_setup_reduce((PyObject *) __pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator) < 0) __PYX_ERR(0, 152, __pyx_L1_error)
+  if (__Pyx_setup_reduce((PyObject *) __pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator) < 0) __PYX_ERR(0, 159, __pyx_L1_error)
   #endif
   #if CYTHON_USE_TYPE_SPECS
   __pyx_ptype_7abalone_2ai_6cython_6cython___pyx_scope_struct__get_valid_moves = (PyTypeObject *) __Pyx_PyType_FromModuleAndSpec(__pyx_m, &__pyx_type_7abalone_2ai_6cython_6cython___pyx_scope_struct__get_valid_moves_spec, NULL); if (unlikely(!__pyx_ptype_7abalone_2ai_6cython_6cython___pyx_scope_struct__get_valid_moves)) __PYX_ERR(0, 44, __pyx_L1_error)
@@ -11645,24 +11754,24 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   PyType_Modified(__pyx_ptype_7abalone_2ai_6cython_6cython_LegalMovesOptimized);
 
-  /* "abalone/ai/cython/cython.pyx":125
+  /* "abalone/ai/cython/cython.pyx":132
  *         return {'player': player_seq, 'opponent': opponent_seq} if sequence_found else None
  * 
  *     @staticmethod             # <<<<<<<<<<<<<<
  *     def generate_all_sumitos(game_state, player_positions, opponent_positions):
  *         board = game_state.board.array
  */
-  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_3generate_all_sumitos, __Pyx_CYFUNCTION_STATICMETHOD | __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_LegalMovesOptimized_generate_all, NULL, __pyx_n_s_abalone_ai_cython_cython, __pyx_d, ((PyObject *)__pyx_codeobj__13)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 125, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_7abalone_2ai_6cython_6cython_19LegalMovesOptimized_3generate_all_sumitos, __Pyx_CYFUNCTION_STATICMETHOD | __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_LegalMovesOptimized_generate_all, NULL, __pyx_n_s_abalone_ai_cython_cython, __pyx_d, ((PyObject *)__pyx_codeobj__13)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 132, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_LegalMovesOptimized, __pyx_n_s_generate_all_sumitos, __pyx_t_3) < 0) __PYX_ERR(0, 125, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_LegalMovesOptimized, __pyx_n_s_generate_all_sumitos, __pyx_t_3) < 0) __PYX_ERR(0, 132, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   PyType_Modified(__pyx_ptype_7abalone_2ai_6cython_6cython_LegalMovesOptimized);
-  __Pyx_GetNameInClass(__pyx_t_3, (PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_LegalMovesOptimized, __pyx_n_s_generate_all_sumitos); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 125, __pyx_L1_error)
+  __Pyx_GetNameInClass(__pyx_t_3, (PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_LegalMovesOptimized, __pyx_n_s_generate_all_sumitos); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 132, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_builtin_staticmethod, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 125, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_builtin_staticmethod, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 132, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_LegalMovesOptimized, __pyx_n_s_generate_all_sumitos, __pyx_t_2) < 0) __PYX_ERR(0, 125, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_LegalMovesOptimized, __pyx_n_s_generate_all_sumitos, __pyx_t_2) < 0) __PYX_ERR(0, 132, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   PyType_Modified(__pyx_ptype_7abalone_2ai_6cython_6cython_LegalMovesOptimized);
 
@@ -11689,102 +11798,102 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   PyType_Modified(__pyx_ptype_7abalone_2ai_6cython_6cython_LegalMovesOptimized);
 
-  /* "abalone/ai/cython/cython.pyx":156
+  /* "abalone/ai/cython/cython.pyx":163
  *     cdef list[int] board_array
  * 
  *     @staticmethod             # <<<<<<<<<<<<<<
  *     def get_player_piece_positions(game_state):
  *         cdef:
  */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_1get_player_piece_positions, __Pyx_CYFUNCTION_STATICMETHOD | __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_StateSpaceGenerator_get_player_p, NULL, __pyx_n_s_abalone_ai_cython_cython, __pyx_d, ((PyObject *)__pyx_codeobj__19)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 156, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_1get_player_piece_positions, __Pyx_CYFUNCTION_STATICMETHOD | __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_StateSpaceGenerator_get_player_p, NULL, __pyx_n_s_abalone_ai_cython_cython, __pyx_d, ((PyObject *)__pyx_codeobj__19)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 163, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator, __pyx_n_s_get_player_piece_positions, __pyx_t_2) < 0) __PYX_ERR(0, 156, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator, __pyx_n_s_get_player_piece_positions, __pyx_t_2) < 0) __PYX_ERR(0, 163, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   PyType_Modified(__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator);
-  __Pyx_GetNameInClass(__pyx_t_2, (PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator, __pyx_n_s_get_player_piece_positions); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 156, __pyx_L1_error)
+  __Pyx_GetNameInClass(__pyx_t_2, (PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator, __pyx_n_s_get_player_piece_positions); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 163, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_builtin_staticmethod, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 156, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_builtin_staticmethod, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 163, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator, __pyx_n_s_get_player_piece_positions, __pyx_t_3) < 0) __PYX_ERR(0, 156, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator, __pyx_n_s_get_player_piece_positions, __pyx_t_3) < 0) __PYX_ERR(0, 163, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   PyType_Modified(__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator);
 
-  /* "abalone/ai/cython/cython.pyx":183
+  /* "abalone/ai/cython/cython.pyx":190
  *         return player_dict
  * 
  *     @staticmethod             # <<<<<<<<<<<<<<
  *     def generate_all_moves(game_state: GameState, dict player_piece):
  *         cdef:
  */
-  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 183, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 190, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_game_state, __pyx_n_s_GameState) < 0) __PYX_ERR(0, 183, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_3generate_all_moves, __Pyx_CYFUNCTION_STATICMETHOD | __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_StateSpaceGenerator_generate_all, NULL, __pyx_n_s_abalone_ai_cython_cython, __pyx_d, ((PyObject *)__pyx_codeobj__21)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 183, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_game_state, __pyx_n_s_GameState) < 0) __PYX_ERR(0, 190, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_3generate_all_moves, __Pyx_CYFUNCTION_STATICMETHOD | __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_StateSpaceGenerator_generate_all, NULL, __pyx_n_s_abalone_ai_cython_cython, __pyx_d, ((PyObject *)__pyx_codeobj__21)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 190, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_CyFunction_SetAnnotationsDict(__pyx_t_2, __pyx_t_3);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator, __pyx_n_s_generate_all_moves, __pyx_t_2) < 0) __PYX_ERR(0, 183, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator, __pyx_n_s_generate_all_moves, __pyx_t_2) < 0) __PYX_ERR(0, 190, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   PyType_Modified(__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator);
-  __Pyx_GetNameInClass(__pyx_t_2, (PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator, __pyx_n_s_generate_all_moves); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 183, __pyx_L1_error)
+  __Pyx_GetNameInClass(__pyx_t_2, (PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator, __pyx_n_s_generate_all_moves); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 190, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_builtin_staticmethod, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 183, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_builtin_staticmethod, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 190, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator, __pyx_n_s_generate_all_moves, __pyx_t_3) < 0) __PYX_ERR(0, 183, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator, __pyx_n_s_generate_all_moves, __pyx_t_3) < 0) __PYX_ERR(0, 190, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   PyType_Modified(__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator);
 
-  /* "abalone/ai/cython/cython.pyx":217
+  /* "abalone/ai/cython/cython.pyx":224
  *         return possible_move_list
  * 
  *     @staticmethod             # <<<<<<<<<<<<<<
  *     def generate_all_sumitos(game_state, player_pieces) -> list[Move]:
  *         max_positions = player_pieces["player_max"]
  */
-  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 217, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 224, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_return, __pyx_kp_s_list_Move) < 0) __PYX_ERR(0, 217, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_5generate_all_sumitos, __Pyx_CYFUNCTION_STATICMETHOD | __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_StateSpaceGenerator_generate_all_2, NULL, __pyx_n_s_abalone_ai_cython_cython, __pyx_d, ((PyObject *)__pyx_codeobj__23)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 217, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_return, __pyx_kp_s_list_Move) < 0) __PYX_ERR(0, 224, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_5generate_all_sumitos, __Pyx_CYFUNCTION_STATICMETHOD | __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_StateSpaceGenerator_generate_all_2, NULL, __pyx_n_s_abalone_ai_cython_cython, __pyx_d, ((PyObject *)__pyx_codeobj__23)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 224, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_CyFunction_SetAnnotationsDict(__pyx_t_2, __pyx_t_3);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator, __pyx_n_s_generate_all_sumitos, __pyx_t_2) < 0) __PYX_ERR(0, 217, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator, __pyx_n_s_generate_all_sumitos, __pyx_t_2) < 0) __PYX_ERR(0, 224, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   PyType_Modified(__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator);
-  __Pyx_GetNameInClass(__pyx_t_2, (PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator, __pyx_n_s_generate_all_sumitos); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 217, __pyx_L1_error)
+  __Pyx_GetNameInClass(__pyx_t_2, (PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator, __pyx_n_s_generate_all_sumitos); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 224, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_builtin_staticmethod, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 217, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_builtin_staticmethod, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 224, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator, __pyx_n_s_generate_all_sumitos, __pyx_t_3) < 0) __PYX_ERR(0, 217, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator, __pyx_n_s_generate_all_sumitos, __pyx_t_3) < 0) __PYX_ERR(0, 224, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   PyType_Modified(__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator);
 
-  /* "abalone/ai/cython/cython.pyx":223
+  /* "abalone/ai/cython/cython.pyx":230
  *         return LegalMovesOptimized.generate_all_sumitos(game_state, max_positions, min_positions)
  * 
  *     @staticmethod             # <<<<<<<<<<<<<<
  *     def generate_all_possible_moves(game_state) -> list[Move]:
  *         player_pieces = StateSpaceGenerator.get_player_piece_positions(game_state)
  */
-  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 223, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 230, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_return, __pyx_kp_s_list_Move) < 0) __PYX_ERR(0, 223, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_7generate_all_possible_moves, __Pyx_CYFUNCTION_STATICMETHOD | __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_StateSpaceGenerator_generate_all_3, NULL, __pyx_n_s_abalone_ai_cython_cython, __pyx_d, ((PyObject *)__pyx_codeobj__25)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 223, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_return, __pyx_kp_s_list_Move) < 0) __PYX_ERR(0, 230, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7abalone_2ai_6cython_6cython_19StateSpaceGenerator_7generate_all_possible_moves, __Pyx_CYFUNCTION_STATICMETHOD | __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_StateSpaceGenerator_generate_all_3, NULL, __pyx_n_s_abalone_ai_cython_cython, __pyx_d, ((PyObject *)__pyx_codeobj__25)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 230, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_CyFunction_SetAnnotationsDict(__pyx_t_2, __pyx_t_3);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator, __pyx_n_s_generate_all_possible_moves, __pyx_t_2) < 0) __PYX_ERR(0, 223, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator, __pyx_n_s_generate_all_possible_moves, __pyx_t_2) < 0) __PYX_ERR(0, 230, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   PyType_Modified(__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator);
-  __Pyx_GetNameInClass(__pyx_t_2, (PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator, __pyx_n_s_generate_all_possible_moves); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 223, __pyx_L1_error)
+  __Pyx_GetNameInClass(__pyx_t_2, (PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator, __pyx_n_s_generate_all_possible_moves); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 230, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_builtin_staticmethod, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 223, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_builtin_staticmethod, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 230, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator, __pyx_n_s_generate_all_possible_moves, __pyx_t_3) < 0) __PYX_ERR(0, 223, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator, __pyx_n_s_generate_all_possible_moves, __pyx_t_3) < 0) __PYX_ERR(0, 230, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   PyType_Modified(__pyx_ptype_7abalone_2ai_6cython_6cython_StateSpaceGenerator);
 

@@ -73,6 +73,13 @@ cdef class LegalMovesOptimized:
         return False
 
     @staticmethod
+    cdef bint is_position_out_of_bounds(list[int ]board, position):
+        """Check if a position is out of bounds."""
+        cdef int index = LegalMovesOptimized.get_flat_index(position[0], position[1])
+        if index ==-1 or board[index] == -1:
+            return True
+
+    @staticmethod
     cdef bint can_sumito_occur(dict sequence, tuple direction, list[int] board):
         cdef tuple last_opponent_pos
         cdef tuple push_target_pos
@@ -135,7 +142,7 @@ cdef class LegalMovesOptimized:
                                             sequence['player']]
                     new_positions_opponent = [(pos[0] + direction[0], pos[1] + direction[1]) for pos in
                                               sequence['opponent']
-                                              if LegalMovesOptimized.is_position_valid(board,(pos[0] + direction[0],
+                                              if not LegalMovesOptimized.is_position_out_of_bounds(board,(pos[0] + direction[0],
                                                                                                    pos[1] + direction[1]))]
 
                     sumito_move_list.append(Move(
