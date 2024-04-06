@@ -6,7 +6,7 @@ from abalone.state import GameStateUpdate, GameState
 
 
 class alphaBetaPruningAgentClumping:
-    def __init__(self, game_state, max_depth: int, max_time_sec: int = 200, ):
+    def __init__(self, game_state, max_depth: int, max_time_sec: int = 15, ):
         self.max_depth = max_depth
         self.max_time_sec = max_time_sec
         self.min_prunes = 0
@@ -288,6 +288,6 @@ def simulate_moves(game_state: GameState, max_moves: int):
 
 if __name__ == '__main__':
     # simulate_moves(GameState(), 10)
-    simulate_moves(GameState(OptimizedBoard(BoardLayout.GERMAN_DAISY.value)), 4)
+    # simulate_moves(GameState(OptimizedBoard(BoardLayout.GERMAN_DAISY.value)), 1)
     # simulate_agents(GameState(),50)
-    # simulate_moves(GameState(), 1)
+    simulate_moves(GameState(), 1)
