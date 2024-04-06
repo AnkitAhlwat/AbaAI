@@ -24,7 +24,7 @@ const Game = () => {
   const [numCapturedBlackMarbles, setNumCapturedBlackMarbles] = useState(0); // Tracks number of black marbles captured
   const [numCapturedWhiteMarbles, setNumCapturedWhiteMarbles] = useState(0); // Tracks number of white marbles captured
   const [currentTurn, setCurrentTurn] = useState(0); // Tracks current turn
-  const [blackMoveTimeRemaining, setBlackMoveTimeRemaining] = useState(10); // Tracks black player move time remaining
+  const [blackMoveTimeRemaining, setBlackMoveTimeRemaining] = useState(0); // Tracks black player move time remaining
   const [whiteMoveTimeRemaining, setWhiteMoveTimeRemaining] = useState(0); // Tracks white player move time remaining
   const [blackMovesRemaining, setBlackMovesRemaining] = useState(0); // Tracks black player moves remaining
   const [whiteMovesRemaining, setWhiteMovesRemaining] = useState(0); // Tracks white player moves remaining
@@ -72,8 +72,12 @@ const Game = () => {
       setNumCapturedWhiteMarbles(gameStatus.game_state.captured_white_marbles);
 
       // Set the move time remaining back to full time
-      setBlackMoveTimeRemaining(gameStatus.moves_remaining[0]);
-      setWhiteMoveTimeRemaining(gameStatus.moves_remaining[1]);
+      setBlackMoveTimeRemaining(gameStatus.game_options.blackTimeLimit);
+      setWhiteMoveTimeRemaining(gameStatus.game_options.whiteTimeLimit);
+
+      // Sets the number of moves remaining
+      setBlackMovesRemaining(gameStatus.moves_remaining[0]);
+    setWhiteMovesRemaining(gameStatus.moves_remaining[1]);
     },
     [setBoardArray]
   );
@@ -81,8 +85,6 @@ const Game = () => {
   const onSubmitConfig = useCallback(async () => {
     const gameStatus = await GameService.postConfig(config);
     updateGame(gameStatus);
-    setBlackMovesRemaining(gameStatus.game_options.moveLimit);
-    setWhiteMovesRemaining(gameStatus.game_options.moveLimit);
   }, [config, updateGame]);
 
   const getAiMove = useCallback(async (gameStatus) => {

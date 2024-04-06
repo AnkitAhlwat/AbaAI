@@ -147,7 +147,7 @@ class Game:
 
     def undo_move(self) -> dict:
         move = self._moves_stack.pop()
-        self._moves_remaining[0 if self._current_game_state.turn == Piece.BLACK else 1] += 1
+        self._moves_remaining[1 if self._current_game_state.turn == Piece.BLACK else 0] += 1
         self._current_game_state.undo_move(move)
 
         return self.__to_json()
