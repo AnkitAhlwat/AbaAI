@@ -57,3 +57,15 @@ class Move:
     @property
     def player(self):
         return self._player
+
+    def to_json(self):
+        return {
+            'previous_player_positions': [{'x': position[0], 'y': position[1]} for position in
+                                          self._previous_player_positions],
+            'next_player_positions': [{'x': position[0], 'y': position[1]} for position in self._next_player_positions],
+            'previous_opponent_positions': [{'x': position[0], 'y': position[1]} for position in
+                                            self._previous_opponent_positions],
+            'next_opponent_positions': [{'x': position[0], 'y': position[1]} for position in
+                                        self._next_opponent_positions],
+            'player': self._player.value
+        }
