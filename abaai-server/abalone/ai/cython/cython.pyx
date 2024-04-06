@@ -9,40 +9,32 @@ cdef class LegalMovesOptimized:
         return y * 9 + x if (0 <= x < 9) and (0 <= y < 9) else -1
 
     @staticmethod
-    def are_marbles_inline(*positions):
-        """Check inline marbles with streamlined direction check."""
-        cdef int num_positions = len(positions)
-        cdef int dx, dy
-        cdef int i
-        cdef tuple direction
-
-        if num_positions < 2:
-            return False
-
-        dx = positions[1][0] - positions[0][0]
-        dy = positions[1][1] - positions[0][1]
-        direction = (dx, dy)
-
-        for i in range(1, num_positions - 1):
-            if (positions[i + 1][0] - positions[i][0], positions[i + 1][1] - positions[i][1]) != direction:
-                return False
-
+    cdef bint are_two_marbles_inline(tuple[int,int] pos1, tuple[int,int] pos2):
+        cdef int dx = pos2[0] - pos1[0]
+        cdef int dy = pos2[1] - pos1[1]
+        cdef tuple direction = (dx, dy)
         return direction in [(-1, 0), (1, 0), (0, -1), (0, 1), (1, -1), (-1, 1)]
+
+    @staticmethod
+    cdef bint are_three_marbles_inline(tuple[int,int] pos1, tuple[int,int] pos2, tuple[int,int] pos3):
+        cdef int dx1 = pos2[0] - pos1[0]
+        cdef int dy1 = pos2[1] - pos1[1]
+        cdef tuple direction1 = (dx1, dy1)
+
+        cdef int dx2 = pos3[0] - pos2[0]
+        cdef int dy2 = pos3[1] - pos2[1]
+        cdef tuple direction2 = (dx2, dy2)
+
+        return direction1 == direction2 and direction1 in [(-1, 0), (1, 0), (0, -1), (0, 1), (1, -1), (-1, 1)]
 
 
     @staticmethod
     cdef is_position_valid(list[int] board, position, vacating_positions=None):
         """Combined checks for board position status with static typing."""
-        cdef int index
-        cdef int x = position[0]
-        cdef int y = position[1]
-
-        # Utilize the statically typed flat index calculation method
-        index = LegalMovesOptimized.get_flat_index(x, y)
+        cdef int index = LegalMovesOptimized.get_flat_index(position[0], position[1])
         if index == -1 or board[index] == -1:
             return False
 
-        # Convert Python None to an empty C++ vector if needed
         if vacating_positions is None:
             vacating_positions = []
 
@@ -58,8 +50,12 @@ cdef class LegalMovesOptimized:
 
         board = game_state.board.array
 
-        if len(positions) > 1 and not LegalMovesOptimized.are_marbles_inline(*positions):
-            return []
+        if len(positions) == 2:
+            if not LegalMovesOptimized.are_two_marbles_inline(positions[0], positions[1]):
+                return []
+        elif len(positions) == 3:
+            if not LegalMovesOptimized.are_three_marbles_inline(positions[0], positions[1], positions[2]):
+                return []
 
         for move_x, move_y in LegalMovesOptimized.possible_moves:
             new_positions = [(pos[0] + move_x, pos[1] + move_y) for pos in positions]

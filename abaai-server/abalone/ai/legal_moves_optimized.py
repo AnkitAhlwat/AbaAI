@@ -129,3 +129,27 @@ class LegalMovesOptimized:
                     )
 
         return sumito_move_list
+
+
+
+# Keeping it here temp
+#     @staticmethod
+#     def are_marbles_inline(*positions):
+#         """Check inline marbles with streamlined direction check."""
+#         cdef int num_positions = len(positions)
+#         cdef int dx, dy
+#         cdef int i
+#         cdef tuple direction
+#
+#         if num_positions < 2:
+#             return False
+#
+#         dx = positions[1][0] - positions[0][0]
+#         dy = positions[1][1] - positions[0][1]
+#         direction = (dx, dy)
+#
+#         for i in range(1, num_positions - 1):
+#             if (positions[i + 1][0] - positions[i][0], positions[i + 1][1] - positions[i][1]) != direction:
+#                 return False
+#
+#         return direction in [(-1, 0), (1, 0), (0, -1), (0, 1), (1, -1), (-1, 1)]
