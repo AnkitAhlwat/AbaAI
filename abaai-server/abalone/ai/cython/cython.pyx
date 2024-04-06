@@ -1,5 +1,7 @@
+import time
+
 from abalone.movement_optimized import Move
-from abalone.state import GameState
+from abalone.state import GameState, GameStateUpdate
 from itertools import combinations
 
 cdef class LegalMovesOptimized:
@@ -235,3 +237,148 @@ cdef class StateSpaceGenerator:
         sumito_moves = StateSpaceGenerator.generate_all_sumitos(game_state, player_pieces)
 
         return player_piece_moves + sumito_moves
+
+
+cdef class alphaBetaPruningAgent:
+    cdef public int max_depth, max_time_sec
+    cdef public int min_prunes, max_prunes
+    cdef public int MAX_PLAYER, MIN_PLAYER
+    cdef public game_state
+    def __init__(self, game_state, int max_depth, int max_time_sec=50):
+        self.max_depth = max_depth
+        self.max_time_sec = max_time_sec
+        self.game_state = game_state
+        self.MAX_PLAYER = game_state.turn.value
+        self.MIN_PLAYER = 3 - game_state.turn.value
+
+    def AlphaBetaPruningSearch(self):
+        cdef float alpha = float('-inf')
+        cdef float beta = float('inf')
+        cdef float value
+        cdef list possible_moves
+        cdef float start_time
+
+        best_move = None
+
+        start_time = time.time()
+        game_state = self.game_state
+        possible_moves = StateSpaceGenerator.generate_all_possible_moves(game_state)
+        sorted_possible_moves = sorted(possible_moves)
+
+        for move in sorted_possible_moves:
+            successor_state = GameStateUpdate(game_state, move).resulting_state
+            value = self.Min_Value(successor_state, alpha, beta, self.max_depth - 1, start_time)
+            if value > alpha:
+                best_move = move
+                alpha = max(alpha, value)
+
+        return best_move
+
+    def Max_Value(self, game_state, alpha: float, beta: float, depth: int, start_time: float):
+        cdef float current_time = time.time()
+        cdef float value = float('-inf')
+        cdef list possible_moves
+        if current_time - start_time >= self.max_time_sec:
+            return self.evaluate(game_state)
+
+        if game_state.is_game_over() or depth == 0:
+            return self.evaluate(game_state)
+
+        possible_moves = StateSpaceGenerator.generate_all_possible_moves(game_state)
+        sorted_possible_moves = sorted(possible_moves)
+
+        for move in sorted_possible_moves:
+            successor_state = GameStateUpdate(game_state, move).resulting_state
+            value = max(value, self.Min_Value(successor_state, alpha, beta, depth - 1, start_time))
+            alpha = max(alpha, value)
+            if value >= beta:
+                return value
+
+        return value
+
+    def Min_Value(self, game_state, alpha: float, beta: float, depth: int, start_time: float):
+        cdef float current_time = time.time()
+        cdef float value = float('inf')
+        cdef list possible_moves
+        if current_time - start_time >= self.max_time_sec:
+            return self.evaluate(game_state)
+
+        if game_state.is_game_over() or depth == 0:
+            return self.evaluate(game_state)
+
+        possible_moves = StateSpaceGenerator.generate_all_possible_moves(game_state)
+        sorted_possible_moves = sorted(possible_moves)
+
+        for move in sorted_possible_moves:
+            successor_state = GameStateUpdate(game_state, move).resulting_state
+            value = min(value, self.Max_Value(successor_state, alpha, beta, depth - 1, start_time))
+            beta = min(beta, value)
+            if value <= alpha:
+                return value
+        return value
+
+    cdef double evaluate(self,game_state:GameState):
+        cdef double score = 0
+        score += 10 * self.board_control(game_state, MANHATTAN_WEIGHT_CONVERTED)
+        score += 1000 * self.piece_advantage(game_state)
+        score += 10000000 * self.terminal_test(game_state)
+        return score
+
+    cdef int board_control(self, game_state:GameState, list[tuple[int,int]] lookup_table):
+        cdef int player_score = 0
+        cdef int opponent_score = 0
+        cdef int index
+        cdef int value
+        cdef tuple hex_coords
+        cdef int distance
+
+        for index in range(len(game_state.board.array)):
+            value = game_state.board.array[index]
+            if value == 1 or value == 2:
+                hex_coords = lookup_table[index]
+                if hex_coords is not None:
+                    distance = abs(hex_coords[0]) + abs(hex_coords[1])
+                    if value == self.MAX_PLAYER:
+                        player_score += distance
+                    else:
+                        opponent_score += distance
+
+        return opponent_score - player_score
+
+    cdef piece_advantage(self,game_state):
+        """
+        A heuristic for evaluating the board state based on the number of marbles the player has compared to the
+        opponent.
+        :param game_state: The current game state
+        :return: The score of the board state based on the number of marbles the player has compared to the opponent.
+        """
+        if game_state.turn.value == self.MAX_PLAYER:
+            return game_state.remaining_player_marbles - game_state.remaining_opponent_marbles
+        else:
+            return game_state.remaining_opponent_marbles - game_state.remaining_player_marbles
+
+    cpdef int terminal_test(self, game_state:GameState):
+        if game_state.turn.value == self.MAX_PLAYER:
+            if game_state.remaining_player_marbles < 9:
+                return -10000
+            if game_state.remaining_opponent_marbles < 9:
+                return 10000
+        else:
+            if game_state.remaining_opponent_marbles < 9:
+                return -10000
+            if game_state.remaining_player_marbles < 9:
+                return 10000
+        return 0  #
+MANHATTAN_WEIGHT_CONVERTED = [
+    None, None, None, None, (4, -4), (3, -4), (2, -4), (1, -4), (0, -4),
+    None, None, None, (4, -3), (3, -3), (2, -3), (1, -3), (0, -3), (-1, -3),
+    None, None, (4, -2), (3, -2), (2, -2), (1, -2), (0, -2), (-1, -2), (-2, -2),
+    None, (4, -1), (3, -1), (2, -1), (1, -1), (0, -1), (-1, -1), (-2, -1), (-3, -1),
+    (-4, 0), (-3, 0), (-2, 0), (-1, 0), (0, 0), (1, 0), (2, 0), (3, 0), (4, 0),
+    (-3, 1), (-2, 1), (-1, 1), (0, 1), (1, 1), (2, 1), (3, 1), (4, 1), None,
+    (-2, 2), (-1, 2), (0, 2), (1, 2), (2, 2), (3, 2), (4, 2), None, None,
+    (-1, 3), (0, 3), (1, 3), (2, 3), (3, 3), (4, 3), None, None, None,
+    (0, 4), (1, 4), (2, 4), (3, 4), (4, 4), None, None, None, None]
+
+
+

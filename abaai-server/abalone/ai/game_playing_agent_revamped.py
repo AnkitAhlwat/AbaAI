@@ -1,7 +1,7 @@
 import time
 
 from abalone.ai.game_playing_agent import AlphaBetaPruningAgent
-from abalone.ai.cython.cython import StateSpaceGenerator
+from abalone.ai.cython.cython import StateSpaceGenerator, alphaBetaPruningAgent as AlphaBetaPruningAgentCython
 from abalone.board import OptimizedBoard, BoardLayout
 from abalone.state import GameStateUpdate, GameState
 
@@ -145,32 +145,6 @@ class alphaBetaPruningAgent:
                 return 10000
             return 0
 
-
-DEFAULT_WEIGHTS = [1000000, 10000, 10, 10, 2, 2, 1, 1]
-MANHATTAN_WEIGHT_FLAT = [
-    0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 1, 2, 1, 1, 0,
-    0, 0, 0, 1, 2, 2, 2, 2, 0,
-    0, 0, 1, 2, 4, 3, 3, 2, 0,
-    0, 2, 3, 4, 5, 4, 3, 2, 0,
-    0, 2, 3, 3, 4, 2, 1, 0, 0,
-    0, 2, 2, 2, 2, 1, 0, 0, 0,
-    0, 1, 1, 2, 1, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0
-]
-
-EMPTY = [
-    [-1, -1, -1, -1, 0, 0, 0, 0, 0],
-    [-1, -1, -1, 0, 0, 0, 0, 0, 0],
-    [-1, -1, 0, 0, 0, 0, 0, 0, 0],
-    [-1, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, -1],
-    [0, 0, 0, 0, 0, 0, 0, -1, -1],
-    [0, 0, 0, 0, 0, 0, -1, -1, -1],
-    [0, 0, 0, 0, 0, -1, -1, -1, -1],
-]
-
 MANHATTAN_WEIGHT_CONVERTED = [
     None, None, None, None, (4, -4), (3, -4), (2, -4), (1, -4), (0, -4),
     None, None, None, (4, -3), (3, -3), (2, -3), (1, -3), (0, -3), (-1, -3),
@@ -209,6 +183,7 @@ def simulate_moves(game_state: GameState, max_moves: int):
     start_time = time.time()
     while i < max_moves:
         agent = alphaBetaPruningAgent(max_depth=4, game_state=game_state)
+        # agent = AlphaBetaPruningAgentCython(game_state=game_state, max_depth=4, max_time_sec=50)
         best_move = agent.AlphaBetaPruningSearch()
         print(f"{game_state.turn.name}->({best_move})")
         original_marbles = game_state.remaining_opponent_marbles
@@ -231,5 +206,5 @@ def simulate_moves(game_state: GameState, max_moves: int):
 if __name__ == '__main__':
     # simulate_moves(GameState(), 10)
     # simulate_agents(GameState(), 1)
-    simulate_moves(GameState(OptimizedBoard(BoardLayout.GERMAN_DAISY.value)), 1)
+    simulate_moves(GameState(OptimizedBoard(BoardLayout.GERMAN_DAISY.value)), 10)
 
