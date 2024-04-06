@@ -1,7 +1,6 @@
 import time
 from random import choice
 
-from abalone.ai.game_playing_agent import AlphaBetaPruningAgent
 from abalone.ai.game_playing_agent_revamped import alphaBetaPruningAgent
 from abalone.ai.state_space_generator import StateSpaceGenerator
 from abalone.board import OptimizedBoard, BoardLayout
@@ -108,7 +107,7 @@ class Game:
         self._game_options = GameOptions()
         self._moves_stack = Stack()
         self._current_game_state = GameState(OptimizedBoard(self._game_options.board_layout.value))
-        self._moves_remaining = 0
+        self._moves_remaining = [0, 0]
         self._game_started = False
         self._game_configured = False
         self._is_first_move = True
@@ -116,9 +115,9 @@ class Game:
     def set_up(self, config) -> dict:
         self._game_options = GameOptions.from_json(config)
         self._current_game_state = GameState(OptimizedBoard(self._game_options.board_layout.value), Piece.BLACK)
-        self._moves_remaining = [self._game_options.move_limit, self._game_options.move_limit]
+        move_limit = self._game_options.move_limit
+        self._moves_remaining = [move_limit, move_limit]
         self._game_configured = True
-
         return self.__to_json()
 
     def start_game(self) -> dict:
@@ -141,14 +140,14 @@ class Game:
 
         # make the move and push it to the stack
         self._moves_stack.push(move_obj)
-        self._moves_remaining -= 1
+        self._moves_remaining[0 if self._current_game_state.turn == Piece.BLACK else 1] -= 1
         self._current_game_state = GameStateUpdate(self._current_game_state, move_obj).resulting_state
 
         return self.__to_json()
 
     def undo_move(self) -> dict:
         move = self._moves_stack.pop()
-        self._moves_remaining += 1
+        self._moves_remaining[0 if self._current_game_state.turn == Piece.BLACK else 1] += 1
         self._current_game_state.undo_move(move)
 
         return self.__to_json()
@@ -209,7 +208,8 @@ class Game:
         self._is_first_move = True
 
         # set moves remaining to normal
-        self._moves_remaining = self._game_options.move_limit
+        move_limit = self._game_options.move_limit
+        self._moves_remaining = [move_limit, move_limit]
 
         # reset the board to be the selected board
         board = OptimizedBoard(self._game_options.board_layout.value)

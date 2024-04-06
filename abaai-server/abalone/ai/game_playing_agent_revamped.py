@@ -124,7 +124,6 @@ class alphaBetaPruningAgent:
         else:
             return game_state.remaining_opponent_marbles - game_state.remaining_player_marbles
 
-
     def terminal_test(self,game_state: GameState):
         """
         A heuristic for evaluating the board state based on whether the game is in a terminal state.
@@ -146,6 +145,7 @@ class alphaBetaPruningAgent:
 
 
 DEFAULT_WEIGHTS = [1000000, 10000, 10, 10, 2, 2, 1, 1]
+
 MANHATTAN_WEIGHT_FLAT = [
     0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 1, 2, 1, 1, 0,
