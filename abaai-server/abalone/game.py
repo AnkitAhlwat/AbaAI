@@ -108,6 +108,7 @@ class Game:
         self._game_options = GameOptions()
         self._moves_stack = Stack()
         self._current_game_state = GameState(OptimizedBoard(self._game_options.board_layout.value))
+        self._moves_remaining = 0
         self._game_started = False
         self._game_configured = False
         self._is_first_move = True
@@ -115,7 +116,7 @@ class Game:
     def set_up(self, config) -> dict:
         self._game_options = GameOptions.from_json(config)
         self._current_game_state = GameState(OptimizedBoard(self._game_options.board_layout.value), Piece.BLACK)
-
+        self._moves_remaining = self._game_options.move_limit
         self._game_configured = True
 
         return self.__to_json()
@@ -140,12 +141,14 @@ class Game:
 
         # make the move and push it to the stack
         self._moves_stack.push(move_obj)
+        self._moves_remaining -= 1
         self._current_game_state = GameStateUpdate(self._current_game_state, move_obj).resulting_state
 
         return self.__to_json()
 
     def undo_move(self) -> dict:
         move = self._moves_stack.pop()
+        self._moves_remaining += 1
         self._current_game_state.undo_move(move)
 
         return self.__to_json()
@@ -173,12 +176,11 @@ class Game:
             else:
                 time_limit = self._game_options.white_time_limit_seconds
 
-            # if self._current_game_state.turn == Piece.BLACK:
-            #     agent = AlphaBetaPruningAgent(max_depth=depth_limit, max_time_sec=time_limit)
-            #     move = agent.AlphaBetaPruningSearch(self._current_game_state)
-            # else:
-            agent = alphaBetaPruningAgent(max_depth=depth_limit,
-                                          max_time_sec=time_limit, game_state=self._current_game_state)
+            agent = alphaBetaPruningAgent(
+                max_depth=depth_limit,
+                max_time_sec=time_limit,
+                game_state=self._current_game_state
+            )
             move = agent.AlphaBetaPruningSearch()
 
             end_time = time.time()
@@ -206,6 +208,9 @@ class Game:
         # set first move to true
         self._is_first_move = True
 
+        # set moves remaining to normal
+        self._moves_remaining = self._game_options.move_limit
+
         # reset the board to be the selected board
         board = OptimizedBoard(self._game_options.board_layout.value)
         self._current_game_state = GameState(board)
@@ -223,6 +228,7 @@ class Game:
             "game_configured": self._game_configured,
             "game_state": self._current_game_state.to_json(),
             "moves_stack": self._moves_stack.to_json(),
+            "moves_remaining": self._moves_remaining,
             "is_first_move": self._is_first_move
         }
 
