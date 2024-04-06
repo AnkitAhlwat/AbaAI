@@ -65,14 +65,14 @@ cdef class LegalMovesOptimized:
         return valid_moves
 
     @staticmethod
-    cdef bint sequence_helper_function(int[:] board, tuple[int,int] position) nogil:
+    cdef bint sequence_helper_function(list[int] board, tuple[int,int] position):
         cdef int index = LegalMovesOptimized.get_flat_index(position[0], position[1])
         if index == -1 or board[index] == -1 or board[index] == 0:
             return True
         return False
 
     @staticmethod
-    cdef bint can_sumito_occur(dict sequence, tuple direction, int[:] board):
+    cdef bint can_sumito_occur(dict sequence, tuple direction, list[int] board):
         cdef tuple last_opponent_pos
         cdef tuple push_target_pos
         cdef int sequence_length_player
@@ -92,7 +92,7 @@ cdef class LegalMovesOptimized:
         return LegalMovesOptimized.sequence_helper_function(board, push_target_pos)
 
     @staticmethod
-    cdef dict find_marble_sequence(int[:] board, tuple start_pos, tuple direction, list player_positions, list opponent_positions):
+    cdef dict find_marble_sequence(list[int] board, tuple start_pos, tuple direction, list player_positions, list opponent_positions):
         cdef list player_seq = []
         cdef list opponent_seq = []
         cdef tuple current_pos = start_pos
