@@ -1,7 +1,7 @@
 import time
 
 from abalone.ai.game_playing_agent import AlphaBetaPruningAgent
-from abalone.ai.state_space_generator import StateSpaceGenerator
+from abalone.ai.cython.cython import StateSpaceGenerator
 from abalone.board import OptimizedBoard, BoardLayout
 from abalone.state import GameStateUpdate, GameState
 
