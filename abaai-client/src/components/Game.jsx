@@ -72,8 +72,8 @@ const Game = () => {
       setNumCapturedWhiteMarbles(gameStatus.game_state.captured_white_marbles);
 
       // Set the move time remaining back to full time
-      setBlackMoveTimeRemaining(gameStatus.game_options.blackTimeLimit);
-      setWhiteMoveTimeRemaining(gameStatus.game_options.whiteTimeLimit);
+      setBlackMoveTimeRemaining(gameStatus.moves_remaining[0]);
+      setWhiteMoveTimeRemaining(gameStatus.moves_remaining[1]);
     },
     [setBoardArray]
   );

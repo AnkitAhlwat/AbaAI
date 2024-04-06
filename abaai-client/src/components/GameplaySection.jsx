@@ -21,7 +21,6 @@ const GameplaySection = (props) => {
     activePlayer,
     toggleActivePlayer,
     gameStarted,
-    gameConfigured,
     startGame,
     stopGame,
     resetClockSignal,

@@ -4,8 +4,7 @@ import { Box, Typography, Button } from '@mui/material';
 
 const GameClock = (props) => {
   const { initialTime, isTurn, playerId, activePlayer, gameStarted, isActive, resetClockSignal} = props;
-  const { start: startClock, stop: stopClock, pause: pauseClock,  resume: resumeClock, currentTime, isRunning 
-  } = useCountdown(initialTime);
+  const { start: startClock, stop: stopClock, pause: pauseClock,  resume: resumeClock, currentTime, isRunning } = useCountdown(initialTime);
   const [initialStart , setInitialStart] = React.useState(true);
   // const [turnClockTime, setTurnClockTime] = useState(initialTime);
   // const [scoreClockTime, setScoreClockTime] = useState(initialTime);
@@ -22,13 +21,12 @@ const GameClock = (props) => {
 
     //pause or resume the game clock
     useEffect(() => {
-      if (!isActive && isTurn) {
+      if (!isActive && isTurn)
         pauseClock();
-      } else if (isActive && isTurn) {
+      else if (isActive && isTurn)
         resumeClock();
-      } if (!isTurn) {
+      if (!isTurn)
         pauseClock();
-      }
     }, [isActive, isTurn, activePlayer]);
 
     //stop the game clock, currently same as reset

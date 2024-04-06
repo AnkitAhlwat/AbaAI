@@ -116,7 +116,7 @@ class Game:
     def set_up(self, config) -> dict:
         self._game_options = GameOptions.from_json(config)
         self._current_game_state = GameState(OptimizedBoard(self._game_options.board_layout.value), Piece.BLACK)
-        self._moves_remaining = self._game_options.move_limit
+        self._moves_remaining = [self._game_options.move_limit, self._game_options.move_limit]
         self._game_configured = True
 
         return self.__to_json()
