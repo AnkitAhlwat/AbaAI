@@ -3,10 +3,10 @@ import time
 from abalone.ai.cython.cython import StateSpaceGenerator
 from abalone.board import OptimizedBoard, BoardLayout
 from abalone.state import GameStateUpdate, GameState
-
+from abalone.ai.game_playing_agent_revamped_iterative_deepening import AlphaBetaPruningAgentIterative
 
 class alphaBetaPruningAgentClumping:
-    def __init__(self, game_state, max_depth: int, max_time_sec: int = 15, ):
+    def __init__(self, game_state, max_depth: int, max_time_sec: int = 50, ):
         self.max_depth = max_depth
         self.max_time_sec = max_time_sec
         self.min_prunes = 0
@@ -84,7 +84,7 @@ class alphaBetaPruningAgentClumping:
 
     def evaluate(self, game_state: GameState) -> float:
         score = 0
-        score += 2 * self.clumping(game_state)
+        # score += 2 * self.clumping(game_state)
         score += 10 * self.board_control(game_state, MANHATTAN_WEIGHT_CONVERTED)
         score += 1000 * self.piece_advantage(game_state)
         score += 10000000 * self.terminal_test(game_state)
@@ -242,22 +242,23 @@ MANHATTAN_WEIGHT_CONVERTED = [
     (0, 4), (1, 4), (2, 4), (3, 4), (4, 4), None, None, None, None]
 
 
-# def simulate_agents(game_state: GameState, max_moves: int):
-#     for i in range(max_moves):
-#         if game_state.turn.value == 1:
-#             agent = alphaBetaPruningAgentClumping(max_depth=2, game_state=game_state)
-#             best_move = agent.AlphaBetaPruningSearch()
-#             game_state = GameStateUpdate(game_state, best_move).resulting_state
-#             print(f'black move {best_move}')
-#         else:
-#             agent = alphaBetaPruningAgent(max_depth=2,game_state=game_state)
-#             move = agent.AlphaBetaPruningSearch()
-#             game_state = GameStateUpdate(game_state, move).resulting_state
-#             print(f'white move {move}')
-#
-#     print(game_state.turn)
-#     print(game_state.remaining_player_marbles)
-#     print(game_state.remaining_opponent_marbles)
+def simulate_agents(game_state: GameState, max_moves: int):
+    agent1 = AlphaBetaPruningAgentIterative(max_depth=4)
+    agent2 = alphaBetaPruningAgentClumping(max_depth=4, game_state=game_state)
+
+    for i in range(max_moves):
+        if game_state.turn.value == 1:
+            best_move = agent1.iterative_deepening_search(game_state)
+            game_state = GameStateUpdate(game_state, best_move).resulting_state
+            print(f'black move {best_move}')
+        else:
+            move = agent2.AlphaBetaPruningSearch()
+            game_state = GameStateUpdate(game_state, move).resulting_state
+            print(f'white move {move}')
+
+    print(game_state.turn)
+    print(game_state.remaining_player_marbles)
+    print(game_state.remaining_opponent_marbles)
 
 
 def simulate_moves(game_state: GameState, max_moves: int):
@@ -265,9 +266,11 @@ def simulate_moves(game_state: GameState, max_moves: int):
     # print(game_state.board)
     i = 0
     start_time = time.time()
+    agent = AlphaBetaPruningAgentIterative(max_depth=4)
     while i < max_moves:
-        agent = alphaBetaPruningAgentClumping(max_depth=4, game_state=game_state)
-        best_move = agent.AlphaBetaPruningSearch()
+        # agent = alphaBetaPruningAgentClumping(max_depth=4, game_state=game_state)
+        # best_move = agent.AlphaBetaPruningSearch()
+        best_move = agent.iterative_deepening_search(game_state)
         print(f"{game_state.turn.name}->({best_move})")
         original_marbles = game_state.remaining_opponent_marbles
         original_opponent_marbles = game_state.remaining_player_marbles
@@ -284,10 +287,11 @@ def simulate_moves(game_state: GameState, max_moves: int):
     print(game_state.turn)
     print(game_state.remaining_opponent_marbles)
     print(game_state.remaining_player_marbles)
+    agent.write_t_table()
 
 
 if __name__ == '__main__':
     # simulate_moves(GameState(), 10)
     # simulate_moves(GameState(OptimizedBoard(BoardLayout.GERMAN_DAISY.value)), 1)
     # simulate_agents(GameState(),50)
-    simulate_moves(GameState(), 1)
+    simulate_moves(GameState(), 150)
