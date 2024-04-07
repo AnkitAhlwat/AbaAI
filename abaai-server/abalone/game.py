@@ -1,8 +1,6 @@
 import time
 
-from abalone.ai.agent_revamped_clumping_revamped import alphaBetaPruningAgentClumping\
-    as alphaBetaPruningAgentClumpingRevamped
-from abalone.ai.game_playing_agent_revamped import alphaBetaPruningAgent
+from abalone.ai.game_playing_agent_revamped_iterative_deepening import AlphaBetaPruningAgentIterative
 from abalone.ai.state_space_generator import StateSpaceGenerator
 from abalone.board import OptimizedBoard, BoardLayout
 from abalone.movement import Move, Piece
@@ -113,6 +111,8 @@ class Game:
         self._game_configured = False
         self._is_first_move = True
 
+        self._agent = None
+
     def set_up(self, config) -> dict:
         self._game_options = GameOptions.from_json(config)
         self._current_game_state = GameState(OptimizedBoard(self._game_options.board_layout.value), Piece.BLACK)
@@ -169,7 +169,7 @@ class Game:
         print("start time:", start_time)
 
         # manually set the depth limit
-        depth_limit = 4
+        depth_limit = 2
 
         # set the time limit for the AI based on config
         if self._current_game_state.turn == Piece.BLACK:
@@ -177,20 +177,20 @@ class Game:
         else:
             time_limit = self._game_options.white_time_limit_seconds
 
-        if self._current_game_state.turn == Piece.BLACK:
-            agent = alphaBetaPruningAgentClumpingRevamped(
-                max_depth=4,
-                max_time_sec=time_limit,
-                game_state=self._current_game_state
-            )
-            move = agent.AlphaBetaPruningSearch()
-        else:
-            agent = alphaBetaPruningAgent(
+        # if self._current_game_state.turn == Piece.BLACK:
+        if self._agent is None:
+            self._agent = AlphaBetaPruningAgentIterative(
                 max_depth=depth_limit,
-                max_time_sec=time_limit,
-                game_state=self._current_game_state
+                max_time_sec=time_limit
             )
-            move = agent.AlphaBetaPruningSearch()
+        move = self._agent.iterative_deepening_search(self._current_game_state)
+        # else:
+        # agent = alphaBetaPruningAgent(
+        #     max_depth=depth_limit,
+        #     max_time_sec=time_limit,
+        #     game_state=self._current_game_state
+        # )
+        # move = agent.AlphaBetaPruningSearch()
 
         end_time = time.time()
         print("end time:", end_time)
