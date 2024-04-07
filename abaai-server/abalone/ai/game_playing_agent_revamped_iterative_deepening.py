@@ -17,6 +17,8 @@ class AlphaBetaPruningAgentIterative:
         self.evaluation_t_table = {}
 
     def iterative_deepening_search(self, game_state):
+        start_time = time.time()
+
         self.game_state = game_state
         self.MAX_PLAYER = game_state.turn.value
         self.MIN_PLAYER = 3 - game_state.turn.value
@@ -30,7 +32,7 @@ class AlphaBetaPruningAgentIterative:
             return self.t_table[hashed_state]
 
         while depth <= self.max_depth:
-            move, move_value = self.alpha_beta_pruning_search(depth)
+            move, move_value = self.alpha_beta_pruning_search(depth, start_time)
             if move_value >= current_best_move_value:
                 current_best_move = move
                 current_best_move_value = move_value
@@ -39,12 +41,11 @@ class AlphaBetaPruningAgentIterative:
         self.t_table[hashed_state] = current_best_move
         return current_best_move
 
-    def alpha_beta_pruning_search(self, max_depth: int):
+    def alpha_beta_pruning_search(self, max_depth: int, start_time: float):
         best_move = None
         alpha = float('-inf')
         beta = float('inf')
 
-        start_time = time.time()
         game_state = self.game_state
         possible_moves = StateSpaceGenerator.generate_all_possible_moves(game_state)
         sorted_possible_moves = sorted(possible_moves)
@@ -56,9 +57,6 @@ class AlphaBetaPruningAgentIterative:
             if value > alpha:
                 best_move = move
                 alpha = max(alpha, value)
-
-        # print(f'Max Prunes: {self.max_prunes}')
-        # print(f'Min Prunes: {self.min_prunes}')
 
         return best_move, alpha
 

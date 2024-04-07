@@ -169,13 +169,13 @@ class Game:
         print("start time:", start_time)
 
         # manually set the depth limit
-        depth_limit = 2
+        depth_limit = 4
 
         # set the time limit for the AI based on config
         if self._current_game_state.turn == Piece.BLACK:
-            time_limit = self._game_options.black_time_limit_seconds
+            time_limit = self._game_options.black_turn_time
         else:
-            time_limit = self._game_options.white_time_limit_seconds
+            time_limit = self._game_options.white_turn_time
 
         # if self._current_game_state.turn == Piece.BLACK:
         if self._agent is None:
