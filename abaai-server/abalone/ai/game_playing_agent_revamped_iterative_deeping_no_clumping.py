@@ -118,7 +118,7 @@ class AlphaBetaPruningAgentIterative:
             return self.evaluation_t_table[hashed_state]
 
         score = 0
-        score += self.clumping(game_state)
+        # score += self.clumping(game_state)
         score += 10 * self.board_control(game_state, MANHATTAN_WEIGHT_CONVERTED)
         score += 1000 * self.piece_advantage(game_state)
         score += 10000000 * self.terminal_test(game_state)
@@ -241,7 +241,7 @@ class AlphaBetaPruningAgentIterative:
         return value
 
     def read_t_table(self) -> dict[int, Move]:
-        t_table_file_name = "master_t_table.json"
+        t_table_file_name = "no_clumping_master_t_table.json"
 
         if os.path.exists(t_table_file_name):
             with open(t_table_file_name, 'r') as file:
@@ -256,7 +256,7 @@ class AlphaBetaPruningAgentIterative:
             return {}
 
     def write_t_table(self):
-        t_table_file_name = "master_t_table.json"
+        t_table_file_name = "no_clumping_master_t_table.json"
 
         with open(t_table_file_name, 'w') as file:
             # Add the new records from the t_table to the master table

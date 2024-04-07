@@ -1,12 +1,16 @@
+import json
+import os
 import time
 
 from abalone.ai.cython.cython import StateSpaceGenerator
 from abalone.board import OptimizedBoard, BoardLayout
+from abalone.movement import Move
 from abalone.state import GameStateUpdate, GameState
 from abalone.ai.game_playing_agent_revamped_iterative_deepening import AlphaBetaPruningAgentIterative
+from abalone.ai.game_playing_agent_revamped_iterative_deeping_no_clumping import AlphaBetaPruningAgentIterative as AlphaBetaPruningAgentNoClumping
 
 class alphaBetaPruningAgentClumping:
-    def __init__(self, game_state, max_depth: int, max_time_sec: int = 50, ):
+    def __init__(self, game_state, max_depth: int, max_time_sec: int = 2000, ):
         self.max_depth = max_depth
         self.max_time_sec = max_time_sec
         self.min_prunes = 0
@@ -14,6 +18,9 @@ class alphaBetaPruningAgentClumping:
         self.game_state = game_state
         self.MAX_PLAYER = game_state.turn.value
         self.MIN_PLAYER = 3 - game_state.turn.value
+        self._table_counter = 0
+        self.t_table = self.read_t_table()
+        self.evaluation_t_table = {}
 
     def AlphaBetaPruningSearch(self):
         best_move = None
@@ -22,6 +29,9 @@ class alphaBetaPruningAgentClumping:
 
         start_time = time.time()
         game_state = self.game_state
+        hashed_state = hash(game_state)
+        if hashed_state in self.t_table:
+            return self.t_table[hashed_state]
         possible_moves = StateSpaceGenerator.generate_all_possible_moves(game_state)
         sorted_possible_moves = sorted(possible_moves)
 
@@ -35,6 +45,7 @@ class alphaBetaPruningAgentClumping:
         print(f'Max Prunes: {self.max_prunes}')
         print(f'Min Prunes: {self.min_prunes}')
 
+        self.t_table[hashed_state] = best_move
         return best_move
 
     def Max_Value(self, game_state: GameState, alpha: float, beta: float, depth: int, start_time: float):
@@ -83,11 +94,15 @@ class alphaBetaPruningAgentClumping:
         return value
 
     def evaluate(self, game_state: GameState) -> float:
+        hashed_state = hash(game_state)
+        if hashed_state in self.evaluation_t_table:
+            return self.evaluation_t_table[hashed_state]
         score = 0
         # score += 2 * self.clumping(game_state)
         score += 10 * self.board_control(game_state, MANHATTAN_WEIGHT_CONVERTED)
         score += 1000 * self.piece_advantage(game_state)
         score += 10000000 * self.terminal_test(game_state)
+        self.evaluation_t_table[hashed_state] = score
         return score
 
     def clumping(
@@ -204,6 +219,30 @@ class alphaBetaPruningAgentClumping:
                 return 10000
             return 0
 
+    def read_t_table(self) -> dict[int, Move]:
+        t_table_file_name = "no_clumping_master_t_table.json"
+
+        if os.path.exists(t_table_file_name):
+            with open(t_table_file_name, 'r') as file:
+                t_table_json: dict = json.load(file)
+                deserialized_t_table = {
+                    int(state_hash): Move.from_json(move_json)
+                    for state_hash, move_json
+                    in t_table_json.items()
+                }
+                return deserialized_t_table
+        else:
+            return {}
+
+    def write_t_table(self):
+        t_table_file_name = "no_clumping_master_t_table.json"
+
+        with open(t_table_file_name, 'w') as file:
+            # Add the new records from the t_table to the master table
+            serialized_t_table = {k: v.to_json() for k, v in self.t_table.items()}
+
+            json.dump(serialized_t_table, file)
+
 
 DEFAULT_WEIGHTS = [1000000, 10000, 10, 10, 2, 2, 1, 1]
 MANHATTAN_WEIGHT_FLAT = [
@@ -242,16 +281,20 @@ MANHATTAN_WEIGHT_CONVERTED = [
     (0, 4), (1, 4), (2, 4), (3, 4), (4, 4), None, None, None, None]
 
 
+
 def simulate_agents(game_state: GameState, max_moves: int):
+    game_state = game_state
     agent1 = AlphaBetaPruningAgentIterative(max_depth=4)
-    agent2 = alphaBetaPruningAgentClumping(max_depth=4, game_state=game_state)
+    # agent2 = AlphaBetaPruningAgentNoClumping(max_depth=4)
+    agent2 = alphaBetaPruningAgentClumping(game_state, max_depth=4)
 
     for i in range(max_moves):
-        if game_state.turn.value == 1:
+        if game_state.turn.value == 2:
             best_move = agent1.iterative_deepening_search(game_state)
             game_state = GameStateUpdate(game_state, best_move).resulting_state
             print(f'black move {best_move}')
         else:
+            agent2 = alphaBetaPruningAgentClumping(game_state, max_depth=4)
             move = agent2.AlphaBetaPruningSearch()
             game_state = GameStateUpdate(game_state, move).resulting_state
             print(f'white move {move}')
@@ -259,6 +302,9 @@ def simulate_agents(game_state: GameState, max_moves: int):
     print(game_state.turn)
     print(game_state.remaining_player_marbles)
     print(game_state.remaining_opponent_marbles)
+    agent1.write_t_table()
+    agent2.write_t_table()
+
 
 
 def simulate_moves(game_state: GameState, max_moves: int):
@@ -293,5 +339,5 @@ def simulate_moves(game_state: GameState, max_moves: int):
 if __name__ == '__main__':
     # simulate_moves(GameState(), 10)
     # simulate_moves(GameState(OptimizedBoard(BoardLayout.GERMAN_DAISY.value)), 1)
-    # simulate_agents(GameState(),50)
-    simulate_moves(GameState(), 150)
+    simulate_agents(GameState(),50)
+    # simulate_moves(GameState(), 150)
