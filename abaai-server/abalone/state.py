@@ -22,7 +22,7 @@ class GameState:
         board_hash = hash(tuple(self._board.array))
 
         # Hash whose turn it is
-        turn_hash = hash(self._turn)
+        turn_hash = hash(self._turn.value)
 
         return hash((board_hash, turn_hash))
 

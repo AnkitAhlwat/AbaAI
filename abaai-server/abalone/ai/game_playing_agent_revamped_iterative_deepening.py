@@ -1,6 +1,9 @@
+import json
+import os
 import time
 
 from abalone.ai.cython.cython import StateSpaceGenerator
+from abalone.movement import Move
 from abalone.state import GameStateUpdate, GameState
 
 
@@ -13,7 +16,7 @@ class AlphaBetaPruningAgentIterative:
         self.MIN_PLAYER = None
 
         self._table_counter = 0
-        self.t_table = {}
+        self.t_table = self.read_t_table()
         self.evaluation_t_table = {}
 
     def iterative_deepening_search(self, game_state):
@@ -176,6 +179,30 @@ class AlphaBetaPruningAgentIterative:
             if game_state.remaining_player_marbles < 9:
                 return 10000
             return 0
+
+    def read_t_table(self) -> dict[int, Move]:
+        t_table_file_name = "master_t_table.json"
+
+        if os.path.exists(t_table_file_name):
+            with open(t_table_file_name, 'r') as file:
+                t_table_json: dict = json.load(file)
+                deserialized_t_table = {
+                    int(state_hash): Move.from_json(move_json)
+                    for state_hash, move_json
+                    in t_table_json.items()
+                }
+                return deserialized_t_table
+        else:
+            return {}
+
+    def write_t_table(self):
+        t_table_file_name = "master_t_table.json"
+
+        with open(t_table_file_name, 'w') as file:
+            # Add the new records from the t_table to the master table
+            serialized_t_table = {k: v.to_json() for k, v in self.t_table.items()}
+
+            json.dump(serialized_t_table, file)
 
 
 MANHATTAN_WEIGHT_CONVERTED = [

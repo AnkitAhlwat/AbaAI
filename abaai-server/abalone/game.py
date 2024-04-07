@@ -1,4 +1,7 @@
+import json
+import os
 import time
+from datetime import datetime
 
 from abalone.ai.game_playing_agent_revamped_iterative_deepening import AlphaBetaPruningAgentIterative
 from abalone.ai.state_space_generator import StateSpaceGenerator
@@ -169,7 +172,7 @@ class Game:
         print("start time:", start_time)
 
         # manually set the depth limit
-        depth_limit = 4
+        depth_limit = 3
 
         # set the time limit for the AI based on config
         if self._current_game_state.turn == Piece.BLACK:
@@ -208,6 +211,8 @@ class Game:
         Resets the game and timer to the default state.
         Clears everything.
         """
+        self.record_game()
+
         # clear the stack
         self._moves_stack.clear_stack()
 
@@ -255,3 +260,20 @@ class Game:
                 moves_dict[key].append(move.to_json())
 
         return moves_dict
+
+    def record_game(self):
+        formatted_datetime = datetime.now().strftime('%d-%m-%Y_%H-%M-%S')
+        games_dir = "archived_games"
+        game_file_name = f"{formatted_datetime}.json"
+        game_file_path = os.path.join(games_dir, game_file_name)
+
+        # Create output directory if it doesn't exist
+        os.makedirs(games_dir, exist_ok=True)
+
+        with open(game_file_path, 'w') as game_file:
+            game_json = self.__to_json()
+            game_json["moves_stack"] = [str(move) for move in self._moves_stack.items]
+            json.dump(game_json, game_file)
+
+        if isinstance(self._agent, AlphaBetaPruningAgentIterative):
+            self._agent.write_t_table()
