@@ -34,6 +34,7 @@ const RightSideBar = (props) => {
     resetClockSignal,
     onSubmitConfig,
     onApplyMove,
+    //onSubmitConfig,
   } = props;
 
   const [value, setValue] = useState(Tabs.CONFIG);
@@ -98,6 +99,7 @@ const RightSideBar = (props) => {
             blackClock={blackClock}
             whiteClock={whiteClock}
             onApplyMove={onApplyMove}
+            //onSubmitConfig={onSubmitConfig}
             // currentPlayer={currentPlayer}
             // isPaused={isPaused}
             // togglePause={togglePause}

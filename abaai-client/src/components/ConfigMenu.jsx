@@ -100,6 +100,20 @@ const ConfigMenu = ({ config, setConfig, onSubmitConfig, switchToGameTab }) => {
       <br />
       <br />
       <NumberInput
+        id="black-turn-limit"
+        label="Black Turn Time (Seconds)"
+        value={config.blackTurnTime}
+        onChange={(e) => {
+          if (e.target.value && e.target.value >= 0) {
+            setConfig({ ...config, blackTurnTime: parseInt(e.target.value) });
+          } else {
+            setConfig({ ...config, blackTurnTime: "" });
+          }
+        }}
+      />
+      <br />
+      <br />
+      <NumberInput
         id="white-time-limit"
         label="White Time Limit (Seconds)"
         value={config.whiteTimeLimit}
@@ -111,6 +125,21 @@ const ConfigMenu = ({ config, setConfig, onSubmitConfig, switchToGameTab }) => {
           }
         }}
       />
+      <br />
+      <br />
+      <NumberInput
+        id="white-turn-limit"
+        label="White Turn Time (Seconds)"
+        value={config.whiteTurnTime}
+        onChange={(e) => {
+          if (e.target.value && e.target.value >= 0) {
+            setConfig({ ...config, whiteTurnTime: parseInt(e.target.value) });
+          } else {
+            setConfig({ ...config, whiteTurnTime: "" });
+          }
+        }}
+      />
+      <br />
       <br />
       <br />
       <NumberInput

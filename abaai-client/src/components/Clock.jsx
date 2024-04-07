@@ -4,10 +4,10 @@ import { Box, Typography, Button } from '@mui/material';
 
 const GameClock = (props) => {
   const { initialTime, isTurn, playerId, activePlayer, gameStarted, isActive, resetClockSignal} = props;
-  // const { initialTime, isActive, playerId, onMoveMade, gameStarted, onTurnEnd} = props;
   const { start: startClock, stop: stopClock, pause: pauseClock,  resume: resumeClock, currentTime, isRunning } = useCountdown(initialTime);
-  // { start, stop, pause, resume, currentTime, isRunning };
   const [initialStart , setInitialStart] = React.useState(true);
+  // const [turnClockTime, setTurnClockTime] = useState(initialTime);
+  // const [scoreClockTime, setScoreClockTime] = useState(initialTime);
 
   //start the game clock
   useEffect(() => {
@@ -21,26 +21,40 @@ const GameClock = (props) => {
 
     //pause or resume the game clock
     useEffect(() => {
-      if (!isActive && isTurn) {
+      if (!isActive && isTurn)
         pauseClock();
-      } else if (isActive && isTurn) {
+      else if (isActive && isTurn)
         resumeClock();
-      } if (!isTurn) {
+      if (!isTurn)
         pauseClock();
-      }
     }, [isActive, isTurn, activePlayer]);
 
     //stop the game clock, currently same as reset
     useEffect(() => {
         stopClock();
         setInitialStart(true);
+        if (gameStarted && isActive) {
+          startClock(); // Immediately start the clock for the new turn.
+          setInitialStart(false);
+        }
     }, [resetClockSignal]);
 
     //reset the game clock
-    useEffect(() => {
-        stopClock();
-        setInitialStart(true);
-    }, [resetClockSignal]);
+    // useEffect(() => {
+    //     stopClock();
+    //     setInitialStart(true);
+    // }, [resetClockSignal]);
+
+    //reset the turn clocks each turn
+    // const resetTurnClock = () => {
+    //   setTurnClockTime(initialTime);
+    // };
+
+    // useEffect(() => {
+    //   stopClock();
+    //   setInitialStart(true);
+    // }, [resetSignal]);
+
 
   //triggered when the active status of the game is changed for taking turns 
   useEffect(() => {
@@ -56,13 +70,6 @@ const GameClock = (props) => {
     }
   // }, [isActive]);
 }, []);
-
-
-
-  // Expose the pause and resume functionality to currentGameBar
-  // useEffect(() => {
-  //   onTurnEnd(pauseClock, resumeClock);
-  // }, [onTurnEnd, pauseClock, resumeClock]);
 
 
   return (

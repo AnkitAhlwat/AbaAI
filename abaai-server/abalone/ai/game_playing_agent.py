@@ -80,6 +80,7 @@ class AlphaBetaPruningAgent:
 
 
 DEFAULT_WEIGHTS = [1000000, 10000, 10, 10, 2, 2, 1, 1]
+
 MANHATTAN_WEIGHT_FLAT = [
     0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 1, 2, 1, 1, 0,

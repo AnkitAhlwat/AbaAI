@@ -19,11 +19,12 @@ const Game = () => {
   const [isGameActive, setIsGameActive] = useState(false);
   const [isGameConfigured, setIsGameConfigured] = useState(false); // Tracks whether game has been configured
   const [resetClockSignal, setResetClockSignal] = useState(0);
+  const [resetTurnClockSignal, setResetTurnClockSignal] = useState(0);
   const [config, setConfig] = useState(null); // Tracks configuration options
   const [numCapturedBlackMarbles, setNumCapturedBlackMarbles] = useState(0); // Tracks number of black marbles captured
   const [numCapturedWhiteMarbles, setNumCapturedWhiteMarbles] = useState(0); // Tracks number of white marbles captured
   const [currentTurn, setCurrentTurn] = useState(0); // Tracks current turn
-  const [blackMoveTimeRemaining, setBlackMoveTimeRemaining] = useState(10); // Tracks black player move time remaining
+  const [blackMoveTimeRemaining, setBlackMoveTimeRemaining] = useState(0); // Tracks black player move time remaining
   const [whiteMoveTimeRemaining, setWhiteMoveTimeRemaining] = useState(0); // Tracks white player move time remaining
   const [blackMovesRemaining, setBlackMovesRemaining] = useState(0); // Tracks black player moves remaining
   const [whiteMovesRemaining, setWhiteMovesRemaining] = useState(0); // Tracks white player moves remaining
@@ -73,6 +74,10 @@ const Game = () => {
       // Set the move time remaining back to full time
       setBlackMoveTimeRemaining(gameStatus.game_options.blackTimeLimit);
       setWhiteMoveTimeRemaining(gameStatus.game_options.whiteTimeLimit);
+
+      // Sets the number of moves remaining
+      setBlackMovesRemaining(gameStatus.moves_remaining[0]);
+    setWhiteMovesRemaining(gameStatus.moves_remaining[1]);
     },
     [setBoardArray]
   );
@@ -80,8 +85,6 @@ const Game = () => {
   const onSubmitConfig = useCallback(async () => {
     const gameStatus = await GameService.postConfig(config);
     updateGame(gameStatus);
-    setBlackMovesRemaining(gameStatus.game_options.moveLimit);
-    setWhiteMovesRemaining(gameStatus.game_options.moveLimit);
   }, [config, updateGame]);
 
   const getAiMove = useCallback(async (gameStatus) => {
@@ -107,6 +110,7 @@ const Game = () => {
 
   const toggleTurn = () => {
     setActivePlayer((prev) => (prev === "black" ? "white" : "black"));
+    setResetTurnClockSignal((prev) => prev + 1);
   };
 
   // Pause the game
@@ -132,6 +136,7 @@ const Game = () => {
   //reset the game and clocks
   const resetGame = async () => {
     const gameStatus = await GameService.postResetGame();
+
     updateGame(gameStatus);
 
     //reset the board logic here
@@ -140,8 +145,10 @@ const Game = () => {
     setGameStarted(false);
     setIsGameActive(false);
     setResetClockSignal((prev) => prev + 1);
+    setResetTurnClockSignal((prev) => prev + 1);
     setBlackAiMove(null);
     setWhiteAiMove(null);
+    setActivePlayer("black");
   };
 
   //stop the game and reset the clocks, this should also completely reset the game state
@@ -151,6 +158,7 @@ const Game = () => {
     setGameStarted(false);
     setIsGameActive(false);
     setResetClockSignal((prev) => prev + 1);
+    setResetTurnClockSignal((prev) => prev + 1);
   };
 
   //undo the last move
@@ -289,11 +297,24 @@ const Game = () => {
           whiteMovesRemaining={whiteMovesRemaining}
 
           //for the clock controls
-          // blackClock={blackClock}
-          // whiteClock={whiteClock}
-          // pauseClock={pauseClock}
-          // resumeClock={resumeClock}
-          // resetClocks={resetClocks}
+          activePlayer={activePlayer}
+          toggleActivePlayer={toggleTurn}
+          gameStarted={gameStarted}
+          // gameActive={isGameActive}
+          gameConfigured={isGameConfigured}
+          startGame={startGame}
+          stopGame={stopGame}
+          resetClockSignal={resetTurnClockSignal}
+          pauseGame={pauseGame}
+          resumeGame={resumeGame}
+          resetGame={resetGame}
+          undoMove={onUndoLastMove}
+          blackClock={blackClock}
+          whiteClock={whiteClock}
+          updateGame={updateGame}
+          config = {config}
+          // onApplyMove={onMoveSelection}
+          // onSubmitConfig={onSubmitConfig}
         />
       </Grid>
 
@@ -314,7 +335,6 @@ const Game = () => {
           blackAiMove={blackAiMove}
           whiteAiMove={whiteAiMove}
           currentTurn={currentTurn}
-          //for the clock controls
           activePlayer={activePlayer}
           toggleActivePlayer={toggleTurn}
           gameStarted={gameStarted}
@@ -332,9 +352,6 @@ const Game = () => {
           updateGame={updateGame}
           onApplyMove={onMoveSelection}
           onSubmitConfig={onSubmitConfig}
-          // currentPlayer={currentPlayer}
-          // isPaused={isPaused}
-          // togglePause={togglePause}
         />
       </Grid>
     </Grid>
