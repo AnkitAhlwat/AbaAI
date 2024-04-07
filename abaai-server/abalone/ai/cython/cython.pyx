@@ -1,8 +1,8 @@
 import time
+from itertools import combinations
 
 from abalone.movement_optimized import Move
 from abalone.state import GameState, GameStateUpdate
-from itertools import combinations
 
 cdef class LegalMovesOptimized:
     possible_moves = [(-1, 0), (1, 0), (0, -1), (0, 1), (1, -1), (-1, 1)]
@@ -12,14 +12,14 @@ cdef class LegalMovesOptimized:
         return y * 9 + x if (0 <= x < 9) and (0 <= y < 9) else -1
 
     @staticmethod
-    cdef bint are_two_marbles_inline(tuple[int,int] pos1, tuple[int,int] pos2):
+    cdef bint are_two_marbles_inline(tuple[int, int] pos1, tuple[int, int] pos2):
         cdef int dx = pos2[0] - pos1[0]
         cdef int dy = pos2[1] - pos1[1]
         cdef tuple direction = (dx, dy)
         return direction in [(-1, 0), (1, 0), (0, -1), (0, 1), (1, -1), (-1, 1)]
 
     @staticmethod
-    cdef bint are_three_marbles_inline(tuple[int,int] pos1, tuple[int,int] pos2, tuple[int,int] pos3):
+    cdef bint are_three_marbles_inline(tuple[int, int] pos1, tuple[int, int] pos2, tuple[int, int] pos3):
         cdef int dx1 = pos2[0] - pos1[0]
         cdef int dy1 = pos2[1] - pos1[1]
         cdef tuple direction1 = (dx1, dy1)
@@ -29,7 +29,6 @@ cdef class LegalMovesOptimized:
         cdef tuple direction2 = (dx2, dy2)
 
         return direction1 == direction2 and direction1 in [(-1, 0), (1, 0), (0, -1), (0, 1), (1, -1), (-1, 1)]
-
 
     @staticmethod
     cdef bint is_position_valid(list[int] board, position, vacating_positions=None):
@@ -44,12 +43,11 @@ cdef class LegalMovesOptimized:
         return board[index] == 0 or position in vacating_positions
 
     @staticmethod
-    def get_valid_moves(game_state:GameState, *positions:list[tuple[int, int]]):
+    def get_valid_moves(game_state: GameState, *positions: list[tuple[int, int]]):
         cdef int move_x, move_y
         cdef int pos_x, pos_y
         cdef list valid_moves = []
         cdef new_positions = []
-
 
         board = game_state.board.array
 
@@ -68,17 +66,17 @@ cdef class LegalMovesOptimized:
         return valid_moves
 
     @staticmethod
-    cdef bint sequence_helper_function(list[int] board, tuple[int,int] position):
+    cdef bint sequence_helper_function(list[int] board, tuple[int, int] position):
         cdef int index = LegalMovesOptimized.get_flat_index(position[0], position[1])
         if index == -1 or board[index] == -1 or board[index] == 0:
             return True
         return False
 
     @staticmethod
-    cdef bint is_position_out_of_bounds(list[int ]board, position):
+    cdef bint is_position_out_of_bounds(list[int]board, position):
         """Check if a position is out of bounds."""
         cdef int index = LegalMovesOptimized.get_flat_index(position[0], position[1])
-        if index ==-1 or board[index] == -1:
+        if index == -1 or board[index] == -1:
             return True
 
     @staticmethod
@@ -101,7 +99,8 @@ cdef class LegalMovesOptimized:
         return LegalMovesOptimized.sequence_helper_function(board, push_target_pos)
 
     @staticmethod
-    cdef dict find_marble_sequence(list[int] board, tuple start_pos, tuple direction, list player_positions, list opponent_positions):
+    cdef dict find_marble_sequence(list[int] board, tuple start_pos, tuple direction, list player_positions,
+                                   list opponent_positions):
         cdef list player_seq = []
         cdef list opponent_seq = []
         cdef tuple current_pos = start_pos
@@ -144,8 +143,9 @@ cdef class LegalMovesOptimized:
                                             sequence['player']]
                     new_positions_opponent = [(pos[0] + direction[0], pos[1] + direction[1]) for pos in
                                               sequence['opponent']
-                                              if not LegalMovesOptimized.is_position_out_of_bounds(board,(pos[0] + direction[0],
-                                                                                                   pos[1] + direction[1]))]
+                                              if not LegalMovesOptimized.is_position_out_of_bounds(board, (
+                        pos[0] + direction[0],
+                        pos[1] + direction[1]))]
 
                     sumito_move_list.append(Move(
                         sequence['player'],
@@ -157,13 +157,12 @@ cdef class LegalMovesOptimized:
 
         return sumito_move_list
 
-
 cdef class StateSpaceGenerator:
     cdef int width
     cdef list[int] board_array
 
     @staticmethod
-    def get_player_piece_positions(game_state):
+    def get_player_piece_positions(game_state: GameState):
         cdef:
             int player_max_value = game_state.turn.value
             int player_min_value = 2 if player_max_value == 1 else 1
@@ -237,7 +236,6 @@ cdef class StateSpaceGenerator:
         sumito_moves = StateSpaceGenerator.generate_all_sumitos(game_state, player_pieces)
 
         return player_piece_moves + sumito_moves
-
 
 cdef class alphaBetaPruningAgent:
     cdef public int max_depth, max_time_sec
@@ -317,14 +315,14 @@ cdef class alphaBetaPruningAgent:
                 return value
         return value
 
-    cdef double evaluate(self,game_state:GameState):
+    cdef double evaluate(self, game_state: GameState):
         cdef double score = 0
         score += 10 * self.board_control(game_state, MANHATTAN_WEIGHT_CONVERTED)
         score += 1000 * self.piece_advantage(game_state)
         score += 10000000 * self.terminal_test(game_state)
         return score
 
-    cdef int board_control(self, game_state:GameState, list[tuple[int,int]] lookup_table):
+    cdef int board_control(self, game_state: GameState, list[tuple[int, int]] lookup_table):
         cdef int player_score = 0
         cdef int opponent_score = 0
         cdef int index
@@ -345,7 +343,7 @@ cdef class alphaBetaPruningAgent:
 
         return opponent_score - player_score
 
-    cdef piece_advantage(self,game_state):
+    cdef piece_advantage(self, game_state):
         """
         A heuristic for evaluating the board state based on the number of marbles the player has compared to the
         opponent.
@@ -357,7 +355,7 @@ cdef class alphaBetaPruningAgent:
         else:
             return game_state.remaining_opponent_marbles - game_state.remaining_player_marbles
 
-    cpdef int terminal_test(self, game_state:GameState):
+    cpdef int terminal_test(self, game_state: GameState):
         if game_state.turn.value == self.MAX_PLAYER:
             if game_state.remaining_player_marbles < 9:
                 return -10000
@@ -379,6 +377,3 @@ MANHATTAN_WEIGHT_CONVERTED = [
     (-2, 2), (-1, 2), (0, 2), (1, 2), (2, 2), (3, 2), (4, 2), None, None,
     (-1, 3), (0, 3), (1, 3), (2, 3), (3, 3), (4, 3), None, None, None,
     (0, 4), (1, 4), (2, 4), (3, 4), (4, 4), None, None, None, None]
-
-
-
