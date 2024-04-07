@@ -241,7 +241,7 @@ class AlphaBetaPruningAgentIterative:
         return value
 
     def read_t_table(self) -> dict[int, Move]:
-        t_table_file_name = "master_t_table.json"
+        t_table_file_name = "look_up_tables/master_t_table.json"
 
         if os.path.exists(t_table_file_name):
             with open(t_table_file_name, 'r') as file:
@@ -256,7 +256,7 @@ class AlphaBetaPruningAgentIterative:
             return {}
 
     def write_t_table(self):
-        t_table_file_name = "master_t_table.json"
+        t_table_file_name = "look_up_tables/master_t_table.json"
 
         with open(t_table_file_name, 'w') as file:
             # Add the new records from the t_table to the master table

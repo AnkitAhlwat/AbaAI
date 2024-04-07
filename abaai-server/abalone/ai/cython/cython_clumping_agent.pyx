@@ -1,5 +1,5 @@
 import time
-from abalone.ai.state_space_generator import StateSpaceGenerator
+from abalone.ai.old_files.state_space_generator import StateSpaceGenerator
 from abalone.movement import Position
 from abalone.state import GameStateUpdate, GameState
 

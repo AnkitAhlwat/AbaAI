@@ -4,7 +4,7 @@ import time
 from datetime import datetime
 
 from abalone.ai.game_playing_agent_revamped_iterative_deepening import AlphaBetaPruningAgentIterative
-from abalone.ai.state_space_generator import StateSpaceGenerator
+from abalone.ai.old_files.state_space_generator import StateSpaceGenerator
 from abalone.board import OptimizedBoard, BoardLayout
 from abalone.movement import Move, Piece
 from abalone.stack import Stack

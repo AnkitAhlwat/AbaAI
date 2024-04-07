@@ -6,7 +6,7 @@ from abalone.ai.cython.cython import StateSpaceGenerator
 from abalone.movement import Move
 from abalone.state import GameStateUpdate, GameState
 
-class AlphaBetaPruningAgentIterative:
+class AlphaBetaPruningAgentIterativeNoClumping:
     def __init__(self, max_depth: int, max_time_sec: int = 2000):
         self.max_depth = max_depth
         self.max_time_sec = max_time_sec
@@ -241,7 +241,7 @@ class AlphaBetaPruningAgentIterative:
         return value
 
     def read_t_table(self) -> dict[int, Move]:
-        t_table_file_name = "no_clumping_master_t_table.json"
+        t_table_file_name = "look_up_tables/no_clumping_master_t_table.json"
 
         if os.path.exists(t_table_file_name):
             with open(t_table_file_name, 'r') as file:
@@ -256,7 +256,7 @@ class AlphaBetaPruningAgentIterative:
             return {}
 
     def write_t_table(self):
-        t_table_file_name = "no_clumping_master_t_table.json"
+        t_table_file_name = "look_up_tables/no_clumping_master_t_table.json"
 
         with open(t_table_file_name, 'w') as file:
             # Add the new records from the t_table to the master table
