@@ -12,7 +12,7 @@ def simulate_agents(game_state: GameState, max_moves: int):
             original_opponent_marbles = game_state.remaining_player_marbles
             best_move = agent1.iterative_deepening_search(game_state)
             game_state = GameStateUpdate(game_state, best_move).resulting_state
-            print(f'white move {best_move}')
+            print(f'black move {best_move}')
             if game_state.remaining_player_marbles < original_marbles:
                 print(f'marbles knocked off')
             if game_state.remaining_opponent_marbles < original_opponent_marbles:
@@ -22,7 +22,7 @@ def simulate_agents(game_state: GameState, max_moves: int):
             original_opponent_marbles = game_state.remaining_player_marbles
             move = agent2.iterative_deepening_search(game_state)
             game_state = GameStateUpdate(game_state, move).resulting_state
-            print(f'black move {move}')
+            print(f'white move {move}')
             if game_state.remaining_player_marbles < original_marbles:
                 print(f'marbles knocked off')
             if game_state.remaining_opponent_marbles < original_opponent_marbles:
@@ -35,4 +35,4 @@ def simulate_agents(game_state: GameState, max_moves: int):
     agent2.write_t_table()
 
 if __name__ == '__main__':
-    simulate_agents(GameState(), 81)
+    simulate_agents(GameState(), 82)
