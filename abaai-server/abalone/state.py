@@ -17,6 +17,15 @@ class GameState:
         self._remaining_player_marbles = remaining_player_marbles
         self._remaining_opponent_marbles = remaining_opponent_marbles
 
+    def __hash__(self):
+        # Hash the board layout
+        board_hash = hash(tuple(self._board.array))
+
+        # Hash whose turn it is
+        turn_hash = hash(self._turn.value)
+
+        return hash((board_hash, turn_hash))
+
     @property
     def board(self):
         return self._board

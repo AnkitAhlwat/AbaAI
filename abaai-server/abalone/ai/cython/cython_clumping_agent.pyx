@@ -1,12 +1,11 @@
 import time
-
-from abalone.ai.game_playing_agent import AlphaBetaPruningAgent
-from abalone.ai.state_space_generator import StateSpaceGenerator
+from abalone.ai.old_files.state_space_generator import StateSpaceGenerator
+from abalone.movement import Position
 from abalone.state import GameStateUpdate, GameState
 
 
-class alphaBetaPruningAgent:
-    def __init__(self,  game_state, max_depth: int, max_time_sec: int = 10,):
+class alphaBetaPruningAgentClumping:
+    def __init__(self, game_state, max_depth: int, max_time_sec: int = 10, ):
         self.max_depth = max_depth
         self.max_time_sec = max_time_sec
         self.min_prunes = 0
@@ -82,14 +81,75 @@ class alphaBetaPruningAgent:
                 return value
         return value
 
-    def evaluate(self,game_state: GameState) -> float:
+    def evaluate(self, game_state: GameState) -> float:
         score = 0
+        score += 2 * self.clumping(game_state)
         score += 10 * self.board_control(game_state, MANHATTAN_WEIGHT_CONVERTED)
         score += 1000 * self.piece_advantage(game_state)
         score += 10000000 * self.terminal_test(game_state)
         return score
 
-    def board_control(self,game_state, lookup_table):
+    def clumping(
+            self,
+            game_state: GameState
+    ) -> float:
+        """
+        Iterates through each player piece and each opponent piece separately. For each piece, it counts how many other
+        pieces of the same color are adjacent to it. The function returns the difference between the number of player
+        pieces clumped together and the number of opponent pieces clumped together.
+        """
+        board_array = game_state.board.to_matrix()
+        piece_positions = StateSpaceGenerator.get_player_piece_positions(game_state)
+        player_marbles = piece_positions["player_max"]
+        opponent_marbles = piece_positions["player_min"]
+
+        player_clump_value = 0
+        opponent_clump_value = 0
+
+        for player_position in player_marbles:
+            player_clump_value += self.__get_clumping_value(player_position, board_array)
+        for opponent_position in opponent_marbles:
+            opponent_clump_value += self.__get_clumping_value(opponent_position, board_array)
+
+        return float(opponent_clump_value - player_clump_value)
+
+    def __get_clumping_value(self, position: Position, board_array: list[list[int]]) -> int:
+        """
+        Returns the number of pieces of the same color that are adjacent to the given position.
+
+        :param position: the position to check
+        :param board_array: the current board state
+        :return: the number of pieces of the same color that are adjacent to the given position
+        """
+        value = 0
+        x, y = position.x, position.y
+        pos_marble = board_array[y][x]
+
+        if x > 0:
+            if board_array[y][x - 1] == pos_marble:
+                value += 1
+            if y < 8:
+                if board_array[y + 1][x - 1] == pos_marble:
+                    value += 1
+
+        if x < 8:
+            if board_array[y][x + 1] == pos_marble:
+                value += 1
+            if y > 0:
+                if board_array[y - 1][x + 1] == pos_marble:
+                    value += 1
+
+        if y > 0:
+            if board_array[y - 1][x] == pos_marble:
+                value += 1
+
+        if y < 8:
+            if board_array[y + 1][x] == pos_marble:
+                value += 1
+
+        return value
+
+    def board_control(self, game_state, lookup_table):
         """
         A zero-sum heuristic for evaluating the board state based on the distance of the player's/opponents marbles from
         the center.
@@ -112,7 +172,7 @@ class alphaBetaPruningAgent:
 
         return opponent_score - player_score
 
-    def piece_advantage(self,game_state):
+    def piece_advantage(self, game_state):
         """
         A heuristic for evaluating the board state based on the number of marbles the player has compared to the
         opponent.
@@ -124,7 +184,7 @@ class alphaBetaPruningAgent:
         else:
             return game_state.remaining_opponent_marbles - game_state.remaining_player_marbles
 
-    def terminal_test(self,game_state: GameState):
+    def terminal_test(self, game_state: GameState):
         """
         A heuristic for evaluating the board state based on whether the game is in a terminal state.
         :param game_state: The current game state
@@ -145,7 +205,6 @@ class alphaBetaPruningAgent:
 
 
 DEFAULT_WEIGHTS = [1000000, 10000, 10, 10, 2, 2, 1, 1]
-
 MANHATTAN_WEIGHT_FLAT = [
     0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 1, 2, 1, 1, 0,
@@ -182,51 +241,3 @@ MANHATTAN_WEIGHT_CONVERTED = [
     (0, 4), (1, 4), (2, 4), (3, 4), (4, 4), None, None, None, None]
 
 
-
-
-
-def simulate_agents(game_state: GameState, max_moves: int):
-    for i in range(max_moves):
-        if game_state.turn.value == 1:
-            agent = alphaBetaPruningAgent(max_depth=3, game_state=game_state)
-            best_move = agent.AlphaBetaPruningSearch()
-            game_state = GameStateUpdate(game_state, best_move).resulting_state
-            print(f'black move {best_move}')
-        else:
-            agent = AlphaBetaPruningAgent(max_depth=3)
-            move = agent.AlphaBetaPruningSearch(game_state)
-            game_state = GameStateUpdate(game_state, move).resulting_state
-            print(f'white move {move}')
-
-    print(game_state.turn)
-    print(game_state.remaining_player_marbles)
-    print(game_state.remaining_opponent_marbles)
-def simulate_moves(game_state: GameState, max_moves: int):
-    print("Initial Board")
-    print(game_state.board)
-    i = 0
-    start_time = time.time()
-    while i < max_moves:
-        agent = alphaBetaPruningAgent(max_depth=3, game_state=game_state)
-        best_move = agent.AlphaBetaPruningSearch()
-        print(f"{game_state.turn.name}->({best_move})")
-        original_marbles = game_state.remaining_opponent_marbles
-        original_opponent_marbles = game_state.remaining_player_marbles
-        game_state = GameStateUpdate(game_state, best_move).resulting_state
-        if game_state.remaining_player_marbles < original_marbles:
-            print(f'marbles knocked off')
-        if game_state.remaining_opponent_marbles < original_opponent_marbles:
-            print(f'marbles knocked off')
-
-        i += 1
-    finish_time = time.time()
-    print(finish_time - start_time)
-    print(game_state.board)
-    print(game_state.turn)
-    print(game_state.remaining_opponent_marbles)
-    print(game_state.remaining_player_marbles)
-
-
-if __name__ == '__main__':
-    # simulate_moves(GameState(), 10)
-    simulate_agents(GameState(), 50)
