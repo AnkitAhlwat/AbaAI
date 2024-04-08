@@ -3,7 +3,10 @@ import os
 import time
 from datetime import datetime
 
+from abalone.ai.ankit_agent import AlphaBetaPruningAgentAnkit
 from abalone.ai.game_playing_agent_revamped_iterative_deepening import AlphaBetaPruningAgentIterative
+from abalone.ai.game_playing_agent_revamped_iterative_deeping_no_clumping import \
+    AlphaBetaPruningAgentIterativeNoClumping
 from abalone.ai.old_files.state_space_generator import StateSpaceGenerator
 from abalone.board import OptimizedBoard, BoardLayout
 from abalone.movement import Move, Piece
@@ -115,6 +118,7 @@ class Game:
         self._is_first_move = True
 
         self._agent = None
+        self._white_agent = None
 
     def set_up(self, config) -> dict:
         self._game_options = GameOptions.from_json(config)
@@ -180,20 +184,20 @@ class Game:
         else:
             time_limit = self._game_options.white_turn_time
 
-        # if self._current_game_state.turn == Piece.BLACK:
-        if self._agent is None:
-            self._agent = AlphaBetaPruningAgentIterative(
-                max_depth=depth_limit,
-                max_time_sec=time_limit
-            )
-        move = self._agent.iterative_deepening_search(self._current_game_state)
-        # else:
-        # agent = alphaBetaPruningAgent(
-        #     max_depth=depth_limit,
-        #     max_time_sec=time_limit,
-        #     game_state=self._current_game_state
-        # )
-        # move = agent.AlphaBetaPruningSearch()
+        if self._current_game_state.turn == Piece.BLACK:
+            if self._agent is None:
+                self._agent = AlphaBetaPruningAgentAnkit(
+                    max_depth=depth_limit,
+                    max_time_sec=time_limit
+                )
+            move = self._agent.iterative_deepening_search(self._current_game_state)
+        else:
+            if self._white_agent is None:
+                self._white_agent = AlphaBetaPruningAgentIterativeNoClumping(
+                    max_depth=depth_limit,
+                    max_time_sec=time_limit)
+
+            move = self._white_agent.iterative_deepening_search(self._current_game_state)
 
         end_time = time.time()
         print("end time:", end_time)

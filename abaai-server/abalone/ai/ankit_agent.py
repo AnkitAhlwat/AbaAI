@@ -3,8 +3,10 @@ import os
 import time
 
 from abalone.ai.cython.cython import StateSpaceGenerator
+from abalone.board import OptimizedBoard
 from abalone.movement import Move
 from abalone.state import GameStateUpdate, GameState
+
 
 class AlphaBetaPruningAgentAnkit:
     def __init__(self, max_depth: int, max_time_sec: int = 2000):
@@ -55,7 +57,7 @@ class AlphaBetaPruningAgentAnkit:
         for move in sorted_possible_moves:
             successor_state = GameStateUpdate(game_state, move).resulting_state
 
-            value = self.min_value(successor_state, alpha, beta, max_depth-1, start_time)
+            value = self.min_value(successor_state, alpha, beta, max_depth - 1, start_time)
             if value > alpha:
                 best_move = move
                 alpha = max(alpha, value)
@@ -120,7 +122,7 @@ class AlphaBetaPruningAgentAnkit:
         score = 0
         score += self.clumping(game_state)
         score += 10 * self.board_control(game_state, MANHATTAN_WEIGHT_CONVERTED)
-        score += 1000 * self.piece_advantage(game_state)
+        score += 10000 * self.piece_advantage(game_state)
         score += 10000000 * self.terminal_test(game_state)
 
         self.evaluation_t_table[hashed_state] = score
@@ -159,7 +161,7 @@ class AlphaBetaPruningAgentAnkit:
         if game_state.turn.value == self.MAX_PLAYER:
             return game_state.remaining_player_marbles - game_state.remaining_opponent_marbles
         else:
-            return game_state.remaining_opponent_marbles - game_state.remaining_player_marbles
+            return (game_state.remaining_player_marbles - game_state.remaining_opponent_marbles) * -1
 
     def terminal_test(self, game_state: GameState):
         """
@@ -174,10 +176,10 @@ class AlphaBetaPruningAgentAnkit:
                 return 10000
             return 0
         else:
+            if game_state.remaining_player_marbles < 9:
+                return +10000
             if game_state.remaining_opponent_marbles < 9:
                 return -10000
-            if game_state.remaining_player_marbles < 9:
-                return 10000
             return 0
 
     def clumping(
@@ -189,22 +191,19 @@ class AlphaBetaPruningAgentAnkit:
         pieces of the same color are adjacent to it. The function returns the difference between the number of player
         pieces clumped together and the number of opponent pieces clumped together.
         """
-        board_array = game_state.board.to_matrix()
-        piece_positions = StateSpaceGenerator.get_player_piece_positions(game_state)
-
-
         player_clump_value = 0
         opponent_clump_value = 0
 
+        for index, value in enumerate(game_state.board.array):
+            if value in (1, 2):
+                if value == self.MAX_PLAYER:
+                    player_clump_value += self.__get_clumping_value(index, game_state.board.array, value)
+                else:
+                    opponent_clump_value += self.__get_clumping_value(index, game_state.board.array, value)
 
-        # for player_position in player_marbles:
-        #     player_clump_value += self.__get_clumping_value(player_position, board_array)
-        # for opponent_position in opponent_marbles:
-        #     opponent_clump_value += self.__get_clumping_value(opponent_position, board_array)
+        return float(player_clump_value - opponent_clump_value)
 
-        return float(opponent_clump_value - player_clump_value)
-
-    def __get_clumping_value(self, position: tuple, board_array: list[list[int]]) -> int:
+    def __get_clumping_value(self, position, board_array, player_value) -> int:
         """
         Returns the number of pieces of the same color that are adjacent to the given position.
 
@@ -213,31 +212,14 @@ class AlphaBetaPruningAgentAnkit:
         :return: the number of pieces of the same color that are adjacent to the given position
         """
         value = 0
-        x, y = position[0], position[1]
-        pos_marble = board_array[y][x]
+        directions = [(-1, 0), (1, 0), (0, -1), (0, 1), (1, -1), (-1, 1)]
 
-        if x > 0:
-            if board_array[y][x - 1] == pos_marble:
+        for dx, dy in directions:
+            new_x = position % 9 + dx
+            new_y = position // 9 + dy
+            new_position = new_y * 9 + new_x
+            if 0 <= new_x < 9 and 0 <= new_y < 9 and board_array[new_position] == player_value:
                 value += 1
-            if y < 8:
-                if board_array[y + 1][x - 1] == pos_marble:
-                    value += 1
-
-        if x < 8:
-            if board_array[y][x + 1] == pos_marble:
-                value += 1
-            if y > 0:
-                if board_array[y - 1][x + 1] == pos_marble:
-                    value += 1
-
-        if y > 0:
-            if board_array[y - 1][x] == pos_marble:
-                value += 1
-
-        if y < 8:
-            if board_array[y + 1][x] == pos_marble:
-                value += 1
-
         return value
 
     def read_t_table(self) -> dict[int, Move]:
@@ -279,8 +261,7 @@ MANHATTAN_WEIGHT_CONVERTED = [
 edge = -1
 near_Edge = -0.5
 
-
-MANHATTAN_WEIGHT_CONVERTED = [
+MANHATTAN_WEIGHT_CONVERTED_EDGE = [
     None, None, None, None, edge, edge, edge, edge, edge,
     None, None, None, edge, near_Edge, near_Edge, near_Edge, near_Edge, edge,
     None, None, edge, near_Edge, (2, -2), (1, -2), (0, -2), near_Edge, edge,
@@ -291,6 +272,7 @@ MANHATTAN_WEIGHT_CONVERTED = [
     edge, near_Edge, near_Edge, near_Edge, near_Edge, edge, None, None, None,
     edge, edge, edge, edge, edge, None, None, None, None]
 
-agent = AlphaBetaPruningAgentAnkit(4)
-move = agent.iterative_deepening_search(GameState())
-
+start =time.time()
+agent = AlphaBetaPruningAgentAnkit(max_depth=4)
+agent.iterative_deepening_search(GameState(OptimizedBoard([[-1, -1, -1, -1, 0, 0, 0, 0, 2], [-1, -1, -1, 2, 2, 2, 2, 0, 2], [-1, -1, 0, 2, 2, 2, 2, 0, 0], [-1, 0, 0, 2, 1, 2, 2, 0, 0], [0, 0, 0, 2, 1, 1, 0, 0, 0], [0, 0, 1, 1, 1, 0, 0, 0, -1], [0, 1, 1, 1, 0, 0, 0, -1, -1], [1, 1, 0, 1, 0, 1, -1, -1, -1], [1, 0, 0, 0, 0, -1, -1, -1, -1]])))
+print(time.time()-start)

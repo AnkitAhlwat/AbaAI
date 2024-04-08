@@ -1,9 +1,11 @@
+from abalone.ai.ankit_agent import AlphaBetaPruningAgentAnkit
 from abalone.state import GameState, GameStateUpdate
 from abalone.ai.game_playing_agent_revamped_iterative_deepening import AlphaBetaPruningAgentIterative
 from abalone.ai.game_playing_agent_revamped_iterative_deeping_no_clumping import AlphaBetaPruningAgentIterativeNoClumping
 def simulate_agents(game_state: GameState, max_moves: int):
     game_state = game_state
-    agent1 = AlphaBetaPruningAgentIterative(max_depth=4)
+    # agent1 = AlphaBetaPruningAgentIterative(max_depth=4)
+    agent1 = AlphaBetaPruningAgentAnkit(max_depth=4)
     agent2 = AlphaBetaPruningAgentIterativeNoClumping(max_depth=4)
 
     for i in range(max_moves):
@@ -35,4 +37,4 @@ def simulate_agents(game_state: GameState, max_moves: int):
     agent2.write_t_table()
 
 if __name__ == '__main__':
-    simulate_agents(GameState(), 82)
+    simulate_agents(GameState(), 50)

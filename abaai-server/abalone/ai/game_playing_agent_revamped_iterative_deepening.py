@@ -3,6 +3,7 @@ import os
 import time
 
 from abalone.ai.cython.cython import StateSpaceGenerator
+from abalone.board import OptimizedBoard
 from abalone.movement import Move
 from abalone.state import GameStateUpdate, GameState
 
@@ -118,7 +119,7 @@ class AlphaBetaPruningAgentIterative:
             return self.evaluation_t_table[hashed_state]
 
         score = 0
-        score += self.clumping(game_state)
+        # score += self.clumping(game_state)
         score += 10 * self.board_control(game_state, MANHATTAN_WEIGHT_CONVERTED)
         score += 1000 * self.piece_advantage(game_state)
         score += 10000000 * self.terminal_test(game_state)
@@ -275,3 +276,7 @@ MANHATTAN_WEIGHT_CONVERTED = [
     (-2, 2), (-1, 2), (0, 2), (1, 2), (2, 2), (3, 2), (4, 2), None, None,
     (-1, 3), (0, 3), (1, 3), (2, 3), (3, 3), (4, 3), None, None, None,
     (0, 4), (1, 4), (2, 4), (3, 4), (4, 4), None, None, None, None]
+start =time.time()
+agent = AlphaBetaPruningAgentIterative(max_depth=4)
+agent.iterative_deepening_search(GameState(OptimizedBoard([[-1, -1, -1, -1, 0, 0, 0, 0, 2], [-1, -1, -1, 2, 2, 2, 2, 0, 2], [-1, -1, 0, 2, 2, 2, 2, 0, 0], [-1, 0, 0, 2, 1, 2, 2, 0, 0], [0, 0, 0, 2, 1, 1, 0, 0, 0], [0, 0, 1, 1, 1, 0, 0, 0, -1], [0, 1, 1, 1, 0, 0, 0, -1, -1], [1, 1, 0, 1, 0, 1, -1, -1, -1], [1, 0, 0, 0, 0, -1, -1, -1, -1]])))
+print(time.time()-start)
