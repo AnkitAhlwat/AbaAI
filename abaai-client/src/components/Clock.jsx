@@ -6,8 +6,6 @@ const GameClock = (props) => {
   const { initialTime, isTurn, playerId, activePlayer, gameStarted, isActive, resetClockSignal} = props;
   const { start: startClock, stop: stopClock, pause: pauseClock,  resume: resumeClock, currentTime, isRunning } = useCountdown(initialTime);
   const [initialStart , setInitialStart] = React.useState(true);
-  // const [turnClockTime, setTurnClockTime] = useState(initialTime);
-  // const [scoreClockTime, setScoreClockTime] = useState(initialTime);
 
   //start the game clock
   useEffect(() => {
@@ -21,6 +19,7 @@ const GameClock = (props) => {
 
     //pause or resume the game clock
     useEffect(() => {
+      console.log("Use Effect for the game clock: ", isActive, isTurn, activePlayer)
       if (!isActive && isTurn)
         pauseClock();
       else if (isActive && isTurn)
@@ -31,46 +30,14 @@ const GameClock = (props) => {
 
     //stop the game clock, currently same as reset
     useEffect(() => {
+        console.log("STOP CLOCK CALLED FOR: ", isActive, isTurn, activePlayer)
         stopClock();
         setInitialStart(true);
-        if (gameStarted && isActive) {
+        if (gameStarted && isActive && isTurn) {
           startClock(); // Immediately start the clock for the new turn.
           setInitialStart(false);
         }
     }, [resetClockSignal]);
-
-    //reset the game clock
-    // useEffect(() => {
-    //     stopClock();
-    //     setInitialStart(true);
-    // }, [resetClockSignal]);
-
-    //reset the turn clocks each turn
-    // const resetTurnClock = () => {
-    //   setTurnClockTime(initialTime);
-    // };
-
-    // useEffect(() => {
-    //   stopClock();
-    //   setInitialStart(true);
-    // }, [resetSignal]);
-
-
-  //triggered when the active status of the game is changed for taking turns 
-  useEffect(() => {
-    if (gameStarted) {
-      if (isActive) {
-        console.log(`Toggling clock for player ${playerId}`);
-        if (isRunning) {
-          pauseClock();
-        }
-      } else if (!isRunning) {
-        resumeClock();
-      }
-    }
-  // }, [isActive]);
-}, []);
-
 
   return (
     <Box>
