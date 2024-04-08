@@ -28,6 +28,7 @@ const Game = () => {
   const [whiteMoveTimeRemaining, setWhiteMoveTimeRemaining] = useState(0); // Tracks white player move time remaining
   const [blackMovesRemaining, setBlackMovesRemaining] = useState(0); // Tracks black player moves remaining
   const [whiteMovesRemaining, setWhiteMovesRemaining] = useState(0); // Tracks white player moves remaining
+  const [prevActivePlayer, setPrevActivePlayer] = useState(null); // Tracks previous player turn
   //Defines aggregate clock states for each player, temporary
   const [blackClock, setBlackClock] = useState({
     time: 180,
@@ -97,6 +98,7 @@ const Game = () => {
         gameStatus.game_options.whitePlayer === "Computer")
     ) {
       const aiMove = await GameService.getAiMoveForCurrentState();
+      pauseTurn();
 
       if (gameStatus.game_state.turn === 1) {
         setBlackAiMove(aiMove);
@@ -109,8 +111,13 @@ const Game = () => {
   }, []);
 
   const toggleTurn = () => {
-    setActivePlayer((prev) => (prev === "black" ? "white" : "black"));
-    setResetTurnClockSignal((prev) => prev + 1);
+    if (!activePlayer) {
+      setActivePlayer(prevActivePlayer === "black" ? "white" : "black");
+      setPrevActivePlayer(null);
+    } else {
+      setActivePlayer(prev => (prev === "black" ? "white" : "black"));
+      setResetTurnClockSignal(prev => prev + 1); 
+    }
   };
 
   // Pause the game
@@ -121,6 +128,12 @@ const Game = () => {
     } else {
       setWhiteClock((clock) => ({ ...clock, isRunning: false }));
     }
+  };
+
+  //pause the timers after an ai move has returned by setting the active turn to null
+  const pauseTurn = () => {
+    setPrevActivePlayer(activePlayer);
+    setActivePlayer(null);
   };
 
   // Resume Game
