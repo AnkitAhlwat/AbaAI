@@ -6,7 +6,7 @@ from abalone.ai.cython.cython import StateSpaceGenerator
 from abalone.movement import Move
 from abalone.state import GameStateUpdate, GameState
 
-class AlphaBetaPruningAgentIterative:
+class AlphaBetaPruningAgentAnkit:
     def __init__(self, max_depth: int, max_time_sec: int = 2000):
         self.max_depth = max_depth
         self.max_time_sec = max_time_sec
@@ -191,16 +191,16 @@ class AlphaBetaPruningAgentIterative:
         """
         board_array = game_state.board.to_matrix()
         piece_positions = StateSpaceGenerator.get_player_piece_positions(game_state)
-        player_marbles = piece_positions["player_max"]
-        opponent_marbles = piece_positions["player_min"]
+
 
         player_clump_value = 0
         opponent_clump_value = 0
 
-        for player_position in player_marbles:
-            player_clump_value += self.__get_clumping_value(player_position, board_array)
-        for opponent_position in opponent_marbles:
-            opponent_clump_value += self.__get_clumping_value(opponent_position, board_array)
+
+        # for player_position in player_marbles:
+        #     player_clump_value += self.__get_clumping_value(player_position, board_array)
+        # for opponent_position in opponent_marbles:
+        #     opponent_clump_value += self.__get_clumping_value(opponent_position, board_array)
 
         return float(opponent_clump_value - player_clump_value)
 
@@ -241,7 +241,7 @@ class AlphaBetaPruningAgentIterative:
         return value
 
     def read_t_table(self) -> dict[int, Move]:
-        t_table_file_name = "look_up_tables/master_t_table.json"
+        t_table_file_name = "look_up_tables/agent_ankit.json"
 
         if os.path.exists(t_table_file_name):
             with open(t_table_file_name, 'r') as file:
@@ -256,7 +256,7 @@ class AlphaBetaPruningAgentIterative:
             return {}
 
     def write_t_table(self):
-        t_table_file_name = "look_up_tables/master_t_table.json"
+        t_table_file_name = "look_up_tables/agent_ankit.json"
 
         with open(t_table_file_name, 'w') as file:
             # Add the new records from the t_table to the master table
@@ -282,11 +282,15 @@ near_Edge = -0.5
 
 MANHATTAN_WEIGHT_CONVERTED = [
     None, None, None, None, edge, edge, edge, edge, edge,
-    None, None, None, edge, (3, -3), (2, -3), (1, -3), (0, -3), edge,
-    None, None, edge, (3, -2), (2, -2), (1, -2), (0, -2), (-1, -2), edge,
-    None, edge, (3, -1), (2, -1), (1, -1), (0, -1), (-1, -1), (-2, -1), edge,
-    edge, (-3, 0), (-2, 0), (-1, 0), (0, 0), (1, 0), (2, 0), (3, 0), edge,
-    edge, (-2, 1), (-1, 1), (0, 1), (1, 1), (2, 1), (3, 1), edge, None,
-    edge, (-1, 2), (0, 2), (1, 2), (2, 2), (3, 2), edge, None, None,
-    edge, (0, 3), (1, 3), (2, 3), (3, 3), edge, None, None, None,
+    None, None, None, edge, near_Edge, near_Edge, near_Edge, near_Edge, edge,
+    None, None, edge, near_Edge, (2, -2), (1, -2), (0, -2), near_Edge, edge,
+    None, edge, near_Edge, (2, -1), (1, -1), (0, -1), (-1, -1), near_Edge, edge,
+    edge, near_Edge, (-2, 0), (-1, 0), (0, 0), (1, 0), (2, 0), near_Edge, edge,
+    edge, near_Edge, (-1, 1), (0, 1), (1, 1), (2, 1), near_Edge, edge, None,
+    edge, near_Edge, (0, 2), (1, 2), (2, 2), near_Edge, edge, None, None,
+    edge, near_Edge, near_Edge, near_Edge, near_Edge, edge, None, None, None,
     edge, edge, edge, edge, edge, None, None, None, None]
+
+agent = AlphaBetaPruningAgentAnkit(4)
+move = agent.iterative_deepening_search(GameState())
+
