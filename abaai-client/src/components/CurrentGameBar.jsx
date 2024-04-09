@@ -25,6 +25,7 @@ const CurrentGameBar = (props) => {
     resumeGame,
     resetGame,
     undoMove,
+    undoSignal,
     blackClock,
     whiteClock,
     onApplyMove,
@@ -55,16 +56,6 @@ const CurrentGameBar = (props) => {
     );
   }, [config]);
 
-  //for the take turn button
-  // const handleClockResume = () => {
-  //   if (!gameStarted) {
-  //     startGame();
-  //   } else {
-  //     toggleActivePlayer();
-  //     console.log("Resuming game"); // Placeholder action
-  //   }
-  // };
-
   const handlePlayerChange = () => {
     toggleActivePlayer();
     // Assuming activePlayer state changes, pause and resume clocks as necessary
@@ -83,6 +74,8 @@ const CurrentGameBar = (props) => {
         gameStarted={gameStarted}
         isActive={gameActive}
         resetClockSignal={resetClockSignal}
+        undoClock={undoSignal}
+        isAggregate={true}
       />
       <GameClock
         initialTime={config?.blackTimeLimit}
@@ -92,6 +85,8 @@ const CurrentGameBar = (props) => {
         gameStarted={gameStarted}
         isActive={gameActive}
         resetClockSignal={resetClockSignal}
+        undoClock={undoSignal}
+        isAggregate={true}
       />
 
       <GameControls

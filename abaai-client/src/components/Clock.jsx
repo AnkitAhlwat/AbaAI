@@ -3,8 +3,11 @@ import { useCountdown } from '../hooks/useCountdown';
 import { Box, Typography, Button } from '@mui/material';
 
 const GameClock = (props) => {
-  const { initialTime, isTurn, playerId, activePlayer, gameStarted, isActive, resetClockSignal} = props;
-  const { start: startClock, stop: stopClock, pause: pauseClock,  resume: resumeClock, currentTime, isRunning } = useCountdown(initialTime);
+  const { initialTime, isTurn, playerId, activePlayer, 
+    gameStarted, isActive, resetClockSignal, undoClock, isAggregate} = props;
+  const { start: startClock, stop: stopClock, pause: pauseClock,  
+    resume: resumeClock, currentTime, isRunning, 
+    recordMoveTime, getMoveTimes} = useCountdown(initialTime, true);
   const [initialStart , setInitialStart] = React.useState(true);
 
   //start the game clock
@@ -19,18 +22,21 @@ const GameClock = (props) => {
 
     //pause or resume the game clock
     useEffect(() => {
-      console.log("Use Effect for the game clock: ", isActive, isTurn, activePlayer)
+      // console.log("Use Effect for the game clock: ", isActive, isTurn, activePlayer)
       if (!isActive && isTurn)
         pauseClock();
       else if (isActive && isTurn)
         resumeClock();
       if (!isTurn)
         pauseClock();
+        if (!isAggregate) return;
+        recordMoveTime();
+        //add time taken to a stack, either in here or in useCountdown
     }, [isActive, isTurn, activePlayer]);
 
     //stop the game clock, currently same as reset
     useEffect(() => {
-        console.log("STOP CLOCK CALLED FOR: ", isActive, isTurn, activePlayer)
+        // console.log("STOP CLOCK CALLED FOR: ", isActive, isTurn, activePlayer)
         stopClock();
         setInitialStart(true);
         if (gameStarted && isActive && isTurn) {
@@ -38,6 +44,11 @@ const GameClock = (props) => {
           setInitialStart(false);
         }
     }, [resetClockSignal]);
+
+    //have the useCountdown hook pop the stack and add back the time to the clock
+    useEffect(() => {
+        getMoveTimes();
+    }, [undoClock]);
 
   return (
     <Box>
