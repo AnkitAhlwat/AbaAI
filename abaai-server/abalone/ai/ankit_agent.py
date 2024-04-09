@@ -37,9 +37,12 @@ class AlphaBetaPruningAgentAnkit:
 
         while depth <= self.max_depth:
             move, move_value = self.alpha_beta_pruning_search(depth, start_time)
-            if move_value >= current_best_move_value:
-                current_best_move = move
-                current_best_move_value = move_value
+
+            current_time = time.time()
+            if current_time - start_time >= self.max_time_sec:
+                break
+
+            current_best_move = move
             depth += 1
 
         self.t_table[hashed_state] = current_best_move
@@ -161,7 +164,7 @@ class AlphaBetaPruningAgentAnkit:
         if game_state.turn.value == self.MAX_PLAYER:
             return game_state.remaining_player_marbles - game_state.remaining_opponent_marbles
         else:
-            return (game_state.remaining_player_marbles - game_state.remaining_opponent_marbles) * -1
+            return game_state.remaining_opponent_marbles - game_state.remaining_player_marbles
 
     def terminal_test(self, game_state: GameState):
         """
@@ -176,10 +179,10 @@ class AlphaBetaPruningAgentAnkit:
                 return 10000
             return 0
         else:
-            if game_state.remaining_player_marbles < 9:
-                return +10000
             if game_state.remaining_opponent_marbles < 9:
                 return -10000
+            if game_state.remaining_player_marbles < 9:
+                return +10000
             return 0
 
     def clumping(
@@ -203,7 +206,7 @@ class AlphaBetaPruningAgentAnkit:
 
         return float(player_clump_value - opponent_clump_value)
 
-    def __get_clumping_value(self, position, board_array, player_value) -> int:
+    def __get_clumping_value(self, position:int, board_array:list[int], player_value:int) -> int:
         """
         Returns the number of pieces of the same color that are adjacent to the given position.
 
@@ -272,7 +275,8 @@ MANHATTAN_WEIGHT_CONVERTED_EDGE = [
     edge, near_Edge, near_Edge, near_Edge, near_Edge, edge, None, None, None,
     edge, edge, edge, edge, edge, None, None, None, None]
 
-start =time.time()
-agent = AlphaBetaPruningAgentAnkit(max_depth=4)
-agent.iterative_deepening_search(GameState(OptimizedBoard([[-1, -1, -1, -1, 0, 0, 0, 0, 2], [-1, -1, -1, 2, 2, 2, 2, 0, 2], [-1, -1, 0, 2, 2, 2, 2, 0, 0], [-1, 0, 0, 2, 1, 2, 2, 0, 0], [0, 0, 0, 2, 1, 1, 0, 0, 0], [0, 0, 1, 1, 1, 0, 0, 0, -1], [0, 1, 1, 1, 0, 0, 0, -1, -1], [1, 1, 0, 1, 0, 1, -1, -1, -1], [1, 0, 0, 0, 0, -1, -1, -1, -1]])))
-print(time.time()-start)
+# start = time.time()
+# agent = AlphaBetaPruningAgentAnkit(4)
+# move = agent.iterative_deepening_search(GameState(OptimizedBoard([[-1, -1, -1, -1, 0, 0, 0, 2, 2], [-1, -1, -1, 2, 0, 0, 0, 2, 2], [-1, -1, 0, 0, 2, 0, 2, 2, 0], [-1, 0, 0, 2, 1, 2, 2, 0, 0], [0, 0, 0, 1, 1, 2, 2, 0, 0], [0, 0, 1, 1, 1, 2, 0, 0, -1], [0, 1, 1, 1, 1, 1, 0, -1, -1], [0, 1, 0, 0, 0, 1, -1, -1, -1], [0, 1, 0, 0, 0, -1, -1, -1, -1]])))
+# print(time.time() - start)
+# print(move)

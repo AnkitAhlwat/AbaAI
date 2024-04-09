@@ -1,4 +1,5 @@
 from abalone.ai.ankit_agent import AlphaBetaPruningAgentAnkit
+from abalone.board import OptimizedBoard
 from abalone.state import GameState, GameStateUpdate
 from abalone.ai.game_playing_agent_revamped_iterative_deepening import AlphaBetaPruningAgentIterative
 from abalone.ai.game_playing_agent_revamped_iterative_deeping_no_clumping import AlphaBetaPruningAgentIterativeNoClumping
@@ -33,8 +34,8 @@ def simulate_agents(game_state: GameState, max_moves: int):
     print(game_state.turn)
     print(game_state.remaining_player_marbles)
     print(game_state.remaining_opponent_marbles)
-    agent1.write_t_table()
-    agent2.write_t_table()
+    # agent1.write_t_table()
+    # agent2.write_t_table()
 
 if __name__ == '__main__':
-    simulate_agents(GameState(), 50)
+    simulate_agents(GameState(OptimizedBoard([[-1, -1, -1, -1, 0, 0, 0, 2, 2], [-1, -1, -1, 2, 0, 0, 0, 2, 2], [-1, -1, 0, 0, 2, 0, 2, 2, 0], [-1, 0, 0, 2, 1, 2, 2, 0, 0], [0, 0, 0, 1, 1, 2, 2, 0, 0], [0, 0, 1, 1, 1, 2, 0, 0, -1], [0, 1, 1, 1, 1, 1, 0, -1, -1], [0, 1, 0, 0, 0, 1, -1, -1, -1], [0, 1, 0, 0, 0, -1, -1, -1, -1]])), 2)

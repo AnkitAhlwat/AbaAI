@@ -192,12 +192,18 @@ class Game:
                 )
             move = self._agent.iterative_deepening_search(self._current_game_state)
         else:
-            if self._white_agent is None:
-                self._white_agent = AlphaBetaPruningAgentIterativeNoClumping(
+            # if self._white_agent is None:
+            #     self._white_agent = AlphaBetaPruningAgentIterativeNoClumping(
+            #         max_depth=depth_limit,
+            #         max_time_sec=time_limit)
+            #
+            # move = self._white_agent.iterative_deepening_search(self._current_game_state)
+            if self._agent is None:
+                self._agent = AlphaBetaPruningAgentAnkit(
                     max_depth=depth_limit,
-                    max_time_sec=time_limit)
-
-            move = self._white_agent.iterative_deepening_search(self._current_game_state)
+                    max_time_sec=time_limit
+                )
+            move = self._agent.iterative_deepening_search(self._current_game_state)
 
         end_time = time.time()
         print("end time:", end_time)
