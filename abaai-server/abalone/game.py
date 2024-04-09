@@ -285,5 +285,5 @@ class Game:
             game_json["moves_stack"] = [str(move) for move in self._moves_stack.items]
             json.dump(game_json, game_file)
 
-        if isinstance(self._agent, AlphaBetaPruningAgentIterative):
+        if isinstance(self._agent, AlphaBetaPruningAgentAnkit):
             self._agent.write_t_table()
