@@ -9,7 +9,7 @@ from abalone.state import GameStateUpdate, GameState
 
 
 class AlphaBetaPruningAgentAnkit:
-    def __init__(self, max_depth: int, max_time_sec: int = 2000):
+    def __init__(self, max_depth: int, max_time_sec: float = 2000):
         self.max_depth = max_depth
         self.max_time_sec = max_time_sec
         self.game_state = None

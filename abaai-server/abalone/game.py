@@ -2,6 +2,7 @@ import json
 import os
 import time
 from datetime import datetime
+from random import choice
 
 from abalone.ai.ankit_agent import AlphaBetaPruningAgentAnkit
 from abalone.ai.game_playing_agent_revamped_iterative_deepening import AlphaBetaPruningAgentIterative
@@ -162,42 +163,28 @@ class Game:
         return self.__to_json()
 
     def get_ai_move(self) -> dict:
-        # if self._game_options.is_black_ai and self._is_first_move:
-        #     self._is_first_move = False
-        #     # random move for first move
-        #     all_moves = StateSpaceGenerator.generate_all_possible_moves(self._current_game_state)
-        #
-        #     return {
-        #         "move": choice(all_moves).to_json(),
-        #         "time_taken": 0.00
-        #     }
-        # else:
-        start_time = time.time()
-        print("start time:", start_time)
+        if self._game_options.is_black_ai and self._is_first_move:
+            self._is_first_move = False
+            # random move for first move
+            all_moves = StateSpaceGenerator.generate_all_possible_moves(self._current_game_state)
 
-        # manually set the depth limit
-        depth_limit = 4
-
-        # set the time limit for the AI based on config
-        if self._current_game_state.turn == Piece.BLACK:
-            time_limit = self._game_options.black_turn_time
+            return {
+                "move": choice(all_moves).to_json(),
+                "time_taken": 0.00
+            }
         else:
-            time_limit = self._game_options.white_turn_time
+            start_time = time.time()
+            print("start time:", start_time)
 
-        if self._current_game_state.turn == Piece.BLACK:
-            if self._agent is None:
-                self._agent = AlphaBetaPruningAgentAnkit(
-                    max_depth=depth_limit,
-                    max_time_sec=time_limit
-                )
-            move = self._agent.iterative_deepening_search(self._current_game_state)
-        else:
-            # if self._white_agent is None:
-            #     self._white_agent = AlphaBetaPruningAgentIterativeNoClumping(
-            #         max_depth=depth_limit,
-            #         max_time_sec=time_limit)
-            #
-            # move = self._white_agent.iterative_deepening_search(self._current_game_state)
+            # manually set the depth limit
+            depth_limit = 4
+
+            # set the time limit for the AI based on config
+            if self._current_game_state.turn == Piece.BLACK:
+                time_limit = self._game_options.black_turn_time - 0.2
+            else:
+                time_limit = self._game_options.white_turn_time - 0.2
+
             if self._agent is None:
                 self._agent = AlphaBetaPruningAgentAnkit(
                     max_depth=depth_limit,
@@ -205,16 +192,16 @@ class Game:
                 )
             move = self._agent.iterative_deepening_search(self._current_game_state)
 
-        end_time = time.time()
-        print("end time:", end_time)
+            end_time = time.time()
+            print("end time:", end_time)
 
-        time_taken = end_time - start_time
-        print("time taken:", time_taken, "seconds")
+            time_taken = end_time - start_time
+            print("time taken:", time_taken, "seconds")
 
-        return {
-            "move": move.to_json(),
-            "time_taken": float(f"{time_taken:.2f}")  # round to 2 decimal places
-        }
+            return {
+                "move": move.to_json(),
+                "time_taken": float(f"{time_taken:.2f}")  # round to 2 decimal places
+            }
 
     def reset_game(self) -> dict:
         """
@@ -239,6 +226,9 @@ class Game:
         # reset the board to be the selected board
         board = OptimizedBoard(self._game_options.board_layout.value)
         self._current_game_state = GameState(board)
+
+        # reset the agent
+        self._agent = None
 
         return self.__to_json()
 
