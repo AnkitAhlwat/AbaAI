@@ -7,7 +7,7 @@ const GameClock = (props) => {
     gameStarted, isActive, resetClockSignal, undoClock, isAggregate} = props;
   const { start: startClock, stop: stopClock, pause: pauseClock,  
     resume: resumeClock, currentTime, isRunning, 
-    recordMoveTime, getMoveTimes} = useCountdown(initialTime, true);
+    recordMoveTime, undoLastMoveTime} = useCountdown(initialTime, true);
   const [initialStart , setInitialStart] = React.useState(true);
 
   //start the game clock
@@ -27,12 +27,16 @@ const GameClock = (props) => {
         pauseClock();
       else if (isActive && isTurn)
         resumeClock();
-      if (!isTurn)
+      if (!isTurn) {   // Pause the clock if it's not the player's turn
         pauseClock();
-        if (!isAggregate) return;
-        recordMoveTime();
+        // if (!isAggregate) return;
+        // console.log("Recording move time for player: ", playerId)
+        // console.log("Activeplayer: ", activePlayer)
+        // console.log("IsTurn: ", isTurn)
+        // recordMoveTime();
+      }
         //add time taken to a stack, either in here or in useCountdown
-    }, [isActive, isTurn, activePlayer]);
+    }, [isTurn, isActive]);
 
     //stop the game clock, currently same as reset
     useEffect(() => {
@@ -45,9 +49,23 @@ const GameClock = (props) => {
         }
     }, [resetClockSignal]);
 
-    //have the useCountdown hook pop the stack and add back the time to the clock
+    //have the useCountdown hook pop the stack and add back the time to the clock (old)
+    //reset the clock if it is a turn clock
     useEffect(() => {
-        getMoveTimes();
+        if (!isAggregate){
+          stopClock();
+          setInitialStart(true);
+          if (gameStarted && isActive && isTurn) {
+            startClock(); // Immediately start the clock for the new turn.
+            setInitialStart(false);
+          }
+        }
+      // console.log("In CLOCK (undoLastMoveTime) turn: ", isTurn)
+      // console.log("Activeplayer: ", activePlayer)
+      // if (gameStarted && !activePlayer){
+      //   console.log("Undoing last move for player: ", playerId)
+      //   undoLastMoveTime();
+      // }
     }, [undoClock]);
 
   return (

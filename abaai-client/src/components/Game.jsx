@@ -231,6 +231,7 @@ const Game = () => {
     const gameStatus = await GameService.postUndoLastMove();
     setUndoSignal((prev) => prev + 1);
     updateGame(gameStatus);
+    toggleTurn();
 
     // if the move that was undone was the ai's move, then fetch the ai move again
     if (
