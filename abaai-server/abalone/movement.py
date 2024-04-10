@@ -80,7 +80,9 @@ class Move:
             player: Piece,
             previous_opponent_positions: list[Position] = None,
             next_opponent_positions: list[Position] = None,
+            # time_taken: float = None
     ):
+        # self.time_taken = time_taken
         self._previous_player_positions = previous_player_positions
         self._next_player_positions = next_player_positions
         self._player = player

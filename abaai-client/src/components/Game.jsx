@@ -20,6 +20,7 @@ const Game = () => {
   const [isGameConfigured, setIsGameConfigured] = useState(false); // Tracks whether game has been configured
   const [resetClockSignal, setResetClockSignal] = useState(0);
   const [resetTurnClockSignal, setResetTurnClockSignal] = useState(0);
+  const [undoSignal, setUndoSignal] = useState(0); // Tracks whether to undo the last move for the clocks
   const [config, setConfig] = useState(null); // Tracks configuration options
   const [numCapturedBlackMarbles, setNumCapturedBlackMarbles] = useState(0); // Tracks number of black marbles captured
   const [numCapturedWhiteMarbles, setNumCapturedWhiteMarbles] = useState(0); // Tracks number of white marbles captured
@@ -174,20 +175,6 @@ const Game = () => {
     setResetTurnClockSignal((prev) => prev + 1);
   };
 
-  //undo the last move
-  const undoMove = (player) => {
-    //undo the last move logic here
-    //reset the turn clocks
-    //reset the board to the last state
-    //add back the time that the last turn took to the previous player's clock
-    //need to be able to do this multiple times
-    if (player === "black") {
-      setBlackClock((clock) => ({ ...clock, isRunning: false }));
-    } else {
-      setWhiteClock((clock) => ({ ...clock, isRunning: false }));
-    }
-  };
-
   //logic to start the game and black game clock
   const startGame = useCallback(async () => {
     if (!gameStarted) {
@@ -242,7 +229,9 @@ const Game = () => {
   // Handles move undo
   const onUndoLastMove = useCallback(async () => {
     const gameStatus = await GameService.postUndoLastMove();
+    setUndoSignal((prev) => prev + 1);
     updateGame(gameStatus);
+    toggleTurn();
 
     // if the move that was undone was the ai's move, then fetch the ai move again
     if (
@@ -260,15 +249,6 @@ const Game = () => {
       setWhiteAiMove(null);
     }
   }, [getAiMove, updateGame]);
-
-  // Handles game reset
-  const onResetGame = useCallback(async () => {
-    console.log("resetting game");
-    const responseData = await GameService.resetGame();
-    console.log(responseData);
-    setBoardArray(responseData.board);
-    setMovesStack(responseData.moves_stack);
-  }, [setBoardArray]);
 
   // ##################### Effects #####################
   useEffect(() => {
@@ -360,6 +340,7 @@ const Game = () => {
           resumeGame={resumeGame}
           resetGame={resetGame}
           undoMove={onUndoLastMove}
+          undoSignal={undoSignal}
           blackClock={blackClock}
           whiteClock={whiteClock}
           updateGame={updateGame}

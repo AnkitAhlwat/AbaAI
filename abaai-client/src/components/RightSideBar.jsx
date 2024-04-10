@@ -29,6 +29,7 @@ const RightSideBar = (props) => {
     resumeGame,
     resetGame,
     undoMove,
+    undoSignal,
     blackClock,
     whiteClock,
     resetClockSignal,
@@ -96,6 +97,7 @@ const RightSideBar = (props) => {
             resumeGame={resumeGame}
             resetGame={resetGame}
             undoMove={undoMove}
+            undoSignal={undoSignal}
             blackClock={blackClock}
             whiteClock={whiteClock}
             onApplyMove={onApplyMove}

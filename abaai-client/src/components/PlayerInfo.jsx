@@ -123,6 +123,8 @@ const PlayerInfo = (props) => {
         gameStarted={gameStarted}
         isActive={isGameActive}
         resetClockSignal={resetClockSignal}
+        undoClock={null}
+        isAggregate={false}
       />
       </Grid>
     </Grid>
