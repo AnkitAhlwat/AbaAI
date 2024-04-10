@@ -4,7 +4,7 @@ import time
 
 from abalone.ai.cython.cython import StateSpaceGenerator
 from abalone.board import OptimizedBoard
-from abalone.movement import Move
+from abalone.movement_optimized import Move
 from abalone.state import GameStateUpdate, GameState
 
 
@@ -293,8 +293,9 @@ MANHATTAN_WEIGHT_CONVERTED_FLAT = [
     4, 5, 6, 7, 8, None, None, None, None]
 
 
-# start = time.time()
-# agent = AlphaBetaPruningAgentAnkit(4)
-# move = agent.iterative_deepening_search(GameState(OptimizedBoard([[-1, -1, -1, -1, 0, 0, 0, 2, 2], [-1, -1, -1, 2, 0, 0, 0, 2, 2], [-1, -1, 0, 0, 2, 0, 2, 2, 0], [-1, 0, 0, 2, 1, 2, 2, 0, 0], [0, 0, 0, 1, 1, 2, 2, 0, 0], [0, 0, 1, 1, 1, 2, 0, 0, -1], [0, 1, 1, 1, 1, 1, 0, -1, -1], [0, 1, 0, 0, 0, 1, -1, -1, -1], [0, 1, 0, 0, 0, -1, -1, -1, -1]])))
-# print(time.time() - start)
-# print(move)
+start = time.time()
+agent = AlphaBetaPruningAgentAnkit(4)
+move = agent.iterative_deepening_search(GameState(OptimizedBoard([[-1, -1, -1, -1, 0, 0, 0, 2, 2], [-1, -1, -1, 2, 0, 0, 0, 2, 2], [-1, -1, 0, 0, 2, 0, 2, 2, 0], [-1, 0, 0, 2, 1, 2, 2, 0, 0], [0, 0, 0, 1, 1, 2, 2, 0, 0], [0, 0, 1, 1, 1, 2, 0, 0, -1], [0, 1, 1, 1, 1, 1, 0, -1, -1], [0, 1, 0, 0, 0, 1, -1, -1, -1], [0, 1, 0, 0, 0, -1, -1, -1, -1]])))
+print(time.time() - start)
+agent.write_t_table()
+print(move)
