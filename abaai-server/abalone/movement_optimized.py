@@ -28,7 +28,7 @@ class Move:
 
     def __lt__(self, other):
         if len(self.next_opponent_positions) != len(other.next_opponent_positions):
-            return len(self.next_opponent_positions) < len(other.next_opponent_positions)
+            return len(self.next_opponent_positions) > len(other.next_opponent_positions)
         return len(self.previous_player_positions) > len(other.previous_player_positions)
 
     @property
