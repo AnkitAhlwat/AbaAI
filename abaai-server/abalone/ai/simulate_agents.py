@@ -50,10 +50,12 @@ def train_agent():
     game_state = GameState(OptimizedBoard(BoardLayout.BELGIAN_DAISY.value))
     agent1 = AlphaBetaPruningAgentAnkit(max_depth=4)
     all_moves = StateSpaceGenerator.generate_all_possible_moves(game_state)
-    for i in range(len(sorted(all_moves))//10):
+    for i in range(len(sorted(all_moves))):
+        game_state = GameState(OptimizedBoard(BoardLayout.BELGIAN_DAISY.value))
+        agent1 = AlphaBetaPruningAgentAnkit(max_depth=4)
         move = all_moves[i]
         game_state = GameStateUpdate(game_state, move).resulting_state
-        for i in range(20):
+        for i in range(5):
             best_move = agent1.iterative_deepening_search(game_state)
             print(f'{game_state.turn.value} {best_move}')
             game_state = GameStateUpdate(game_state, best_move).resulting_state
