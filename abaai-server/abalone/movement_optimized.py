@@ -19,15 +19,8 @@ class Move:
         self._next_player_positions = next_player_positions
         self._player = player
 
-        if previous_opponent_positions is None:
-            self._previous_opponent_positions = []
-        else:
-            self._previous_opponent_positions = previous_opponent_positions
-
-        if next_opponent_positions is None:
-            self._next_opponent_positions = []
-        else:
-            self._next_opponent_positions = next_opponent_positions
+        self._previous_opponent_positions = previous_opponent_positions if previous_opponent_positions is not None else []
+        self._next_opponent_positions = next_opponent_positions if next_opponent_positions is not None else []
 
     def __str__(self):
         return f'Player:{self.previous_player_positions} -> {self.next_player_positions}\n' \
@@ -35,7 +28,7 @@ class Move:
 
     def __lt__(self, other):
         if len(self.next_opponent_positions) != len(other.next_opponent_positions):
-            return len(self.next_opponent_positions) > len(other.next_opponent_positions)
+            return len(self.next_opponent_positions) < len(other.next_opponent_positions)
         return len(self.previous_player_positions) > len(other.previous_player_positions)
 
     @property
