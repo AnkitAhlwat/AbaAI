@@ -4,11 +4,7 @@ import time
 from datetime import datetime
 from random import choice
 
-# from abalone.ai.ankit_agent import AlphaBetaPruningAgentAnkit
 from abalone.ai.cython.cython_clumping_agent import AlphaBetaPruningAgentAnkit
-from abalone.ai.game_playing_agent_revamped_iterative_deepening import AlphaBetaPruningAgentIterative
-from abalone.ai.game_playing_agent_revamped_iterative_deeping_no_clumping import \
-    AlphaBetaPruningAgentIterativeNoClumping
 from abalone.ai.old_files.state_space_generator import StateSpaceGenerator
 from abalone.board import OptimizedBoard, BoardLayout
 from abalone.movement import Move, Piece

@@ -3,7 +3,7 @@ import os
 import time
 
 from abalone.ai.cython.cython import StateSpaceGenerator
-from abalone.board import OptimizedBoard
+from abalone.board import OptimizedBoard, BoardLayout
 from abalone.movement_optimized import Move
 from abalone.state import GameStateUpdate, GameState
 
@@ -112,7 +112,6 @@ class AlphaBetaPruningAgentAnkit:
             value = min(value, self.max_value(successor_state, alpha, beta, depth - 1, start_time))
             beta = min(beta, value)
             if value <= alpha:
-                # self.min_prunes += 1
                 return value
 
         return value
@@ -125,12 +124,33 @@ class AlphaBetaPruningAgentAnkit:
         score = 0
         score += self.clumping(game_state)
         score += 10 * self.board_control_flat(game_state, MANHATTAN_WEIGHT_CONVERTED_FLAT)
+        # score += 100 * self.edge(game_state, EDGE)
         score += 10000 * self.piece_advantage(game_state)
         score += 10000000 * self.terminal_test(game_state)
 
         self.evaluation_t_table[hashed_state] = score
         return score
 
+    def edge(self, game_state, lookup_table):
+        """
+        A zero-sum heuristic for evaluating the board state based on the distance of the player's/opponents marbles from
+        the center.
+        :param game_state: The current game state
+        :param lookup_table: A lookup table.
+        :return: The score of the board state based on the distance of the player's/opponents marbles from the center.
+        """
+        player_score = 0
+        opponent_score = 0
+
+        for index, value in enumerate(game_state.board.array):
+            if value in (1, 2):
+                distance = lookup_table[index]
+                if value == self.MAX_PLAYER:
+                    player_score += distance
+                else:
+                    opponent_score += distance
+
+        return player_score - opponent_score
     def board_control_flat(self, game_state, lookup_table):
         """
         A zero-sum heuristic for evaluating the board state based on the distance of the player's/opponents marbles from
@@ -292,10 +312,20 @@ MANHATTAN_WEIGHT_CONVERTED_FLAT = [
     4, 3, 4, 5, 6, 7, None, None, None,
     4, 5, 6, 7, 8, None, None, None, None]
 
-
+EDGE =[-999, -999, -999, -999, -5, -5, -5, -5, -5,
+       -999, -999, -999, -5, -2.5, -2.5, -2.5, -2.5, -5,
+       -999, -999, -5, -2.5, 0, 0, 0, -2.5, -5,
+       -999, -5, -2.5, 0, 0, 0, 0, -2.5, -5,
+       -5, -2.5, 0, 0, 0, 0, 0, -2.5, -5,
+       -5, -2.5, 0, 0, 0, 0, -2.5, -5, -999,
+       -5, -2.5, 0, 0, 0, -2.5, -5, -999, -999,
+       -5, -2.5, -2.5, -2.5, -2.5, -5, -999, -999, -999,
+       -5, -5, -5, -5, -5, -999, -999, -999, -999]
+#
 # start = time.time()
 # agent = AlphaBetaPruningAgentAnkit(4)
-# move = agent.iterative_deepening_search(GameState(OptimizedBoard([[-1, -1, -1, -1, 0, 0, 0, 2, 2], [-1, -1, -1, 2, 0, 0, 0, 2, 2], [-1, -1, 0, 0, 2, 0, 2, 2, 0], [-1, 0, 0, 2, 1, 2, 2, 0, 0], [0, 0, 0, 1, 1, 2, 2, 0, 0], [0, 0, 1, 1, 1, 2, 0, 0, -1], [0, 1, 1, 1, 1, 1, 0, -1, -1], [0, 1, 0, 0, 0, 1, -1, -1, -1], [0, 1, 0, 0, 0, -1, -1, -1, -1]])))
+# # move = agent.iterative_deepening_search(GameState(OptimizedBoard([[-1, -1, -1, -1, 0, 0, 0, 2, 2], [-1, -1, -1, 2, 0, 0, 0, 2, 2], [-1, -1, 0, 0, 2, 0, 2, 2, 0], [-1, 0, 0, 2, 1, 2, 2, 0, 0], [0, 0, 0, 1, 1, 2, 2, 0, 0], [0, 0, 1, 1, 1, 2, 0, 0, -1], [0, 1, 1, 1, 1, 1, 0, -1, -1], [0, 1, 0, 0, 0, 1, -1, -1, -1], [0, 1, 0, 0, 0, -1, -1, -1, -1]])))
+# move = agent.iterative_deepening_search(GameState(OptimizedBoard(BoardLayout.BELGIAN_DAISY.value)))
 # print(time.time() - start)
-# agent.write_t_table()
+# # agent.write_t_table()
 # print(move)

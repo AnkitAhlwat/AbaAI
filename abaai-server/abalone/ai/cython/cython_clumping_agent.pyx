@@ -125,8 +125,9 @@ cdef class AlphaBetaPruningAgentAnkit:
             return self.evaluation_t_table[hashed_state]
 
         score = 0
-        score += self.clumping(game_state)
-        score += 10 * self.board_control_flat(game_state, MANHATTAN_WEIGHT_CONVERTED_FLAT)
+        score += 2* self.clumping(game_state)
+        score +=  self.board_control_flat(game_state, MANHATTAN_WEIGHT_CONVERTED_FLAT)
+        score += 10 * self.edge(game_state, EDGE)
         score += 10000 * self.piece_advantage(game_state)
         score += 10000000 * self.terminal_test(game_state)
 
@@ -151,6 +152,29 @@ cdef class AlphaBetaPruningAgentAnkit:
 
         return opponent_score - player_score
 
+    def edge(self, game_state, lookup_table):
+        """
+        A zero-sum heuristic for evaluating the board state based on the distance of the player's/opponents marbles from
+        the center.
+        :param game_state: The current game state
+        :param lookup_table: A lookup table.
+        :return: The score of the board state based on the distance of the player's/opponents marbles from the center.
+        """
+        cdef int player_score = 0
+        cdef int opponent_score = 0
+        cdef int index
+        cdef int value
+        cdef int distance
+
+        for index, value in enumerate(game_state.board.array):
+            if value in (1, 2):
+                distance = lookup_table[index]
+                if value == self.MAX_PLAYER:
+                    player_score += distance
+                else:
+                    opponent_score += distance
+
+        return player_score - opponent_score
     def piece_advantage(self, game_state):
         if game_state.turn.value == self.MAX_PLAYER:
             return game_state.remaining_player_marbles - game_state.remaining_opponent_marbles
@@ -242,3 +266,13 @@ MANHATTAN_WEIGHT_CONVERTED_FLAT = [
     4, 3, 2, 3, 4, 5, 6, None, None,
     4, 3, 4, 5, 6, 7, None, None, None,
     4, 5, 6, 7, 8, None, None, None, None]
+
+EDGE =[-999, -999, -999, -999, -5, -5, -5, -5, -5,
+       -999, -999, -999, -5, -2.5, -2.5, -2.5, -2.5, -5,
+       -999, -999, -5, -2.5, 0, 0, 0, -2.5, -5,
+       -999, -5, -2.5, 0, 0, 0, 0, -2.5, -5,
+       -5, -2.5, 0, 0, 0, 0, 0, -2.5, -5,
+       -5, -2.5, 0, 0, 0, 0, -2.5, -5, -999,
+       -5, -2.5, 0, 0, 0, -2.5, -5, -999, -999,
+       -5, -2.5, -2.5, -2.5, -2.5, -5, -999, -999, -999,
+       -5, -5, -5, -5, -5, -999, -999, -999, -999]
