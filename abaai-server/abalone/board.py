@@ -98,16 +98,16 @@ class OptimizedBoard:
 
     def make_move(self, move_obj):
         for position in move_obj.previous_player_positions:
-            self.set_space_state(position.x, position.y, SpaceState.EMPTY)
+            self.set_space_state(position[0], position[1], SpaceState.EMPTY)
 
         for position in move_obj.previous_opponent_positions:
-            self.set_space_state(position.x, position.y, SpaceState.EMPTY)
+            self.set_space_state(position[0], position[1], SpaceState.EMPTY)
 
         for position in move_obj.next_player_positions:
-            self.set_space_state(position.x, position.y, SpaceState(move_obj.player.value))
+            self.set_space_state(position[0], position[1], SpaceState(move_obj.player.value))
 
         for position in move_obj.next_opponent_positions:
-            self.set_space_state(position.x, position.y, SpaceState(3 - move_obj.player.value))
+            self.set_space_state(position[0], position[1], SpaceState(3 - move_obj.player.value))
 
     def undo_move(self, move_obj):
         for position in move_obj.next_player_positions:

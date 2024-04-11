@@ -20,14 +20,16 @@ const Game = () => {
   const [isGameConfigured, setIsGameConfigured] = useState(false); // Tracks whether game has been configured
   const [resetClockSignal, setResetClockSignal] = useState(0);
   const [resetTurnClockSignal, setResetTurnClockSignal] = useState(0);
+  const [undoSignal, setUndoSignal] = useState(0); // Tracks whether to undo the last move for the clocks
   const [config, setConfig] = useState(null); // Tracks configuration options
   const [numCapturedBlackMarbles, setNumCapturedBlackMarbles] = useState(0); // Tracks number of black marbles captured
   const [numCapturedWhiteMarbles, setNumCapturedWhiteMarbles] = useState(0); // Tracks number of white marbles captured
   const [currentTurn, setCurrentTurn] = useState(0); // Tracks current turn
-  const [blackMoveTimeRemaining, setBlackMoveTimeRemaining] = useState(10); // Tracks black player move time remaining
+  const [blackMoveTimeRemaining, setBlackMoveTimeRemaining] = useState(0); // Tracks black player move time remaining
   const [whiteMoveTimeRemaining, setWhiteMoveTimeRemaining] = useState(0); // Tracks white player move time remaining
   const [blackMovesRemaining, setBlackMovesRemaining] = useState(0); // Tracks black player moves remaining
   const [whiteMovesRemaining, setWhiteMovesRemaining] = useState(0); // Tracks white player moves remaining
+  const [prevActivePlayer, setPrevActivePlayer] = useState(null); // Tracks previous player turn
   //Defines aggregate clock states for each player, temporary
   const [blackClock, setBlackClock] = useState({
     time: 180,
@@ -74,6 +76,10 @@ const Game = () => {
       // Set the move time remaining back to full time
       setBlackMoveTimeRemaining(gameStatus.game_options.blackTimeLimit);
       setWhiteMoveTimeRemaining(gameStatus.game_options.whiteTimeLimit);
+
+      // Sets the number of moves remaining
+      setBlackMovesRemaining(gameStatus.moves_remaining[0]);
+    setWhiteMovesRemaining(gameStatus.moves_remaining[1]);
     },
     [setBoardArray]
   );
@@ -81,8 +87,6 @@ const Game = () => {
   const onSubmitConfig = useCallback(async () => {
     const gameStatus = await GameService.postConfig(config);
     updateGame(gameStatus);
-    setBlackMovesRemaining(gameStatus.game_options.moveLimit);
-    setWhiteMovesRemaining(gameStatus.game_options.moveLimit);
   }, [config, updateGame]);
 
   const getAiMove = useCallback(async (gameStatus) => {
@@ -95,6 +99,7 @@ const Game = () => {
         gameStatus.game_options.whitePlayer === "Computer")
     ) {
       const aiMove = await GameService.getAiMoveForCurrentState();
+      pauseTurn();
 
       if (gameStatus.game_state.turn === 1) {
         setBlackAiMove(aiMove);
@@ -107,8 +112,13 @@ const Game = () => {
   }, []);
 
   const toggleTurn = () => {
-    setActivePlayer((prev) => (prev === "black" ? "white" : "black"));
-    setResetTurnClockSignal((prev) => prev + 1);
+    if (!activePlayer) {
+      setActivePlayer(prevActivePlayer === "black" ? "white" : "black");
+      setPrevActivePlayer(null);
+    } else {
+      setActivePlayer(prev => (prev === "black" ? "white" : "black"));
+      setResetTurnClockSignal(prev => prev + 1); 
+    }
   };
 
   // Pause the game
@@ -119,6 +129,12 @@ const Game = () => {
     } else {
       setWhiteClock((clock) => ({ ...clock, isRunning: false }));
     }
+  };
+
+  //pause the timers after an ai move has returned by setting the active turn to null
+  const pauseTurn = () => {
+    setPrevActivePlayer(activePlayer);
+    setActivePlayer(null);
   };
 
   // Resume Game
@@ -157,20 +173,6 @@ const Game = () => {
     setIsGameActive(false);
     setResetClockSignal((prev) => prev + 1);
     setResetTurnClockSignal((prev) => prev + 1);
-  };
-
-  //undo the last move
-  const undoMove = (player) => {
-    //undo the last move logic here
-    //reset the turn clocks
-    //reset the board to the last state
-    //add back the time that the last turn took to the previous player's clock
-    //need to be able to do this multiple times
-    if (player === "black") {
-      setBlackClock((clock) => ({ ...clock, isRunning: false }));
-    } else {
-      setWhiteClock((clock) => ({ ...clock, isRunning: false }));
-    }
   };
 
   //logic to start the game and black game clock
@@ -227,7 +229,9 @@ const Game = () => {
   // Handles move undo
   const onUndoLastMove = useCallback(async () => {
     const gameStatus = await GameService.postUndoLastMove();
+    setUndoSignal((prev) => prev + 1);
     updateGame(gameStatus);
+    toggleTurn();
 
     // if the move that was undone was the ai's move, then fetch the ai move again
     if (
@@ -245,15 +249,6 @@ const Game = () => {
       setWhiteAiMove(null);
     }
   }, [getAiMove, updateGame]);
-
-  // Handles game reset
-  const onResetGame = useCallback(async () => {
-    console.log("resetting game");
-    const responseData = await GameService.resetGame();
-    console.log(responseData);
-    setBoardArray(responseData.board);
-    setMovesStack(responseData.moves_stack);
-  }, [setBoardArray]);
 
   // ##################### Effects #####################
   useEffect(() => {
@@ -345,6 +340,7 @@ const Game = () => {
           resumeGame={resumeGame}
           resetGame={resetGame}
           undoMove={onUndoLastMove}
+          undoSignal={undoSignal}
           blackClock={blackClock}
           whiteClock={whiteClock}
           updateGame={updateGame}

@@ -1,3 +1,5 @@
+import atexit
+
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
@@ -71,4 +73,7 @@ def possible_moves():
 
 
 if __name__ == "__main__":
+    # register the at exit function
+    atexit.register(app.game.record_game)
+
     app.run()

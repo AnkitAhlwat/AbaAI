@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 
-export const useCountdown = (totalSeconds) => {
+export const useCountdown = (totalSeconds, isAggregate = false) => {
   const [isRunning, setIsRunning] = useState(false);
   const [currentTime, setCurrentTime] = useState('');
   const startTimeRef = useRef(0);
@@ -8,6 +8,9 @@ export const useCountdown = (totalSeconds) => {
   const pauseStartTimeRef = useRef(0);
   const requestRef = useRef();
   const totalMilliseconds = totalSeconds * 1000;
+  const moveTimesStack = isAggregate ? useRef([]) : null;  //tracks if this is an aggregate timer for undo functionality
+  const moveDuration = useRef(0);
+  const allMoveDuration = useRef(0); //tracks all move duration for the game
 
   const formatTime = useCallback((milliseconds) => {
     let totalSeconds = milliseconds / 1000;
@@ -53,6 +56,8 @@ export const useCountdown = (totalSeconds) => {
     startTimeRef.current = 0;
     elapsedPauseTimeRef.current = 0;
     pauseStartTimeRef.current = 0;
+    moveDuration.current = 0;
+    moveTimesStack.current = [];
     setCurrentTime(formatTime(totalMilliseconds)); // Optionally reset the displayed time
   }, [formatTime, totalMilliseconds]);
 
@@ -62,6 +67,8 @@ export const useCountdown = (totalSeconds) => {
       setIsRunning(false);
       pauseStartTimeRef.current = Date.now();
       cancelAnimationFrame(requestRef.current);
+      // moveDuration.current += Date.now() - startTimeRef.current - elapsedPauseTimeRef.current - allMoveDuration.current;
+      allMoveDuration.current += moveDuration.current;
     }
   }, [isRunning]);
 
@@ -74,10 +81,25 @@ export const useCountdown = (totalSeconds) => {
     }
   }, [isRunning]);
 
+  //record the move time to be added to a stack
+  const recordMoveTime = useCallback(() => { 
+    console.log("Recording move time: ", moveDuration.current)
+    moveTimesStack.current.push(moveDuration.current);
+    moveDuration.current = 0; 
+  }, [isAggregate]);
+
+  //undo the last move time from the stack
+  const undoLastMoveTime = useCallback(() => {
+    const lastMoveTime = moveTimesStack.current.pop();
+    console.log("Last Move Time: ", lastMoveTime)
+    const currentMilliseconds = getRemainingMilliseconds() + lastMoveTime;
+    setCurrentTime(formatTime(currentMilliseconds));
+}, [getRemainingMilliseconds, formatTime, isAggregate]);
+
   // Initialize currentTime with the formatted total time
   useEffect(() => {
     setCurrentTime(formatTime(totalMilliseconds));
   }, [totalMilliseconds, formatTime]);
 
-  return { start, stop, pause, resume, currentTime, isRunning };
+  return { start, stop, pause, resume, currentTime, isRunning, recordMoveTime, undoLastMoveTime};
 };

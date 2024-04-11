@@ -80,7 +80,9 @@ class Move:
             player: Piece,
             previous_opponent_positions: list[Position] = None,
             next_opponent_positions: list[Position] = None,
+            # time_taken: float = None
     ):
+        # self.time_taken = time_taken
         self._previous_player_positions = previous_player_positions
         self._next_player_positions = next_player_positions
         self._player = player
@@ -123,6 +125,25 @@ class Move:
     @property
     def player(self):
         return self._player
+
+    @classmethod
+    def from_json(cls, json_data):
+        previous_player_positions = [Position(position['x'], position['y']) for position in
+                                     json_data['previous_player_positions']]
+        next_player_positions = [Position(position['x'], position['y']) for position in
+                                 json_data['next_player_positions']]
+        previous_opponent_positions = [Position(position['x'], position['y']) for position in
+                                       json_data['previous_opponent_positions']]
+        next_opponent_positions = [Position(position['x'], position['y']) for position in
+                                   json_data['next_opponent_positions']]
+        player = Piece(json_data['player'])
+        return cls(
+            previous_player_positions,
+            next_player_positions,
+            player,
+            previous_opponent_positions,
+            next_opponent_positions
+        )
 
     def to_json(self):
         return {

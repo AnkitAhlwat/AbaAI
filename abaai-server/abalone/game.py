@@ -1,9 +1,15 @@
+import json
+import os
 import time
+from datetime import datetime
 from random import choice
 
-from abalone.ai.game_playing_agent import AlphaBetaPruningAgent
-from abalone.ai.game_playing_agent_revamped import alphaBetaPruningAgent
-from abalone.ai.state_space_generator import StateSpaceGenerator
+# from abalone.ai.ankit_agent import AlphaBetaPruningAgentAnkit
+from abalone.ai.cython.cython_clumping_agent import AlphaBetaPruningAgentAnkit
+from abalone.ai.game_playing_agent_revamped_iterative_deepening import AlphaBetaPruningAgentIterative
+from abalone.ai.game_playing_agent_revamped_iterative_deeping_no_clumping import \
+    AlphaBetaPruningAgentIterativeNoClumping
+from abalone.ai.old_files.state_space_generator import StateSpaceGenerator
 from abalone.board import OptimizedBoard, BoardLayout
 from abalone.movement import Move, Piece
 from abalone.stack import Stack
@@ -108,14 +114,19 @@ class Game:
         self._game_options = GameOptions()
         self._moves_stack = Stack()
         self._current_game_state = GameState(OptimizedBoard(self._game_options.board_layout.value))
+        self._moves_remaining = [0, 0]
         self._game_started = False
         self._game_configured = False
         self._is_first_move = True
 
+        self._agent = None
+        self._white_agent = None
+
     def set_up(self, config) -> dict:
         self._game_options = GameOptions.from_json(config)
         self._current_game_state = GameState(OptimizedBoard(self._game_options.board_layout.value), Piece.BLACK)
-
+        move_limit = self._game_options.move_limit
+        self._moves_remaining = [move_limit, move_limit]
         self._game_configured = True
 
         return self.__to_json()
@@ -140,12 +151,14 @@ class Game:
 
         # make the move and push it to the stack
         self._moves_stack.push(move_obj)
+        self._moves_remaining[0 if self._current_game_state.turn == Piece.BLACK else 1] -= 1
         self._current_game_state = GameStateUpdate(self._current_game_state, move_obj).resulting_state
 
         return self.__to_json()
 
     def undo_move(self) -> dict:
         move = self._moves_stack.pop()
+        self._moves_remaining[1 if self._current_game_state.turn == Piece.BLACK else 0] += 1
         self._current_game_state.undo_move(move)
 
         return self.__to_json()
@@ -165,21 +178,20 @@ class Game:
             print("start time:", start_time)
 
             # manually set the depth limit
-            depth_limit = 3
+            depth_limit = 4
 
             # set the time limit for the AI based on config
             if self._current_game_state.turn == Piece.BLACK:
-                time_limit = self._game_options.black_time_limit_seconds
+                time_limit = self._game_options.black_turn_time - 0.2
             else:
-                time_limit = self._game_options.white_time_limit_seconds
+                time_limit = self._game_options.white_turn_time - 0.2
 
-            # if self._current_game_state.turn == Piece.BLACK:
-            #     agent = AlphaBetaPruningAgent(max_depth=depth_limit, max_time_sec=time_limit)
-            #     move = agent.AlphaBetaPruningSearch(self._current_game_state)
-            # else:
-            agent = alphaBetaPruningAgent(max_depth=depth_limit,
-                                          max_time_sec=time_limit, game_state=self._current_game_state)
-            move = agent.AlphaBetaPruningSearch()
+            if self._agent is None:
+                self._agent = AlphaBetaPruningAgentAnkit(
+                    max_depth=depth_limit,
+                    max_time_sec=time_limit
+                )
+            move = self._agent.iterative_deepening_search(self._current_game_state)
 
             end_time = time.time()
             print("end time:", end_time)
@@ -197,6 +209,8 @@ class Game:
         Resets the game and timer to the default state.
         Clears everything.
         """
+        self.record_game()
+
         # clear the stack
         self._moves_stack.clear_stack()
 
@@ -206,9 +220,16 @@ class Game:
         # set first move to true
         self._is_first_move = True
 
+        # set moves remaining to normal
+        move_limit = self._game_options.move_limit
+        self._moves_remaining = [move_limit, move_limit]
+
         # reset the board to be the selected board
         board = OptimizedBoard(self._game_options.board_layout.value)
         self._current_game_state = GameState(board)
+
+        # reset the agent
+        self._agent = None
 
         return self.__to_json()
 
@@ -223,6 +244,7 @@ class Game:
             "game_configured": self._game_configured,
             "game_state": self._current_game_state.to_json(),
             "moves_stack": self._moves_stack.to_json(),
+            "moves_remaining": self._moves_remaining,
             "is_first_move": self._is_first_move
         }
 
@@ -239,3 +261,20 @@ class Game:
                 moves_dict[key].append(move.to_json())
 
         return moves_dict
+
+    def record_game(self):
+        formatted_datetime = datetime.now().strftime('%d-%m-%Y_%H-%M-%S')
+        games_dir = "archived_games"
+        game_file_name = f"{formatted_datetime}.json"
+        game_file_path = os.path.join(games_dir, game_file_name)
+
+        # Create output directory if it doesn't exist
+        os.makedirs(games_dir, exist_ok=True)
+
+        with open(game_file_path, 'w') as game_file:
+            game_json = self.__to_json()
+            game_json["moves_stack"] = [str(move) for move in self._moves_stack.items]
+            json.dump(game_json, game_file)
+
+        if isinstance(self._agent, AlphaBetaPruningAgentAnkit):
+            self._agent.write_t_table()
