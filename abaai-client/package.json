@@ -10,7 +10,9 @@
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "electron": "electron .",
-    "package": "electron-packager . AbaAi --platform=win32 --arch=x64 --out=release-builds"
+    "package": "electron-packager . AbaAi --platform=win32 --arch=x64 --out=release-builds",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
@@ -20,8 +22,6 @@
     "@mui/material": "^5.15.13",
     "@mui/system": "^5.15.9",
     "axios": "^1.6.7",
-    "electron-package": "^0.1.0",
-    "mui": "^0.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
@@ -30,11 +30,44 @@
     "@types/react-dom": "^18.2.19",
     "@vitejs/plugin-react": "^4.2.1",
     "electron": "^29.1.6",
+    "electron-builder": "^24.13.3",
     "electron-packager": "^17.1.2",
     "eslint": "^8.56.0",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
-    "vite": "^5.1.4"
+    "vite": "^5.2.8"
+  },
+  "build": {
+    "asar": true,
+    "asarUnpack": [
+      "preload.js"
+    ],
+    "extraResources": [
+      {
+        "from": "./dist",
+        "to": "dist",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "appId": "com.yourcompany.yourapp",
+    "productName": "YourApp",
+    "directories": {
+      "output": "dist_electron"
+    },
+    "files": [
+      "dist/**/*",
+      "electron-starter.cjs",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "mac": {
+      "target": "dmg"
+    }
   }
 }

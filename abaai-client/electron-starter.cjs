@@ -1,49 +1,35 @@
-const { app, BrowserWindow } = require('electron');
-const { spawn } = require('child_process');
+const { app, BrowserWindow, protocol } = require('electron');
+const path = require('path');
 
 let mainWindow;
-let flaskProcess = null;
-let viteServer = null;
-
-function createViteServer() {
-  viteServer = spawn('npm', ['run', 'dev'], { shell: true, stdio: 'inherit', cwd: __dirname });
-
-  viteServer.on('close', code => {
-    console.log(`Vite server exited with code ${code}`);
-  });
-}
-
-function runServer() {
-  flaskProcess = spawn('./app.exe', [], { shell: true });
-  flaskProcess.stdout.on('data', data => {
-    console.log(`Flask: ${data}`);
-  });
-}
+const preloadPath = path.join(process.resourcesPath, 'app.asar.unpacked', 'preload.js');
 
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
+      nodeIntegration: true, // consider security implications
+      contextIsolation: false, // for security, usually set to true
+      preload: preloadPath
     }
   });
 
-  const startURL = 'http://localhost:5173';
-  mainWindow.loadURL(startURL);
+  // Correct path for loading index.html with file protocol
+  mainWindow.loadURL(`file://${path.join(process.resourcesPath, 'dist', 'index.html')}`);
 
   mainWindow.on('closed', () => {
     mainWindow = null;
-    if (flaskProcess) flaskProcess.kill();
-    if (viteServer) viteServer.kill();
   });
-
 }
 
+// Register custom protocol once
 app.whenReady().then(() => {
-  runServer();
-  createViteServer();
+  protocol.registerFileProtocol('app', (request, callback) => {
+    const url = request.url.replace(/^app:\/\//, '');
+    callback({ path: path.normalize(`${__dirname}/${url}`) });
+  });
+  
   createWindow();
 });
 
