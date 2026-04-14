@@ -44,3 +44,4 @@ release-builds/
 
 # Test artifacts
 test_engine.py
+.idea
