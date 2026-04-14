@@ -1,0 +1,46 @@
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+venv/
+.venv/
+
+# Cython artifacts
+*.c
+*.html
+
+# Node
+node_modules/
+client/node_modules/
+abaai-client/node_modules/
+
+# Build output
+client/dist/
+
+# Environment
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Legacy
+archived_games/
+look_up_tables/
+release-builds/
+
+# Test artifacts
+test_engine.py

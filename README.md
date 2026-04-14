@@ -1,159 +1,122 @@
-# AbaAI
+# AbaAI — Abalone Game Platform
 
-## Introduction
+An open platform for playing and testing AI agents against each other in Abalone.
 
-AbaAI is an ambitious project aimed at developing a sophisticated AI to excel at the Abalone board game. By exploring and implementing advanced heuristics and strategies, our AI seeks to achieve unparalleled mastery of the game.
-
-## Project Goals
-
-- To develop an AI that can consistently outperform human players in Abalone.
-- To explore various heuristics and algorithms to find the most effective strategies for winning.
-- To contribute to the AI and board game community by providing a fully open-source solution.
-
-## Application Website
-
-You can access the application via the following url:
-
-[Aba AI](https://aba-ai.vercel.app/)
-
-NOTE: This is hosted using a free cloud hosting service, and may not respond properly all the time.
-
-## Running the State-Space Generator
-
-*Simplified instructions in GENERATOR_INSTRUCTIONS.md
-
-Can be run from AbaAI/abaai-server/State_Space_Generator/state_space_generator.exe directly without the need for downloading if the repo is cloned (instructions below)
-
-### Prerequisites
-
-- Working Test.input files
-
-### Step 1: Download State_Space_Generator.zip
-
-1. Locate the file
+## Architecture
 
 ```
-On the repository main page, find State_Space_Generator.zip
-Alternatively, it may be located in:
-".\AbaAI\abaai-server\abalone\ai\State_Space_Generator.zip"
+AbaAI/
+  client/     → React SPA (play as a human in the browser)
+  server/     → FastAPI game server (manages sessions, validates moves)
+  agents/     → Bot framework (connect your own AI to the server)
 ```
 
-2. Download and unzip the file
+The server is model-agnostic. Any HTTP client — a browser, a Python script, a Rust CLI — can play.
 
-```
-Can be dowloaded directly in the directry if the repository is cloned, unzip the file by right-clicking it and selecting "Extract All..."
-Alternatively, select the .zip folder in the repository, then in the github code file header select the dowload icon 
-```
+## Quick Start
 
-3. Insert input files and run the Executable
+### 1. Start the server
 
-```
-Navigate into the downloaded "State_Space_Generator" folder
-Insert as many Test<#>.input files in the "input_files" folder as desired
-Run the executable by double-clicking it, or by opening the command prompt in the "State_Space_Generator" and typing:
-"state_space_generator_main.exe"
+```bash
+cd server
+pip install -r requirements.txt
+uvicorn app:app --reload
 ```
 
-4. Find output files
+The API docs are available at `http://localhost:8000/docs`.
 
-```
-Navigate to the "output_files" folder to find the Test<#>.move and Test<#>.board files for all input files
-```
+### 2. Start the client (optional — for human players)
 
-## Local Installation
-
-### Prerequisites
-
-- Python 3.11 or higher is installed on your computer. [Install Python Here](https://www.python.org/downloads/?trk=cndc-detail)
-- Node 20.11 or higher is installed on your computer. [Install Node Here](https://nodejs.org/en/download/)
-
-### Step 1: Clone the project to your computer and navigate to directory
-
-```
-git clone <project url> <directory name>
-cd <directory name>
+```bash
+cd client
+npm install
+npm run dev
 ```
 
-### Step 2: Start the backend Python server
+Open `http://localhost:5173` in your browser.
 
-1. Change directory to the `abaai-server` directory
+### 3. Run a bot
 
-    ```
-    cd abaai-server
-    ```
+```bash
+pip install -r agents/requirements.txt
 
-2. Initalize a python virtual environment
+# Create a game and play as a random bot
+python -m agents.runner --server http://localhost:8000 --create --agent random
 
-- Windows
+# Join an existing game with the alpha-beta agent
+python -m agents.runner --server http://localhost:8000 --join GAME_ID --agent alphabeta
+```
 
-    ```
-    python -m venv venv
-    ```
+## API Reference
 
-- Linux/MacOS
+Five endpoints:
 
-    ```
-    python3 -m venv venv
-    ```
+| Method | Path | Description |
+|--------|------|-------------|
+| `POST` | `/api/games` | Create a new game (returns game ID + player token) |
+| `POST` | `/api/games/{id}/join` | Join as second player (returns player token) |
+| `GET` | `/api/games/{id}/state` | Get current state (board, turn, legal moves) |
+| `POST` | `/api/games/{id}/move` | Submit a move |
+| `GET` | `/api/games/{id}/history` | Move history |
 
-3. Activate the virtual environment
+### Game state response
 
-- Windows
+```json
+{
+  "game_id": "abc123",
+  "status": "in_progress",
+  "board": [[0,0,0,0,1,1,1,1,1], ...],
+  "turn": "black",
+  "your_turn": true,
+  "captures": {"black": 0, "white": 2},
+  "legal_moves": [
+    {"from": ["E5"], "to": ["E6"]},
+    {"from": ["D4","E5"], "to": ["D5","E6"], "pushed": ["F6"]}
+  ],
+  "move_number": 12
+}
+```
 
-    ```
-    .\venv\Scripts\activate
-    ```
+### Submitting a move
 
-- Linux/MaxOS
+Pick from the legal moves list:
+```json
+{"move_index": 5}
+```
 
-    ```
-    source venv/bin/activate
-    ```
+Or specify explicitly in algebraic notation:
+```json
+{"from": ["D4", "E5"], "to": ["D5", "E6"]}
+```
 
-4. Install the dependencies from the `requirements.txt` file
+Pass your player token in the `X-Player-Token` header.
 
-    ```
-    pip install -r requirements.txt
-    ```
+## Build Your Own Bot
 
-5. Start the application server
+1. Create a class that extends `AbaloneAgent`:
 
-- Windows
+```python
+from agents.base import AbaloneAgent
 
-    ```
-    python app.py
-    ```
+class MyBot(AbaloneAgent):
+    def select_move(self, game_state: dict) -> dict:
+        # game_state has: board, turn, legal_moves, captures, etc.
+        # Return {"move_index": int} or {"from": [...], "to": [...]}
+        return {"move_index": 0}  # always pick first legal move
+```
 
-- Linux/MaxOS
+2. Run it:
 
-    ```
-    python3 app.py
-    ```
+```bash
+python -m agents.runner --server http://localhost:8000 --join GAME_ID --agent my_module.MyBot
+```
 
-### Step 3: Start the front end React server
+## Board Coordinates
 
-1. Open a separate terminal window
+The board is a 9x9 grid. Algebraic notation uses letters I-A (top to bottom) and numbers 1-9 (left to right).
 
-2. Change directory to the `abaai-client` directory. (from root directory)
+Cell values: `0` = empty, `1` = black, `2` = white, `-1` = out of bounds.
 
-    ```
-    cd abaai-client
-    
-    or
-    
-    cd ../abaai-client // if navigating from abaai-server directory
-    ```
+## License
 
-3. Install the node dependencies
-
-    ```
-    npm install
-    ```
-
-4. Start the React server
-
-    ```
-    npm run dev
-    ```
-
-### Step 4: Have fun
+GPL v3 — see [LICENSE](LICENSE).
