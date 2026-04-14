@@ -27,18 +27,12 @@ class Move:
     """
     Represents a single Abalone move.
 
-    Positions are stored as (x, y) tuples internally.
+    Positions are (x, y) tuples.
     from_positions / to_positions: the player's marbles before and after.
     from_opponent / to_opponent: opponent marbles displaced (sumito).
     """
 
-    __slots__ = [
-        "_from_positions",
-        "_to_positions",
-        "_player",
-        "_from_opponent",
-        "_to_opponent",
-    ]
+    __slots__ = ["from_positions", "to_positions", "player", "from_opponent", "to_opponent"]
 
     def __init__(
         self,
@@ -48,89 +42,55 @@ class Move:
         from_opponent: list[tuple[int, int]] | None = None,
         to_opponent: list[tuple[int, int]] | None = None,
     ):
-        self._from_positions = from_positions
-        self._to_positions = to_positions
-        self._player = player
-        self._from_opponent = from_opponent or []
-        self._to_opponent = to_opponent or []
-
-    # --- Properties ---
-
-    @property
-    def from_positions(self) -> list[tuple[int, int]]:
-        return self._from_positions
-
-    @property
-    def to_positions(self) -> list[tuple[int, int]]:
-        return self._to_positions
-
-    @property
-    def from_opponent(self) -> list[tuple[int, int]]:
-        return self._from_opponent
-
-    @property
-    def to_opponent(self) -> list[tuple[int, int]]:
-        return self._to_opponent
-
-    @property
-    def player(self) -> Piece:
-        return self._player
+        self.from_positions = from_positions
+        self.to_positions = to_positions
+        self.player = player
+        self.from_opponent = from_opponent or []
+        self.to_opponent = to_opponent or []
 
     @property
     def is_sumito(self) -> bool:
-        return len(self._from_opponent) > 0
+        return len(self.from_opponent) > 0
 
     @property
     def is_capture(self) -> bool:
-        return len(self._from_opponent) > len(self._to_opponent)
-
-    # --- Algebraic notation ---
+        return len(self.from_opponent) > len(self.to_opponent)
 
     def to_notation(self) -> dict:
         result = {
-            "from": [coord_to_notation(x, y) for x, y in self._from_positions],
-            "to": [coord_to_notation(x, y) for x, y in self._to_positions],
+            "from": [coord_to_notation(x, y) for x, y in self.from_positions],
+            "to": [coord_to_notation(x, y) for x, y in self.to_positions],
         }
-        if self._from_opponent:
-            pushed = [
-                coord_to_notation(x, y)
-                for x, y in self._from_opponent
-            ]
-            result["pushed"] = pushed
+        if self.from_opponent:
+            result["pushed"] = [coord_to_notation(x, y) for x, y in self.from_opponent]
         return result
 
-    @classmethod
-    def from_notation(cls, data: dict, player: Piece) -> Move:
-        from_positions = [notation_to_coord(n) for n in data["from"]]
-        to_positions = [notation_to_coord(n) for n in data["to"]]
-        return cls(from_positions, to_positions, player)
-
-    # --- Sorting (prioritise sumito, then larger groups) ---
-
     def __lt__(self, other):
-        if len(self._to_opponent) != len(other._to_opponent):
-            return len(self._to_opponent) > len(other._to_opponent)
-        return len(self._from_positions) > len(other._from_positions)
+        if len(self.to_opponent) != len(other.to_opponent):
+            return len(self.to_opponent) > len(other.to_opponent)
+        return len(self.from_positions) > len(other.from_positions)
 
     def __repr__(self):
-        frm = ",".join(coord_to_notation(x, y) for x, y in self._from_positions)
-        to = ",".join(coord_to_notation(x, y) for x, y in self._to_positions)
+        frm = ",".join(coord_to_notation(x, y) for x, y in self.from_positions)
+        to = ",".join(coord_to_notation(x, y) for x, y in self.to_positions)
         return f"{frm} -> {to}"
 
     def __eq__(self, other):
         if not isinstance(other, Move):
             return NotImplemented
         return (
-            sorted(self._from_positions) == sorted(other._from_positions)
-            and sorted(self._to_positions) == sorted(other._to_positions)
-            and self._player == other._player
-            and sorted(self._from_opponent) == sorted(other._from_opponent)
-            and sorted(self._to_opponent) == sorted(other._to_opponent)
+            sorted(self.from_positions) == sorted(other.from_positions)
+            and sorted(self.to_positions) == sorted(other.to_positions)
+            and self.player == other.player
+            and sorted(self.from_opponent) == sorted(other.from_opponent)
+            and sorted(self.to_opponent) == sorted(other.to_opponent)
         )
 
     def __hash__(self):
         return hash((
-            tuple(sorted(self._from_positions)),
-            tuple(sorted(self._to_positions)),
-            self._player,
+            tuple(sorted(self.from_positions)),
+            tuple(sorted(self.to_positions)),
+            self.player,
+            tuple(sorted(self.from_opponent)),
+            tuple(sorted(self.to_opponent)),
         ))

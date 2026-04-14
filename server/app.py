@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from fastapi import FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from .sessions import SessionManager
 
@@ -38,21 +38,10 @@ class JoinGameResponse(BaseModel):
     color: str
 
 
-class MoveByIndex(BaseModel):
-    move_index: int
-
-
-class MoveByNotation(BaseModel):
-    from_positions: list[str]  # aliased to "from" via model_config
-    to_positions: list[str]
-
-    model_config = {"populate_by_name": True}
-
-
 class MoveRequest(BaseModel):
     move_index: int | None = None
-    from_positions: list[str] | None = None
-    to_positions: list[str] | None = None
+    from_positions: list[str] | None = Field(None, alias="from")
+    to_positions: list[str] | None = Field(None, alias="to")
 
     model_config = {"populate_by_name": True}
 
@@ -85,7 +74,7 @@ def get_state(game_id: str, x_player_token: str = Header()):
 
 
 @app.post("/api/games/{game_id}/move")
-def make_move(game_id: str, body: dict, x_player_token: str = Header()):
+def make_move(game_id: str, body: MoveRequest, x_player_token: str = Header()):
     session = manager.get_session(game_id)
     if session is None:
         raise HTTPException(status_code=404, detail="Game not found")
@@ -100,14 +89,13 @@ def make_move(game_id: str, body: dict, x_player_token: str = Header()):
     if not session.is_players_turn(x_player_token):
         raise HTTPException(status_code=400, detail="Not your turn")
 
-    # Resolve the move
     move = None
-    if "move_index" in body:
-        move = session.find_move_by_index(body["move_index"])
+    if body.move_index is not None:
+        move = session.find_move_by_index(body.move_index)
         if move is None:
             raise HTTPException(status_code=400, detail="Invalid move index")
-    elif "from" in body and "to" in body:
-        move = session.find_move_by_notation(body["from"], body["to"])
+    elif body.from_positions is not None and body.to_positions is not None:
+        move = session.find_move_by_notation(body.from_positions, body.to_positions)
         if move is None:
             raise HTTPException(status_code=400, detail="Illegal move")
     else:

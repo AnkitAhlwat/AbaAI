@@ -41,7 +41,3 @@ Thumbs.db
 archived_games/
 look_up_tables/
 release-builds/
-
-# Test artifacts
-test_engine.py
-.idea

@@ -83,26 +83,13 @@ class GameState:
         return positions
 
 
-class GameStateUpdate:
-    """Apply a move to a state to produce the resulting state."""
-
-    __slots__ = ["_previous", "_move", "_resulting"]
-
-    def __init__(self, previous: GameState, move: Move):
-        self._previous = previous
-        self._move = move
-        self._resulting = self._generate()
-
-    @property
-    def resulting_state(self) -> GameState:
-        return self._resulting
-
-    def _generate(self) -> GameState:
-        new_board = self._previous.board.copy()
-        new_board.apply_move(self._move)
-
-        next_turn = self._previous.turn.opponent
-        black_count = new_board.count(Piece.BLACK.value)
-        white_count = new_board.count(Piece.WHITE.value)
-
-        return GameState(new_board, next_turn, black_count, white_count)
+def apply_move(state: GameState, move: Move) -> GameState:
+    """Apply a move to a state and return the resulting state."""
+    new_board = state.board.copy()
+    new_board.apply_move(move)
+    return GameState(
+        new_board,
+        state.turn.opponent,
+        new_board.count(Piece.BLACK.value),
+        new_board.count(Piece.WHITE.value),
+    )

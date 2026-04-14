@@ -7,14 +7,9 @@ Uses the server engine internally for move generation during search.
 
 from __future__ import annotations
 
-import sys
-import os
 import time
 
-# Add project root to path so we can import the engine
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
-
-from server.engine import Board, Piece, GameState, GameStateUpdate, generate_all_legal_moves
+from server.engine import Board, Piece, GameState, apply_move, generate_all_legal_moves
 from agents.base import AbaloneAgent
 from .heuristics import board_control, piece_advantage, terminal_score, clumping
 
@@ -64,7 +59,7 @@ class AlphaBetaAgent(AbaloneAgent):
 
         moves = sorted(generate_all_legal_moves(state))
         for move in moves:
-            child = GameStateUpdate(state, move).resulting_state
+            child = apply_move(state, move)
             value = self._min_value(child, alpha, beta, max_depth - 1, start)
             if value > alpha:
                 best_move = move
@@ -80,7 +75,7 @@ class AlphaBetaAgent(AbaloneAgent):
 
         value = float("-inf")
         for move in sorted(generate_all_legal_moves(state)):
-            child = GameStateUpdate(state, move).resulting_state
+            child = apply_move(state, move)
             value = max(value, self._min_value(child, alpha, beta, depth - 1, start))
             alpha = max(alpha, value)
             if value >= beta:
@@ -95,7 +90,7 @@ class AlphaBetaAgent(AbaloneAgent):
 
         value = float("inf")
         for move in sorted(generate_all_legal_moves(state)):
-            child = GameStateUpdate(state, move).resulting_state
+            child = apply_move(state, move)
             value = min(value, self._max_value(child, alpha, beta, depth - 1, start))
             beta = min(beta, value)
             if value <= alpha:

@@ -28,7 +28,8 @@ class RandomAgent(AbaloneAgent):
 
 
 BUILTIN_AGENTS = {
-    "random": RandomAgent,
+    "random": lambda: RandomAgent(),
+    "alphabeta": lambda: importlib.import_module("agents.alphabeta.agent").AlphaBetaAgent(),
 }
 
 
@@ -36,11 +37,6 @@ def load_agent(name: str) -> AbaloneAgent:
     if name in BUILTIN_AGENTS:
         return BUILTIN_AGENTS[name]()
 
-    if name == "alphabeta":
-        from agents.alphabeta.agent import AlphaBetaAgent
-        return AlphaBetaAgent()
-
-    # Try importing as a dotted path e.g. "my_package.my_agent.MyAgent"
     module_path, _, class_name = name.rpartition(".")
     if module_path:
         mod = importlib.import_module(module_path)

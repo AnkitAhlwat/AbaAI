@@ -68,13 +68,6 @@ class BoardLayout(Enum):
     ]
 
 
-BOARD_LAYOUT_NAMES = {
-    BoardLayout.DEFAULT: "Default",
-    BoardLayout.BELGIAN_DAISY: "Belgian Daisy",
-    BoardLayout.GERMAN_DAISY: "German Daisy",
-    BoardLayout.EMPTY: "Empty",
-}
-
 WIDTH = 9
 HEIGHT = 9
 

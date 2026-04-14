@@ -9,11 +9,10 @@ from .engine import (
     Board,
     BoardLayout,
     GameState,
-    GameStateUpdate,
     Move,
     Piece,
+    apply_move,
     generate_all_legal_moves,
-    coord_to_notation,
     notation_to_coord,
 )
 
@@ -32,7 +31,11 @@ class GameSession:
         self.game_id = game_id
         self.layout = layout
         self.board = Board(layout.value)
-        self.state = GameState(self.board, Piece.BLACK, 14, 14)
+        self.state = GameState(
+            self.board, Piece.BLACK,
+            self.board.count(Piece.BLACK.value),
+            self.board.count(Piece.WHITE.value),
+        )
         self.status = "waiting"  # waiting | in_progress | game_over
 
         self.player_black_token: str | None = None
@@ -71,8 +74,7 @@ class GameSession:
         return self.player_black_token is not None and self.player_white_token is not None
 
     def apply_move(self, move: Move) -> None:
-        update = GameStateUpdate(self.state, move)
-        self.state = update.resulting_state
+        self.state = apply_move(self.state, move)
         self.move_history.append(move.to_notation())
         self._legal_moves = None  # invalidate cache
 

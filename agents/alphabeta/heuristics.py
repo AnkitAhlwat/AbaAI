@@ -1,5 +1,7 @@
 """Heuristic evaluation functions for Abalone."""
 
+from server.engine.movement import DIRECTIONS
+
 MANHATTAN_WEIGHT = [
     None, None, None, None, 8, 7, 6, 5, 4,
     None, None, None, 7, 6, 5, 4, 3, 4,
@@ -11,9 +13,6 @@ MANHATTAN_WEIGHT = [
     4, 3, 4, 5, 6, 7, None, None, None,
     4, 5, 6, 7, 8, None, None, None, None,
 ]
-
-DIRECTIONS = [(-1, 0), (1, 0), (0, -1), (0, 1), (1, -1), (-1, 1)]
-
 
 def board_control(board_array: list[int], max_player: int) -> float:
     player_score = 0

@@ -129,11 +129,17 @@ def _generate_sumitos(game_state: GameState, player_positions: list, opponent_po
     player_set = set(player_positions)
     opponent_set = set(opponent_positions)
     sumitos = []
+    seen: set[tuple] = set()
 
     for start in player_positions:
         for direction in DIRECTIONS:
             seq = _find_marble_sequence(board, start, direction, player_set, opponent_set)
             if seq and _can_sumito(seq, direction, board):
+                key = (tuple(sorted(seq["player"])), direction)
+                if key in seen:
+                    continue
+                seen.add(key)
+
                 new_player = [(p[0] + direction[0], p[1] + direction[1]) for p in seq["player"]]
                 new_opponent = []
                 for p in seq["opponent"]:
